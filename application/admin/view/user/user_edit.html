@@ -47,20 +47,20 @@
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
+                                    <td>头像:</td>
+                                    <td>{:uploadHtml('header_img',$data.header_img,'single_img')}</td>
+                                </tr>
+                                <tr>
+                                    <td>用户昵称:</td>
+                                    <td><input placeholder="用户昵称" class="form-control" name="nick_name" type="text" value="{$data.nick_name}"></td>
+                                </tr>
+                                <tr>
                                     <td>手机号码:</td>
                                     <td><input placeholder="手机号码" class="form-control" name="phone" type="text" value="{$data.phone}"></td>
                                 </tr>
                                 <tr>
                                     <td>积分余额:</td>
                                     <td><input placeholder="积分余额" class="form-control" name="money" type="text" value="{$data.money}" ></td>
-                                </tr>
-                                <tr>
-                                    <td>密码:</td>
-                                    <td><input placeholder="不填写密码默认不进行修改" class="form-control" name="password" type="text" ></td>
-                                </tr>
-                                <tr>
-                                    <td>交易密码:</td>
-                                    <td><input placeholder="不填写密码默认不进行修改" class="form-control" name="trade_password" type="text" ></td>
                                 </tr>
                                 </tbody>
                             </table>

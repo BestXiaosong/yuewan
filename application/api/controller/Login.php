@@ -3,6 +3,8 @@ namespace app\api\controller;
 
 use app\common\logic\Users;
 use think\Db;
+use think\Request;
+
 class Login extends Base
 {
 
@@ -19,60 +21,35 @@ class Login extends Base
      * password => 密码
      * type = post
      */
-    public function login()
+    public function login(Request $request)
     {
-        if (request()->isPost()){
-            $data = input('post.');
+
+        if ($request->isPost()){
+            $data = $request->only(['phone','code'],'post');
             if (!empty($data['phone'])){
-                if (!empty($data['password'])){
-                    $row = Db::name('users')->where('phone',$data['phone'])->field('user_id,salt,password,status')->find();
-                    if (!empty($row)){
-                        if($row['status'] == 1){
-                            $password = md5(md5($data['password']).$row['salt']);
-                            if ($password == $row['password']){
-                                $token = $this->makeToken($row['user_id']);
-                                $this->log($row['user_id']);
-                                api_return(1,'登录成功',['phone'=>$data['phone'],'token'=>$token]);
-                            }
-                            api_return(0,'账号或密码错误');
-                        }
-                    }
-                    api_return(0,'账户不存在或被禁用');
-                }else if(!empty($data['token'])){
-                    $row = Db::name('users')->where('phone',$data['phone'])->field('user_id,token,token_expire,status')->find();
-                    if (!empty($row)){
-                        if($row['status'] == 1){
-                            if ($data['token'] == $row['token'] && time() < $row['token_expire']){
-                                $data = Db::name('users')->where('user_id',$row['user_id'])->update(['token_expire'=>(time()+config('token_expire'))]);
-                                if (!$data){
-                                    Db::name('users')->where('user_id',$row['user_id'])->update(['token_expire'=>(time()+config('token_expire'))]);
-                                }
-                                $this->log($row['user_id']);
-                                api_return(1,'登录成功');
-                            }
-                            api_return(-1,'登录过期');
-                        }
-                    }
-                    api_return(0,'账户不存在或被禁用');
-                }else if (!empty($data['code'])){
-                    $code = cache('code'.$data['phone']);
-                    if (!empty($code) && $code == $data['code']){
-                        $row = Db::name('users')->where('phone',$data['phone'])->field('user_id,status')->find();
-                        if (!empty($row)){
-                            if($row['status'] == 1){
-                                //登陆日志
-                                $this->log($row['user_id']);
-                                $token = $this->makeToken($row['user_id']);
-                                api_return(1,'登陆成功',['phone'=>$data['phone'],'token'=>$token]);
-                            }
-                            api_return(0,'账号被禁用');
-                        }else{
-                            api_return(0,'您的手机号码尚未注册,请前往注册页面进行注册');
-                        }
-                    }
-                    api_return(0,'验证码错误');
+                $code = cache('code'.$data['phone']);
+                if (empty($code)|| $code != $data['code']) {
+//                    api_return(0,'验证码错误');
                 }
-                api_return(0,'请输入完整的数据');
+                $row = Db::name('users')->where('phone',$data['phone'])->field('user_id,status')->find();
+                if (!empty($row)){
+                    if($row['status'] == 1){
+                        //登陆日志
+                        $this->log($row['user_id']);
+                        $token = $this->makeToken($row['user_id']);
+                        api_return(1,'登陆成功',['token'=>$token]);
+                    }
+                    api_return(0,'账号被禁用');
+                }else{
+                    //快捷注册
+                    $model  = new Users();
+                    $result = $model->change($data);
+                    if ($result){
+                        $this->log($row['user_id']);
+                        $token = $this->makeToken($result);
+                        api_return(1,'登陆成功',['token'=>$token]);
+                    }
+                }
             }
             api_return(0,'手机号不能为空');
         }else{
@@ -156,9 +133,7 @@ class Login extends Base
             $data['phone']     = input('post.phone');
             if (!empty(input('id'))) $data['proxy_id']  = dehashid(input('id'));
             $data['password']  = input('post.password');
-            $data['trade_password']  = input('post.trade_password');
-            $data['money'] = 3000000;
-            $data['BCDN']  = 3000000;
+
             $code  = input('post.code');
             $open_id  = input('post.open_id');
             $type  = input('post.type');
@@ -212,7 +187,7 @@ class Login extends Base
                     //登陆日志
                     $this->log($row['user_id']);
                     $token = $this->makeToken($row['user_id']);
-                    api_return(1,'登陆成功',['token'=>$token,'phone'=>$row['phone']]);
+                    api_return(1,'登陆成功',['token'=>$token]);
                 }
                 api_return(0,'账号被禁用');
             }else{

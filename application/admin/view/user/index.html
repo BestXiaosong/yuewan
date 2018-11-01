@@ -20,7 +20,6 @@
                     </button>
                     <a href="{:url('user_edit')}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
                     <a  onclick="add()" class="btn btn-primary pull-right"><i class="fa fa-volume-up"></i>发布推送</a>
-                    <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
                 </form>
             </div>
             <div id="ajax_return">
@@ -30,10 +29,10 @@
                             <thead>
                             <tr>
                                 <td>用户id</td>
+                                <td>昵称</td>
+                                <td>头像</td>
                                 <td>手机号码</td>
                                 <td>积分余额</td>
-                                <td>BCDN余额</td>
-                                <td>下级人数</td>
                                 <td>注册日期</td>
                                 <td>状态</td>
                                 <td>操作</td>
@@ -44,10 +43,10 @@
                             {volist name="rows" id="row" key="key"}
                             <tr>
                                 <td>{$row.user_id}</td>
+                                <td>{$row.nick_name}</td>
+                                <td><img src="{$row.header_img}" style="max-width: 100px" alt=""></td>
                                 <td>{$row.phone}</td>
                                 <td>{$row.money}</td>
-                                <td>{$row.BCDN}</td>
-                                <td>{:junior($row.user_id)}</td>
                                 <td>{$row.create_time}</td>
                                 <td>{if condition="$row.status == 1"} 启用 {else /} 禁用 {/if}</td>
                                 <td>

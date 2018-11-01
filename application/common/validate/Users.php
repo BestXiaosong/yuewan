@@ -6,21 +6,21 @@ use think\Validate;
 class Users extends Validate
 {
     protected $rule = [
-//        'nick_name|昵称'  =>  'length:2,12',
+        'nick_name|昵称'  =>  'length:2,12',
         'real_name|真实姓名'  =>  'length:2,12',
 //        'ID|身份证号码'  =>  'IDCard',
-        'header_img|头像'  =>  'checkImg',
+        'header_img|头像'  =>  'require',
         'phone|手机号码'  =>  '/^1[345789]{1}[0-9]{9}$/',
         'password|登录密码'  =>  'length:6,12',
         'trade_password|交易密码'  =>  'length:6,12',
-//        'sex|性别为必选项'  =>  'require|in:0,1',
+        'sex|性别为必选项'  =>  'require|in:0,1',
 //        'region|地区'  =>  'require',
     ];
 
     protected $scene = [
-        'edit'=> ['header_img'],
-        'back_edit'=> ['header_img'],
-        'back_add'=> ['header_img','password','phone','trade_password'],
+        'edit'=> ['header_img','nick_name'],
+        'back_edit'=> ['header_img','nick_name','phone'],
+        'back_add'=> ['header_img','phone','nick_name'],
     ];
 
 

@@ -14,17 +14,14 @@ use app\common\model\RoomFollow;
 
 class User extends Base
 {
-
+    //用户id
+    protected $user_id = 0;
 
 
     public function _initialize()
     {
         parent::_initialize();
-        $user = $this->checkToken();
-        $this->user_id = $user['user_id'];
-        $this->role_id = $user['role_id'];
-        $this->room_id = $user['room_id'];
-        $this->phone   = $user['phone'];
+        $this->user_id = $this->checkToken();
     }
 
     /**
@@ -35,7 +32,6 @@ class User extends Base
         $user_id = $this->user_id;
         $result  = Db::name('users')->where('user_id',$user_id)->update(['token_expire'=>0]);
         if ($result !== false){
-            session('userInfo',null);
             api_return(1,'操作成功');
         }
         api_return(0,'操作失败');

@@ -44,7 +44,7 @@ class Base extends Validate
     protected $scene = [
         'extend' => ['guess_ratio','compare_num'],
         'nick_name'   =>  ['nick_name'],
-        'front_user_add'   =>  ['password','phone','trade_password'],
+        'front_user_add'   =>  ['phone'],
         'header_img'=> ['header_img'],
         'edit'=> ['header_img','nick_name','day'],
         'day'=> ['day'],

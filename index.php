@@ -8,7 +8,6 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
 // 指定允许其他域名访问
 header('Access-Control-Allow-Origin:*');
 // 响应类型
@@ -21,4 +20,4 @@ define('APP_PATH', __DIR__ . '/application/');
 
 // 加载框架引导文件
 require __DIR__ . '/thinkphp/start.php';
-    //define('', '/extend/');EXTEND_PATH
+

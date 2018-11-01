@@ -414,7 +414,7 @@ function deHashToken($str)
  * 极光推送公用方法
  *
  */
- function Push($type = 0,$j_push_id = '',$title = '来自soha直播的推送消息',$room_id)
+ function Push($type = 0,$j_push_id = '',$title = '来自聊天约玩直播的推送消息',$room_id)
 {
     if (!$j_push_id) return false;
 
@@ -778,8 +778,8 @@ function chatRoomUserCount($chat_room){
 function redisConnect()
 {
     $redis = new \Redis();
-    $redis->connect(\think\Config::get('redis_ip'), \think\Config::get('redis_port'));
-    $password = \think\Config::get('redis_pwd');
+    $redis->connect(\think\Env::get('redis_host','127.0.0.1'), \think\Env::get('redis_port',6379));
+    $password = \think\Env::get('redis_password','');
     $redis->auth($password);
     return $redis;
 }

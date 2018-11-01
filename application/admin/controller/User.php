@@ -30,9 +30,7 @@ class User extends Base
         if(!empty($_GET['user_id'])){
             $where['user_id'] = trim(input('get.user_id'));
         }
-        if(!empty($_GET['cid'])){
-            $where['cid'] = trim(input('get.cid'));
-        }
+
         $model = new \app\common\model\Users();
         $rows = $model->userList($where);
         $this->assign([

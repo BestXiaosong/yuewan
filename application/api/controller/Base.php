@@ -21,17 +21,7 @@ use think\Exception;
 class Base extends Controller
 {
 
-    //用户id
-    protected $user_id = 0;
 
-    //用户当前选择的角色id
-    protected $role_id = 0;
-
-    //用户当前选择的房间id
-    protected $room_id = 0;
-
-    //当前用户使用的手机号
-    protected $phone  = '';
 
 
     public function _initialize()
@@ -45,74 +35,6 @@ class Base extends Controller
 //            Cache::set($ip,1,60);
 //        }
     }
-
-    /**
-     * 获取推流地址
-     */
-    protected function getPushUrl($id){
-        $pushUrl = cache('pushUrlCache'.$id);
-        if ($pushUrl){
-            return $pushUrl;
-        }else{
-
-            $ak = config('qiniu.ACCESSKEY');
-            $sk = config('qiniu.SECRETKEY');
-            $hubName = config('qiniu.hubName');
-            $qiNiu = config('qiniu');
-            $mac = new Mac($ak,$sk);
-            $client = new Client($mac);
-            $hub  = $client->hub($hubName);
-            $streamKey = "play_".$id;
-            $time = 3600 * 100;
-            $stream = $hub->stream($streamKey);
-            $info = $stream->info();
-            $data = $stream->updateConverts(array("480p", "720p"));
-            $pushUrl =  RTMPPublishURL($qiNiu['pushDomain'],$qiNiu['hubName'], $streamKey,$time,$ak, $sk);
-            cache('pushUrlCache'.$id,$pushUrl,1);
-            return $pushUrl;
-        }
-    }
-
-    /**
-     * 获取播放信息
-     */
-    protected function getPlayInfo($id){
-        $playInfo = cache('playUrlCache'.$id);
-        if ($playInfo){
-            return $playInfo;
-        }else{
-            $snapshotDomain = config('qiniu')['snapshotDomain'];
-            $hubName = config('qiniu')['hubName'];
-            $hlsDomain = config('qiniu')['hlsDomain'];
-            $streamKey = "play_".$id;
-            $playInfo['m3u8']    = "http://$hlsDomain/$hubName/$streamKey.m3u8";//原画
-            $playInfo["m3u8_hd"] = "http://$hlsDomain/$hubName/$streamKey@720p.m3u8";//高清
-            $playInfo["m3u8_sd"] = "http://$hlsDomain/$hubName/$streamKey@480p.m3u8";//标清
-            $playInfo['img']     = "http://$snapshotDomain/$hubName/$streamKey.jpg";
-            cache('playUrlCache'.$id,$playInfo,60);
-            return $playInfo;
-        }
-    }
-
-    /**
-     * Created by xiaosong
-     * E-mail:306027376@qq.com
-     * 保存直播数据
-     */
-    public function savePlay($id)
-    {
-        $ak = config('qiniu.ACCESSKEY');
-        $sk = config('qiniu.SECRETKEY');
-        $hubName = config('qiniu.hubName');
-        $mac = new Mac($ak,$sk);
-        $client = new Client($mac);
-        $hub  = $client->hub($hubName);
-        $streamKey = "play_".$id;
-        $stream = $hub->stream($streamKey);
-        $resp = $stream->saveas(array("format" => "mp4"));
-        print_r($resp);
-    }
-
 
     /**
      * @param string $url 文件第三方完整地址
@@ -189,34 +111,22 @@ class Base extends Controller
      */
     protected function checkToken(){
         if (request()->isPost()){
-            $token = input('post.token');
-            if (empty($token)) $token = session('userInfo')['token'];
-            $phone = input('post.phone');
-            if (empty($phone)) $phone = session('userInfo')['phone'];
-            if (empty($token) || empty($phone)){
-                $header = request()->header();
-                if (isset($header['token']) && !empty($header['token'])){
-                    $token = $header['token'];
-                }
-                if (isset($header['phone']) && !empty($header['phone'])){
-                    $phone = $header['phone'];
-                }
+            $token = input('post.token')??request()->header()['token'];
+            if (empty($token)){
+                api_return(-1,'登录过期');
             }
-            if (empty($token) || empty($phone)){
-                api_return(0,'请先登陆');
-            }
-            $data  = Db::name('users')->where('phone',$phone)->field('role_id,room_id,user_id,token,token_expire,status')->find();
+            $data  = Db::name('users')->where('token',$token)->field('user_id,token,token_expire,status')->find();
             if ($data['status'] == 1){
                 if ($token == $data['token']){
                     if(time() < $data['token_expire']){
-                        return ['user_id'=>$data['user_id'],'role_id'=>$data['role_id'],'room_id'=>$data['room_id'],'phone'=>$phone];
+                        return $data['user_id'];
                     }
                 }
                 api_return(-1,'登录过期');
             }
             api_return(0,'账号不存在或被禁用');
         }
-        api_return(0,'非法操作');
+        api_return(0,'访问错误');
     }
 
 
@@ -585,7 +495,7 @@ class Base extends Controller
      * @return bool
      *
      */
-    protected function Push($type,$j_push_id = '',$title = '来自soha直播的推送消息',$room_id)
+    protected function Push($type,$j_push_id = '',$title = '来自聊天约玩直播的推送消息',$room_id)
     {
         if (!$j_push_id) return false;
 
