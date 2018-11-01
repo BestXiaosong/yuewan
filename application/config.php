@@ -193,26 +193,11 @@ return [
         'prefix' => '',
         // 缓存有效期 0表示永久缓存
         'expire' => 0,
-            'host'       => \think\Env::get('host','39.108.192.60'),
+            'host'       => \think\Env::get('host','127.0.0.1'),
             'port'       => \think\Env::get('port',6479),
-            'password'   => \think\Env::get('password','xiaosong'),
+            'password'   => \think\Env::get('password','123456'),
     ],
-//
-//    'cache'                  => [
-//        // 驱动方式
-//        'type'   => 'File',
-//        // 缓存保存目录
-//        'path'   => CACHE_PATH,
-//        // 缓存前缀
-//        'prefix' => '',
-//        // 缓存有效期 0表示永久缓存
-//        'expire' => 0,
-//        'host'       => '127.0.0.1',
-//        'port'       => 6379,
-////        'password'   => 'Tiku2018.',
-////        'password'   => 'Tiku2018.',
-//
-//    ],
+
 
 
     // +----------------------------------------------------------------------
@@ -235,12 +220,9 @@ return [
         'type'           => 'redis',
         // 是否自动开启 SESSION
         'auto_start'     => true,
-        'host'       => \think\Env::get('host','39.108.192.60'),
+        'host'       => \think\Env::get('host','127.0.0.1'),
         'port'       => \think\Env::get('port',6479),
-        'password'   => \think\Env::get('password','xiaosong'),
-//        'host'       => '39.108.192.61',
-//        'port'       => 6479,
-//        'password'   => 'xiaosong',
+        'password'   => \think\Env::get('password','123456'),
     ],
 
     // +----------------------------------------------------------------------
@@ -269,7 +251,9 @@ return [
         'var_page'  => 'page',
         'list_rows' => 20,
     ],
-    'hash_key'=>'soha',
+
+    'hash_key' => \think\Env::get('hash_key','xiaosong'),
+
     //聚合数据
     'juhe' => [
         //短信模板id
@@ -278,14 +262,7 @@ return [
         'smskey' => '796b03e929f71b6dcf14aa5db7eca540',
         'IDkey' => 'f34e0944b85b5c11ff2e95d140176f39',
     ],
-    //阿里云
-    'ali' => [
-        //短信模板id
-        'smsid' => 91961 ,
-        //短信应用appkey
-        'smskey' => '796b03e929f71b6dcf14aa5db7eca540',
-        'IDkey' => 'f34e0944b85b5c11ff2e95d140176f39',
-    ],
+
 
     //融云
     'rongyun' => [
@@ -307,8 +284,9 @@ return [
         'hlsDomain'=>'pili-live-hls.play.51soha.com',
         'snapshotDomain'=>'pili-live-snapshot.play.51soha.com',
     ],
+
+    //默认头像
     'default_img' => 'http://file.51soha.com/default_header.jpg',
-    'default_room_img' => 'http://file.51soha.com/default_room.png',
 
     //极光推送
     'jpush'=> [
@@ -316,32 +294,7 @@ return [
             'mk'=>'24585eeb255bceee6c5b3598',
         ],
 
-    //websocket监听地址
-    'websocketUrl' => 'ws://47.52.207.212:7777/ws',
 
-    //wap pc端调用的api地址
-//    'api_domain' => 'http://api.soho.com'
-    'api_domain' => 'http://39.108.192.61',
-
-    //微信开放平台第三方登录wx0283a3062e5c12c4
-    'wxAppid' => 'wxbd6ab6aa9af2debc',
-    'wxAppkey'=>'d2cb629a306b083fd520ab13c63663bf',
-    'wxCallback'=>'http://wap.xingzhuosong.com/login/wxcallback',
-
-    //第三方登陆
-    'qqAppid'    => '101503564',
-    'qqAppkey'   =>'2a86bfc6ffea0364244afd8cf68ff9c7',
-    //QQ登录成功后跳转的地址,请确保地址真实可用，否则会导致登录失败。
-    'qqCallback' =>'http://wap.xingzhuosong.com/login/qqcallback',
-
-    //红包领取redis配置
-    'redis_ip'=> \think\Env::get('host','39.108.192.61'),
-    'redis_pwd'=> \think\Env::get('password','39.108.192.60'),
-    'redis_port'=> \think\Env::get('port','39.108.192.60'),
-
-
-    //分享域名
-    'share_domain' => 'http://wap.xingzhuosong.com/',
 
 
 ];
