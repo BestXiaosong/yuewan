@@ -150,13 +150,6 @@ class Base extends Controller
     }
 
 
-    public function test()
-    {
-        $data = $this->fileInfo('http://file.51soha.com/default_header.jpg');
-        dump($data);
-    }
-
-
 
     public function _empty()
     {
@@ -250,9 +243,7 @@ class Base extends Controller
     protected function get_user_id(){
         if (request()->isPost()){
             $token = input('post.token');
-            if (empty($token)) $token = session('userInfo')['token'];
             $phone = input('post.phone');
-            if (empty($phone)) $phone = session('userInfo')['phone'];
             if (empty($token) || empty($phone)){
                 $header = request()->header();
                 if (isset($header['token']) && !empty($header['token'])){
@@ -314,7 +305,6 @@ class Base extends Controller
         }
         return true;
     }
-
 
 
     /**
@@ -399,39 +389,6 @@ class Base extends Controller
     }
 
 
-    /**
-     * 融云发送自定义消息
-     */
-    protected function sendMsg1($room_id){
-        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
-        $data['type'] = 'gift';
-        $data['data']['gift_name'] = '无字天书';
-        $data['data']['img'] = 'http://file.51soha.com/cb911201808151000427141.png';
-        $data['data']['num'] = '10';
-        $data['data']['role_name'] = '9999';
-        $data['data']['role_id'] = hashid(2);
-        $content = json_encode(['content'=>$data,'extra'=>'xxxxxxx']);
-         $model->message()->publishChatroom('system', [$room_id], 'RC:custom',$content);
-    }
-
-    protected function sendMsg2($room_id){
-        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
-        $data['type'] = 'gift';
-        $data['data']['gift_name'] = '无字天书';
-        $data['data']['img'] = 'http://file.51soha.com/cb911201808151000427141.png';
-        $data['data']['num'] = '10';
-        $data['data']['role_name'] = '9999';
-        $data['data']['role_id'] = hashid(2);
-        $content = json_encode(['content'=>'test','extra'=>'xxxxxxx']);
-        $model->message()->publishChatroom('system', [$room_id], 'RC:custom',$content);
-    }
-
-
-    protected function test1($room_id){
-        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
-        $model->message()->publishChatroom('system', [$room_id], 'RC:custom',"{\"content\":\"hello\",\"extra\":\"helloExtra\"}");
-
-    }
 
 
     /**
@@ -462,7 +419,7 @@ class Base extends Controller
      * $rows['answer_A']  选项A
      * $rows['answer_B']  选项B
      *
-     *
+     *融云自定义消息发送
      */
     protected function sendMsg($room_id,$type,$rows = []){
         $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);

@@ -10,11 +10,5 @@
 // +----------------------------------------------------------------------
 
 return [
-    'app\api\command\Api',
-    'app\api\command\Sale',
-    'app\api\command\Work',
-    'app\api\command\Expired',
-    'app\api\command\Recharge',
-    'app\api\command\Red',
-    'app\api\command\Guess',
+
 ];

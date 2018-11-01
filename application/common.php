@@ -191,7 +191,14 @@ function cate2select($name, $rows, $default, $class, $valueField = 'id', $textFi
     echo $html;
 }
 
-
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param int $length
+ * @param string $type
+ * @return string
+ * 获取随机字符串
+ */
 function generateStr($length = 5, $type = "all")
 {
     //密码字符集，可任意添加你需要的字符
@@ -375,6 +382,14 @@ function hashToken($str)
     return $hash->encode($str);
 }
 
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param $str
+ * @return string
+ * @throws Exception
+ * 公钥解密
+ */
 function deHashToken($str)
 {
     $hash = new \Hashids\Hashids(config('hash_key'), 32);
@@ -396,6 +411,7 @@ function deHashToken($str)
  * @param string $title
  * @param $room_id
  * @return bool
+ * 极光推送公用方法
  *
  */
  function Push($type = 0,$j_push_id = '',$title = '来自soha直播的推送消息',$room_id)
@@ -423,7 +439,7 @@ function deHashToken($str)
 
 
 /**
- * 及时推送
+ * 极光及时推送
  */
 function j_push($title = '', $reg_id, $extend = [])
 {
@@ -455,7 +471,7 @@ function j_push($title = '', $reg_id, $extend = [])
 }
 
 /**
- * 定时推送
+ * 极光定时推送
  */
 function j_push_schedule($title = '', $reg_id, $time, $name)
 {
@@ -483,7 +499,7 @@ function j_push_schedule($title = '', $reg_id, $time, $name)
 
 
 /**
- * 发送一条短信
+ * 聚合数据发送一条短信
  */
 function sendSms($mobile = 0)
 {
@@ -527,7 +543,15 @@ function curl_get($url)
     return $result;
 }
 
-
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param $url
+ * @param bool $params
+ * @param int $ispost
+ * @return bool|mixed
+ * 聚合curl请求
+ */
 function juhecurl($url, $params = false, $ispost = 0)
 {
     $httpInfo = array();
@@ -592,7 +616,13 @@ function formatTime($time)
     return $str;
 }
 
-
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param $time
+ * @return false|string
+ * 人性化时间
+ */
 function time_format($time)
 {
     $publish_timestamp = strtotime($time);
@@ -625,6 +655,14 @@ function time_format($time)
     return $format_time;
 }
 
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param $str
+ * @param $field
+ * @return bool
+ * 查出数据库不允许使用的字段进行判断
+ */
 function filterWord($str, $field)
 {
     $arr = \think\Db::name('extend')->where('id', 1)->value($field);
@@ -689,6 +727,7 @@ function money($id, $money_type, $money,$coin_type = 1,$remark = '',$order_num= 
  * @param int $money_type 金币类型 1=>积分 2=>比特币  3=>以太币 4=>BCDN'
  * @param int $status  状态 1=>平台流水 2=>用户充值 3=>用户提现
  * @param string $remark 备注
+ * 资金流水写入
  */
 function stream($money,$money_type = 1,$remark = '',$status = 1){
     if ($money <= 0) return false;
@@ -706,55 +745,6 @@ function stream($money,$money_type = 1,$remark = '',$status = 1){
 }
 
 
-
-
-/**
- * @param $data
- * 批量插入资金详情
- */
-function moneyAll($data){
-
-}
-
-
-function click($pid)
-{
-    $data = replys($pid);
-    return $data;
-}
-
-function replys($pid, $results = array(), $p_id = 0)
-{
-    $result = db('vod_reply')->where(['pid' => $pid, 'p_id' => $p_id])->select();
-    foreach ($result as $k => $v) {
-        $results[] = $result[$k];
-        $results = replys($pid, $results, $v['reply_id']);
-    }
-    return $results;
-}
-
-
-
-/*
- * 房间热度值获取
- */
-function hotValue($room_id)
-{
-    $hotRoom = cache('hot_room_'.$room_id);
-    if (!isEmpty($hotRoom)) return $hotRoom;
-    if (!is_numeric($room_id)){
-        $room_id = dehashid($room_id);
-        $hash    = $room_id;
-    }else{
-        $hash    = hashid($room_id);
-    }
-    $fans   = db('room')->where('room_id', $room_id)->value('fans')<100??100;
-    $watch  = chatRoomUserCount('room_'.$hash); //直播间人数 room_ha
-    $online = chatRoomUserCount('play_'.$hash);//聊天室人数
-    $hotVal = num(hotVal($fans, $online, $watch));
-    cache('hot_room_'.$room_id, $hotVal, 300);
-    return $hotVal;
-}
 
 /**
  * Created by xiaosong
@@ -779,64 +769,12 @@ function chatRoomUserCount($chat_room){
 }
 
 
-
-
-/*
-  * 房间热度值算法
-  * 关注人数+在线人数+直播观看人数
-  */
-function hotVal($guan, $zai, $zhi)
-{
-    switch ($guan) {
-        case $guan <= 100;
-            $count1 = $guan * 5;
-            break;
-        case $guan < 500 && $guan > 100;
-            $count1 = $guan * 3;
-            break;
-        case $guan >= 500;
-            $count1 = $guan * 1.5;
-            break;
-        default:
-            break;
-    }
-    switch ($zai) {
-        case $zai <= 100;
-            $count2 = $zai * 10;
-            break;
-        case $zai < 500 && $zai > 100;
-            $count2 = $zai * 5;
-            break;
-        case $zai >= 500;
-            $count2 = $zai * 2;
-            break;
-        default:
-            break;
-    }
-    switch ($zhi) {
-        case $zhi <= 100;
-            $count3 = $zhi * 15;
-            break;
-        case $zhi < 500 && $zhi > 100;
-            $count3 = $zhi * 10;
-            break;
-        case $zhi >= 500;
-            $count3 = $zhi * 5;
-            break;
-        default:
-            break;
-    }
-
-    return $count1 + $count2 + $count3 + rand(1,99);
-}
-
-//获取赠送礼物扣除积分
-function getMoney($giftId, $num)
-{
-    $price = db('gift')->where('gift_id', $giftId)->value('price');
-    return bcmul($price,$num,2);
-}
-
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @return Redis
+ * 原生redis连接
+ */
 function redisConnect()
 {
     $redis = new \Redis();
@@ -874,65 +812,6 @@ function delVod($file)
 }
 
 
-/**
- * 莓果api公用请求方法
- * $Method string 调用方法
- * $ID string 我方用户id
- * $arr array 请求参数
- * ps:严格设置请求参数类型
- * 例:
- * $arr['Account'] = "8618780106307";
- * $arr['Pwd'] = "Wo@123456";
- * $data = MBerryApi($arr,'api.Login',14);
- */
-function MBerryApi($arr,$Method = '',$ID = '',$orderby='asc',$url = "http://47.52.207.212:7777/rpc"){
-    $data['Method'] = $Method;
-    $data['ID'] = "$ID";
-    if($orderby == 'asc'){//对数组 $arr 进行排序
-        ksort($arr);
-    }else{
-        krsort($arr);
-    }
-    $str = '';
-    foreach ($arr as $k => $v){
-        $str .= $k.'='.$v.'&';
-    }
-    $str = trim($str,'&');
-    $sign = hash_hmac('md5',$str,'BigFoolYouAreTheBest');
-    $arr['sign'] = $sign;
-    $data['Params'] = $arr;
-    $data_string =  json_encode($data);
-    //curl验证成功
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS,$data_string);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($data_string)
-    ));
-    $result = curl_exec($ch);
-    if (curl_errno($ch)) {
-        return curl_error($ch);
-    }
-    curl_close($ch);
-    return json_decode($result,true);
-}
-
-
-
-/*
- * 举报理由
- */
-function report(){
-    $report=db('explain')->where('id',6)->value('content');
-    return explode(',',$report);
-}
-//获取用户余额
-function getEndMoney($user_id){
-    return db('users')->where(['user_id'=>$user_id])->value('money');
-}
-
 
 /**
  * 计算下级总人数
@@ -948,28 +827,6 @@ function  junior($user_id = 0){
     $num += $countB;
     $where['proxy_id'] = ['in',$ClassB];
     $num += \think\Db::name('users')->where($where)->count('user_id');
-    return $num;
-}
-
-/**
- * 计算总收益
- */
-function  all_money($user_id = 0){
-    $ClassA = \think\Db::name('users')->where('proxy_id',$user_id)->column('user_id');
-    if (empty($ClassA)) return 0;
-    $map['proxy_id'] = ['in',$ClassA];
-    $user['user_id'] = ['in',$ClassA];
-    $num = \think\Db::name('money_detail')->where($user)->where(['money_type'=>8])->sum('money');
-    $ClassB = \think\Db::name('users')->where($map)->column('user_id');
-    if (empty($countB)) return $num;
-    $where['proxy_id'] = ['in',$ClassB];
-    $user['user_id'] = ['in',$ClassB];
-    $num += \think\Db::name('money_detail')->where($user)->where(['money_type'=>8])->sum('money');
-    $ClassC = \think\Db::name('users')->where($where)->column('user_id');
-    if (empty($ClassC)) return $num;
-    $wheres['proxy_id'] = ['in',$ClassC];
-    $user['user_id'] = ['in',$ClassC];
-    $num += \think\Db::name('money_detail')->where($user)->where(['money_type'=>8])->sum('money');
     return $num;
 }
 
@@ -998,12 +855,15 @@ function code($value = '',$codeName = ''){
     if ($err !== null) {
         return false;
     } else {
-//                api_return(0,'test',['ret'=>$ret,'err'=>$err]);
        return config('qiniu.domain').'/'.$ret['key'];
     }
 }
 
-
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * 在left和right范围内获取不等于that的值
+ */
 function get_rand_num($left,$right,$that)
 {
     $num = rand($left,$right);
@@ -1014,30 +874,4 @@ function get_rand_num($left,$right,$that)
     return $num;
 }
 
-function block_list($room_id,$role_id=0,$type= 0){
 
-    $RongCloud = new \rongyun\api\RongCloud('m7ua80gbmjrnm','cWPdDytpyx4');
-    if(cache('block_list_'.$room_id)){
-        $user = cache('block_list_'.$room_id);
-    }else{
-        $result = $RongCloud->chatroom()->getListBlockUser('play_'.hashid($room_id));
-        $result = json_decode($result,true);
-        $user = $result['users'];
-        cache('block_list_'.$room_id,$user,5);
-    }
-
-    $userId = array();
-    foreach($user as $k=>$v){
-        $userId[] = $v['userId'];
-    }
-    if($type){
-            if(in_array(hashid($role_id),$userId)){
-                return true;
-            }else{
-                return false;
-            }
-    }else{
-        return $user;
-    }
-
-}
