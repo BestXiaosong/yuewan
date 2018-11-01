@@ -24,6 +24,17 @@ class Message extends User
         api_return(1,'获取成功',$data);
     }
 
-
+    public function feedBack()
+    {
+        $user_id = $this->user_id;
+        $param = Request::instance()->post();
+        $param['user_id'] = $user_id;
+        $logic = new \app\common\logic\Opinion();
+        $res = $logic->saveOpinion($param);
+        if($res['code']==1){
+            api_return(1,'反馈成功','');
+        }
+        api_return(0,$res['msg']);
+    }
 
 }

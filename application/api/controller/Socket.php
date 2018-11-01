@@ -13,7 +13,7 @@ use think\Request;
 use Workerman\Worker;
 use Workerman\Connection\AsyncTcpConnection;
 
-class Man extends Controller
+class Socket extends Controller
 {
     public function __construct(Request $request = null)
     {

@@ -164,22 +164,6 @@ class Vod extends User
         }
     }
 
-//    /**
-//     * 回放视频时点击粉丝关注
-//     */
-//
-//    public function fans(){
-//        $pid = $this->request->post('pid');
-//        $id = $this->user_id;
-//        $model = new \app\common\logic\Sale();
-//        $result = $model->fans($pid,$id);
-//        if($result){
-//            api_return(1,'操作成功');
-//        }else{
-//            api_return(0,'操作失败');
-//        }
-//    }
-
 
     /**
      * 当前主播回访视频列表
@@ -250,113 +234,6 @@ class Vod extends User
           }else{
               api_return(0,'暂无数据');
           }
-      }
-
-      /**
-       * 视频上传验证
-       */
-      public function upload_verify(){
-          $data['play_url'] = $this->request->post('file');
-          $data['cid'] = $this->request->post('cid');
-          $data['title'] = $this->request->post('title');
-          $data['img'] = $this->request->post('img');
-          $data['detail'] = $this->request->post('detail');
-//          api_return(1,'xxx',$data);
-          if(in_array('',$data)) api_return(0,'参数缺失,请补全参数之后提交');
-          $space = $this->fileInfo( $data['play_url']);
-          if($space['code'] == 0) api_return(0,'视频路径错误,请重试');
-          $user_id = $this->user_id;
-          $ture_space = bcdiv($space['size'],1024,2);
-          if ($ture_space == 0) $ture_space = 0.01;
-          $model = new \app\common\logic\Vod();
-          $result = $model->upload($user_id,$ture_space,$data);
-          if($result == 0){
-                $up = new \app\admin\controller\Upload();
-                $results = db('vod')->where(['play_url'=>$data['play_url']])->select();
-                if($results){
-                    $up->delete1($data['play_url']);
-                }
-                api_return(0,'您的可用空间不足，您的视频上传失败');
-          }elseif($result == 2){
-                api_return(0,'上传失败,请确认信息无误后重新上传');
-          }else{
-                api_return(1,'上传成功');
-          }
-      }
-
-      /**
-       * 升级空间
-       */
-
-      public function space_level(){
-          $model = new Users();
-          $user_id = $this->user_id;
-          $result = $model->space_up($user_id);
-          if($result){
-              $time = $this->request->post('date');
-              if(empty($time)){
-                  api_return(1,'当前用户可以进行空间升级');
-              }else{
-                  $month = $time;
-                  $size = $this->request->post('size');
-                  if(!$size) api_return(0,'升级空间大小未选择,请选择空间大小');
-                  if(!$month) api_return(0,'升级时间未选择,请选择升级时间');
-                  $result = $model->money($month,$size);
-                  api_return(1,'总价格获取成功',$result);
-              }
-          }else{
-              api_return(0,'您当前处于空间已升级状态,不能进行空间升级');
-          }
-      }
-
-    /**
-     * 当前用户支付升级空间所需积分
-     */
-    public function need(){
-        $model = new \app\common\logic\Users();
-        $models = new Users();
-        $time = $this->request->post('date');
-        $user_id = $this->user_id;
-        $month = $time;
-        $size = $this->request->post('size');
-        if(!$size) api_return(0,'升级空间大小未选择,请选择空间大小');
-        if(!$month) api_return(0,'升级时间未选择,请选择升级时间');
-        $result = $models->money($month,$size);
-        $psw = $this->request->post('psw');
-        $results = $model->pay($user_id,$psw,$result,$size,$time);
-//        var_dump($results);exit;
-        if($results === 0){
-            api_return(0,'交易密码错误，请重试');
-        }elseif($results === 2){
-            api_return(0,'您当前账户余额不足，请充值后再开通');
-        }else{
-            api_return(1,'升级成功',$results);
-        }
-    }
-    /**
-     * 支付成功调用接口
-     */
-    public function order_detail(){
-        $order_num = $this->request->post('order_num');
-        $model = new Users();
-        $result = $model->order_detail($order_num);
-        if($result){
-            api_return(1,'查询成功',$result);
-        }else{
-            api_return(0,'暂无数据');
-        }
-    }
-    /**
-     * @param $date1  当前日期
-     * @param $date2  日期大的
-     * @return float|int  两个日期相差几个月
-     */
-    public function getMonthNum($date1,$date2){
-          $date1_stamp=strtotime($date1);
-          $date2_stamp=strtotime($date2);
-          list($date_1['y'],$date_1['m'])=explode("-",date('Y-m',$date1_stamp));
-          list($date_2['y'],$date_2['m'])=explode("-",date('Y-m',$date2_stamp));
-          return abs($date_1['y']-$date_2['y'])*12 +$date_2['m']-$date_1['m'];
       }
 
 }
