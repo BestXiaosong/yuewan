@@ -2,5 +2,5 @@
 composer.lock
 *.log
 vendor
-/.env
+.env
 
