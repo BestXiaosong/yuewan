@@ -3,4 +3,7 @@ composer.lock
 *.log
 .env
 runtime
+/application/config.php
+/application/api/config.php
+/application/admin/config.php
 
