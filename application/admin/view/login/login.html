@@ -1,0 +1,30 @@
+
+{extend name="public:common_index"/}
+
+{block name="css"}
+    <link href="__CSS__/login.min.css" rel="stylesheet">
+{/block}
+
+{block name="main"}
+<body class="signin">
+    <div class="signinpanel">
+        <div class="row">
+            <div class="col-sm-7">
+                <div class="signin-info">
+
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <form method="post" action="">
+                    <h4 class="no-margins">登录：</h4>
+                    <p class="m-t-md">登录到soha后台管理系统</p>
+                    <input name="user_name" type="text" class="form-control uname" placeholder="用户名" />
+                    <input name="password" type="password" class="form-control pword m-b" placeholder="密码" />
+                    <button class="btn btn-success btn-block">登录</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</body>
+{/block}

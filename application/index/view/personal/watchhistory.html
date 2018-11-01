@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+        <!--观看历史-->
+        <div class="mg_top20 personal_div" style="display: block">
+            <div class="msg-box bor_b">
+                <a href="javascript:;" class="active"><strong>房间</strong></a>
+                <a href="javascript:;"><strong>回放</strong></a>
+            </div>
+            <!--房间-->
+            <div class="history-box entrance-box active clearfix ">
+                {volist name = 'room' id='vo'}
+                <dl style="margin: 0 0.5%">
+                    <a href="{:url('/play/play_detail',array('room_id'=>$vo.room_id,'cid'=>$vo.cid))}">
+                        <dt><img class="width_100" src="{$vo.img}"></dt>
+                    </a>
+                    <dd>
+                        <p class="color_55"><strong>{$vo.room_name}</strong></p>
+                        <h6 class="width_100 mg_top10 clearfix">
+                        <span class="left"><img src="__IMG2__/icon_user.png"/>
+                            <i class="mg_lr10">{$vo.role_name}</i></span>
+                            <span class="right"><img src="__IMG2__/icon-star.png"/> {$vo.hot}</span>
+                        </h6>
+                    </dd>
+                </dl>
+                {/volist}
+
+            </div>
+            <!--回放-->
+            <div class="history-box entrance-box  clearfix ">
+                {volist name='data' id='vo'}
+                <dl style="margin: 0 0.5%">
+                    {if !empty($vo.play_url)}
+                    <a href="{$vo.play_url}">
+                        <dt><img class="width_100" src="{$vo.img}"></dt>
+                    </a>
+                    {else /}
+                    <dt><img class="width_100" src="{$vo.img}"></dt>
+                    {/if}
+                    <dd>
+                        <p class="color_55"><strong>{$vo.title}</strong></p>
+                        <h6 class="width_100 mg_top10 clearfix">
+                        <span class="left"><img src="__IMG2__/icon_user.png"/>
+                            <i class="mg_lr10">{$vo.role_name}</i></span>
+                            <span class="right">{$vo.update_time}</span>
+                        </h6>
+                    </dd>
+                </dl>
+                {/volist}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

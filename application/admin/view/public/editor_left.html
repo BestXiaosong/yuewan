@@ -1,0 +1,46 @@
+<aside class="main-sidebar">
+	<!-- sidebar: style can be found in sidebar.less -->
+	<section class="sidebar">
+		<ul class="sidebar-menu">
+			<!--论坛管理-->
+			<li class="treeview">
+				<a href="#">
+					<i class="glyphicon glyphicon-list"></i> <span>论坛管理</span>
+					<span class="pull-right-container">
+					  <i class="fa fa-angle-left pull-right"></i>
+					</span>
+				</a>
+				<ul class="treeview-menu">
+					<li onclick="makecss(this)" data-id=""><a href="{:url('Forum/post_list')}"  target="rightContent"><i class="fa fa-circle-o"></i>帖子管理</a></li>
+					<li onclick="makecss(this)" data-id=""><a href="{:url('ForumCategory/index')}"  target="rightContent"><i class="fa fa-circle-o"></i>论坛分类</a></li>
+					<li onclick="makecss(this)" data-id=""><a href="{:url('Forum/forum_config')}"  target="rightContent"><i class="fa fa-circle-o"></i>论坛设置</a></li>
+				</ul>
+			</li>
+			<!--服务商管理-->
+			<li class="treeview">
+				<a href="#">
+					<i class="glyphicon glyphicon-briefcase"></i> <span>服务商管理</span>
+					<span class="pull-right-container">
+					  <i class="fa fa-angle-left pull-right"></i>
+					</span>
+				</a>
+				<ul class="treeview-menu">
+					<li onclick="makecss(this)" data-id="Goods_index"><a href="/supplier"  target="rightContent"><i class="fa fa-circle-o"></i>服务商列表</a></li>
+				</ul>
+			</li>
+			<!--短信查看-->
+			<li class="treeview">
+				<a href="#">
+					<i class="glyphicon glyphicon-briefcase"></i> <span>短信查看</span>
+					<span class="pull-right-container">
+					  <i class="fa fa-angle-left pull-right"></i>
+					</span>
+				</a>
+				<ul class="treeview-menu">
+					<li onclick="makecss(this)" data-id="Goods_index"><a href="/sms"  target="rightContent"><i class="fa fa-circle-o"></i>短信查看</a></li>
+				</ul>
+			</li>
+
+		</ul>
+	</section>
+</aside>

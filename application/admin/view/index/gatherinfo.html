@@ -1,0 +1,88 @@
+<extend name="public:common_index"/>
+<block name="main">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> 今天注册用户</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>用户名称</th>
+                        <th>用户真实姓名</th>
+                        <th>手机号</th>
+                        <th>email</th>
+                        <th>最后一次登录</th>
+                        <th>用户状态</th>
+                        <th>用户类型</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 列表循环开始 -->
+                    <volist name="rows" id="row">
+                        <tr>
+                        <td>{$row.user_id}</td>
+                        <td>{$row.user_name}</td>
+                        <td>{$row.real_name}</td>
+                        <td>{$row.phone}</td>
+                        <td>{$row.email}</td>
+                        <td>{:empty($row.last_login)?'':date("Y-m-d H:i:s",$row.last_login)}</td>
+                        <td>{:$row.user_state == 0 ?'禁用':'正常'}</td>
+                        <td>{:$user_type[$row.user_type]}</td>
+                        </tr>
+                    </volist>
+                    <!-- 列表循环结束 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> 七天内注册用户</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>用户名称</th>
+                        <th>用户真实姓名</th>
+                        <th>手机号</th>
+                        <th>email</th>
+                        <th>最后一次登录</th>
+                        <th>用户状态</th>
+                        <th>用户类型</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 列表循环开始 -->
+                    <volist name="rows2" id="row">
+                        <tr>
+                            <td>{$row.user_id}</td>
+                            <td>{$row.user_name}</td>
+                            <td>{$row.real_name}</td>
+                            <td>{$row.phone}</td>
+                            <td>{$row.email}</td>
+                            <td>{:empty($row.last_login)?'':date("Y-m-d H:i:s",$row.last_login)}</td>
+                            <td>{:$row.user_state == 0 ?'禁用':'正常'}</td>
+                            <td>{:$user_type[$row.user_type]}</td>
+                        </tr>
+                    </volist>
+                    <!-- 列表循环结束 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</block>
+
+
+
+
+

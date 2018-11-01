@@ -1,0 +1,105 @@
+
+{extend name="public:common_index"/}
+{block name="css"}
+<style>
+    .form-control {
+        max-width: 350px;
+    }
+
+    .tb-name {
+        width: 238px;
+    }
+    .error{
+        color: red;
+        margin-top: 10px;
+        display: none;
+    }
+    .select{
+        margin-bottom: 10px;
+    }
+    .doctor{
+        display: none;
+    }
+</style>
+{/block}
+{block name="main"}
+<section class="content">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default"
+               data-original-title="返回"><i class="fa fa-reply"></i></a>
+            <a href="javascript:void(0);" class="btn btn-default"
+               data-url="javascript:;"
+               onclick="get_help(this)"><i class="fa fa-question-circle"></i> 帮助</a>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+            </div>
+            <div class="panel-body">
+                <!--表单数据-->
+                <form action="" method="post" class="form-horizontal"
+                      id="category_form">
+
+                    <!--通用信息-->
+                    <div class="tab-content">
+                        <input type="hidden" value="0" name="sale_user_id">
+                        <div class="tab-pane active" id="tab_tongyong">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>拍卖品类型:</td>
+                                    <td>
+                                        <select class="form-control" name="type" id="type">
+                                        <option id="status" value=""> 请选择类型</option>
+                                        <option id="status2" value="0" {if isset($data.sale_id)}{if $data.type eq 0}selected="selected"{/if}{/if}> 角色</option>
+                                        <option id="status3" value="1" {if isset($data.sale_id)}{if $data.type eq 1}selected="selected"{/if}{/if}>房间号</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>拍卖品名:</td>
+                                    <td>
+                                        {if isset($data.sale_id)}
+                                        {volist name="result" id="v"}
+                                        {if $data.type eq 0}
+                                        {if $data.g_id eq $v.role_id}
+                                        <input type="text" name="name" value="{$v.role_name}" placeholder="请输入拍卖品名" class="form-control">
+                                        {/if}
+                                        {else}
+                                        {if $data.g_id eq $v.room_id}
+                                        <input type="text" name="name" value="{$v.room_name}" placeholder="请输入拍卖品名" class="form-control">
+                                        {/if}
+                                        {/if}
+                                        {/volist}
+                                        {else}
+                                        <input type="text" name="name" value="" placeholder="请输入拍卖品名" class="form-control">
+                                        {/if}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>设置底价:</td>
+                                    <td>
+                                        <input type="text" name="money" value="{if isset($data.g_id)}{$data.money}{/if}" placeholder="请输入拍卖品名" class="form-control">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <label class="control-label col-sm-2"></label>
+                        <input type="hidden" name="id" value="{$data.sale_id}">
+                        <input class="btn btn-primary submit" type="submit" value="保存">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="js"}
+<script>
+
+</script>
+{/block}

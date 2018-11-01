@@ -1,0 +1,101 @@
+{extend name="public:common_edit"/}
+{block name="css"}
+<link href="/public/plugs/switch-button/css/bootstrap-switch.css" rel="stylesheet">
+{/block}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i>{$title}</h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="input-order-id">角色昵称</label>
+                        <div class="input-group">
+                            <input type="text" name="role_name" value="{$Think.get.role_name}" placeholder="角色昵称" class="form-control">
+                        </div>
+                    </div>
+                    <label class="control-label" for="input-order-id">状态</label>
+                    {:arr4select('status',$status,'全部',input('status'),'status','name')}
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                    <a href="{:url('role_edit')}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                    <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>角色id</td>
+                                <td>所属用户</td>
+                                <td>头像</td>
+                                <td>角色昵称</td>
+                                <td>是否推荐</td>
+                                <td>创建日期</td>
+                                <td>状态</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row"}
+                            <tr>
+                                <td>{$row.role_id}</td>
+                                <td>{$row.phone}</td>
+                                <td><img src="{$row.header_img}" style="max-width: 120px" alt=""></td>
+                                <td>{$row.role_name}</td>
+                                <td><input type="checkbox" class="checkbox is_top" {:ischeck($row.top)} data-size="small" data-id="{$row.role_id}"></td>
+                                <td>{$row.create_time}</td>
+                                <td>{$status[$row.status]['name']}</td>
+                                <td>
+                                    <a class="btn btn-primary " href="/user/role_edit/id/{$row.role_id}">编辑</a>
+                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-message="" data-url="/user/role_change/id/{$row.role_id}/type/0">禁用 </span>
+                                    {elseif condition="$row.status == 0"/} <span class="btn btn-primary change" data-message="" data-url="/user/role_change/id/{$row.role_id}/type/1">启用</span> {/if}
+
+                                    {/*:url('user.role_del',['id'=>$role_id])*/}
+
+                                    <!--<span class="btn btn-danger check_del" data-message="" data-url="">删除</span>-->
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+{block name="js"}
+<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
+<script>
+    $(document).ready(function(){
+        $(".checkbox").bootstrapSwitch({
+            onText:'是',
+            offText:'否'
+        });
+        $('.is_top').on('switchChange.bootstrapSwitch', function (event,state){
+            var val = state?1:0;
+            var id = $(this).attr('data-id');
+            $.post("{:url('top')}",{id:id,val:val},function (data) {
+                if(data.code!=1){layer.msg('改变状态失败', {icon: 5, time: 2000});}
+            });
+        });
+    });
+    $(function () {
+
+    })
+</script>
+{/block}
+
+
+
+

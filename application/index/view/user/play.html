@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>soha</title>
+    <link rel="stylesheet" href="__CSS__/css.css"/>
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/clipboard.min.js"></script>
+    {include file="public/js" /}
+</head>
+<body class="hide">
+<div class="video">
+    <div id="video">
+
+    </div>
+
+
+
+    <div class="head">
+        <a  class="back">
+            <img src="__IMG__/back.png" alt=""/>
+        </a>
+        <a  class="fxa">
+            <img src="__IMG__/bfx.png" alt=""/>
+        </a>
+    </div>
+    <!--<span class="hot">热度：{$data.hot}</span>-->
+    <a class="stop" id="stop">
+        <img src="__IMG__/ico-stop.png" alt=""/>
+    </a>
+    <!--<a class="stop" id="play">-->
+        <!--<img src="__IMG__/ico-play.png" style="width: 16px" alt=""/>-->
+    <!--</a>-->
+    <!--<a class="stop window" id="window">-->
+        <!--<img src="__IMG__/ico-all.png" alt=""/>-->
+    <!--</a>-->
+</div>
+<div class="video-list">
+    <p data-type="lt" class="active">
+        <a>聊天</a>
+    </p>
+    <p data-type="zb" id="who">
+        <a>主播</a>
+    </p>
+    <p data-type="hf" id="vod">
+        <a>回放</a>
+    </p>
+    <p data-type="cy" id="people">
+        <a>成员（20）</a>
+    </p>
+</div>
+<div id="lt" class="room-n">
+    <div class="room">
+        <div class="room-txt">
+
+
+        </div>
+    </div>
+    <div class="footer">
+
+        <p>
+        <span class="q">
+            <span>
+                <b onclick="jump()">屏蔽礼物消息</b>
+                <b onclick="jump()">屏蔽广播</b>
+            </span>
+            <img src="__IMG__/do_03.png" alt=""/>
+        </span>
+            <a data-id="0" id="pb"><img src="__IMG__/icon001.png" alt=""/> </a>
+            <input type="text" placeholder="文字" id="talk" onclick="jump()"/>
+            <!--<button id="send" style="display: none;">发送</button>-->
+            <a onclick="jump()"><img src="__IMG__/icon03.png" alt=""/></a>
+            <a onclick="jump()"><img src="__IMG__/icon04.png" alt=""/></a>
+            <a onclick="jump()"><img src="__IMG__/icon05.png" alt=""/></a>
+        </p>
+    </div>
+
+</div>
+
+<div id="zb" class="room-n">
+    <div class="room-zb">
+        <div class="zb-top">
+            <div class="top-c">
+                <img src="__IMG__/29.png" alt=""/>
+                <p>
+                    <span id="play_people">Ann 洁</span>
+                    <span>
+                        <a class="blue">官方认证</a>
+                        <a class="yello">主播认证</a>
+                       <img src="__IMG__/icon_sex.png" alt="" id="sex"/>
+                    </span>
+                </p>
+                <span class="r">
+                    <a id="look">关注</a>
+                    <b>11万</b>
+                </span>
+                <b class="both"></b>
+            </div>
+        </div>
+        <div class="zb-top">
+            <div class="tit-n">
+                <h1>个性签名</h1>
+                <p id="sign">个性签名个性签名个性签名个性签名个性签名个性签名个性签名个性签名</p>
+            </div>
+        </div>
+        <div class="zb-top" id="notice">
+            <div class="tit-n">
+                <h1>直播公告</h1>
+                <p id="gg">个性签名个性签名个性签名个性签名个性签名个性签名个性签名个性签名</p>
+            </div>
+        </div>
+        <!--<div class="zb-top">-->
+            <!--<div class="tit-n">-->
+                <!--<h1>他的公告</h1>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="k">-->
+            <!--<div class="k-n">-->
+                <!--<h1>-->
+                    <!--区块链和比特币-->
+                    <!--<span>7月26日 12:00开始 123人预定</span>-->
+                    <!--<a href="res.html">预定</a>-->
+                <!--</h1>-->
+                <!--<p class="pic">-->
+                    <!--<img src="__IMG__/19.png" alt=""/>-->
+                    <!--<a>待开始</a>-->
+                <!--</p>-->
+                <!--<p class="note">-->
+                    <!--区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币-->
+                <!--</p>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="k">-->
+            <!--<div class="k-n">-->
+                <!--<h1>-->
+                    <!--区块链和比特币-->
+                    <!--<span>7月26日 12:00开始 123人预定</span>-->
+                    <!--<a href="res.html">预定</a>-->
+                <!--</h1>-->
+                <!--<p class="pic">-->
+                    <!--<img src="__IMG__/19.png" alt=""/>-->
+                    <!--<a>待开始</a>-->
+                <!--</p>-->
+                <!--<p class="note">-->
+                    <!--区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币区块链和比特币-->
+                <!--</p>-->
+            <!--</div>-->
+        <!--</div>-->
+    </div>
+</div>
+<div id="hf" class="room-n">
+    <div class="room-zb room-zba">
+        <ul>
+            <!--<li>-->
+                <!--<a href="room-hf.html">-->
+                <!--<p>-->
+                    <!--<img src="__IMG__/banner1.png" alt=""/>-->
+                    <!--<span>红的发紫 <i><img src="__IMG__/hot.png" alt=""/><b>2.4万</b></i></span>-->
+                <!--</p>-->
+                <!--<span class="title">-->
+                    <!--虚拟货币-->
+                <!--</span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <!--<li>-->
+                <!--<p>-->
+                    <!--<img src="__IMG__/banner1.png" alt=""/>-->
+                    <!--<span>红的发紫 <i><img src="__IMG__/hot.png" alt=""/><b>2.4万</b></i></span>-->
+                <!--</p>-->
+                <!--<span class="title">-->
+                    <!--虚拟货币-->
+                <!--</span>-->
+            <!--</li>-->
+
+            <!--<li>-->
+                <!--<p>-->
+                    <!--<img src="__IMG__/banner1.png" alt=""/>-->
+                    <!--<span>红的发紫 <i><img src="__IMG__/hot.png" alt=""/><b>2.4万</b></i></span>-->
+                <!--</p>-->
+                <!--<span class="title">-->
+                    <!--虚拟货币-->
+                <!--</span>-->
+            <!--</li>-->
+
+            <!--<li>-->
+                <!--<p>-->
+                    <!--<img src="__IMG__/banner1.png" alt=""/>-->
+                    <!--<span>红的发紫 <i><img src="__IMG__/hot.png" alt=""/><b>2.4万</b></i></span>-->
+                <!--</p>-->
+                <!--<span class="title">-->
+                    <!--虚拟货币-->
+                <!--</span>-->
+            <!--</li>-->
+
+        </ul>
+        <b class="both"></b>
+    </div>
+</div>
+<div id="cy" class="room-n">
+    <div class="room-zb">
+        <div class="cy-list" id="room_owner">
+            <h1>房主、管理员（6人）</h1>
+            <ul>
+                <li>
+                    <img src="__IMG__/24.png" alt=""/>
+                    <p>
+                        <span class="ti">区块链和比特币</span>
+                        <span>
+                            <a class="blue">房主</a>
+                        </span>
+                    </p>
+                    <b class="both"></b>
+                </li>
+                <li>
+                    <img src="__IMG__/24.png" alt=""/>
+                    <p>
+                        <span class="ti">区块链和比特币</span>
+                        <span>
+                            <a class="yello">管理员</a>
+                        </span>
+                    </p>
+                    <b class="both"></b>
+                </li>
+            </ul>
+        </div>
+        <div class="cy-list" id="peoples">
+            <h1>房间成员</h1>
+            <ul>
+                <li>
+                    <img src="__IMG__/24.png" alt=""/>
+                    <p>
+                        <span class="ti">区块链和比特币</span>
+                        <span>
+                            <a class="bluue">成员</a>
+                        </span>
+                    </p>
+                    <b class="both"></b>
+                </li>
+                <li>
+                    <img src="__IMG__/24.png" alt=""/>
+                    <p>
+                        <span class="ti">区块链和比特币</span>
+                        <span>
+                            <a class="bluue">成员</a>
+                        </span>
+                    </p>
+                    <b class="both"></b>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="meng">
+    <div class="fenx">
+        <h1>分享到</h1>
+        <div class="but">
+            <a>
+                <img src="__IMG__/f1.png" alt=""/>
+            </a>
+            <a>
+                <img src="__IMG__/f2.png" alt=""/>
+            </a>
+            <a>
+                <img src="__IMG__/f3.png" alt=""/>
+            </a>
+            <a>
+                <img src="__IMG__/f4.png" alt=""/>
+            </a>
+            <a>
+                <img style="width: 94%" src="__IMG__/f5.png" alt=""/>
+            </a>
+        </div>
+        <a class="off">取消</a>
+    </div>
+</div>
+<div class="hong">
+    <div class="ho-n">
+        <img src="__IMG__/hong.png" alt="" class="bac"/>
+        <div class="ho-c">
+            <img src="__IMG__/26.png" alt="" class="hea"/>
+            <p>坤大少</p>
+            <p>给你发了一个红包</p>
+            <h1>手慢无</h1>
+            <img src="__IMG__/cai.png" alt="" class="cai"/>
+        </div>
+    </div>
+</div>
+<script src="__JS__/js.js"></script>
+<script src="__JS__/TcPlayer-2.2.2.js" charset="utf-8"></script>
+<script src="//cdn.ronghub.com/RongIMLib-2.3.3.min.js"></script>
+</body>
+<script>
+
+
+    var player = new TcPlayer('video',{
+        'live':true,
+        "m3u8"      : "{$data.playUrl.m3u8}",//原画
+        "m3u8_hd"   : "{$data.playUrl.m3u8_hd}",//高清
+        "m3u8_sd"   : "{$data.playUrl.m3u8_sd}",//标清
+        "autoplay"  : true,      //iOS下safari浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
+        "coverpic"  : "{$data.playUrl.img}",//封面地址
+        "clarityLabel" : {
+            od: '原画', hd: '高清', sd: '标清'//清晰度切换标签
+        },
+        "clarity" : 'od',//默认清晰度
+        "width"   : '500',//视频的显示宽度，请尽量使用视频分辨率宽度
+        "height"  : '250'//视频的显示高度，请尽量使用视频分辨率高度
+    });
+    var status = player.fullscreen();
+    $('.vcp-fullscreen-toggle').click(function () {
+        console.log(status);
+    });
+
+
+
+    $(function(){
+        $('#pb').click(function(){
+            var id = $(this).attr('data-id');
+            if(id == 0){
+                $('.q').show();
+                $(this).attr('data-id',1);
+            }else{
+                $('.q').hide();
+                $(this).attr('data-id',0);
+            }
+
+        })
+
+        var he = $('body').innerHeight()-$('.video').innerHeight()-46-50;
+        $('.room').css({height:he+'px'});
+        $('.room-zb').css({height:he+50+'px'});
+        var video = document.getElementById('video');
+        $('#play').click(function(){
+            video.play();
+            $(this).hide();
+            $('#stop').show();
+        })
+        $('#stop').click(function(){
+            video.pause();
+            $(this).hide();
+            $('#play').show();
+        });
+    });
+    $('.video-list p').click(function(){
+        $(this).addClass('active');
+        $(this).siblings().removeClass('active');
+        var type = "#"+$(this).attr('data-type');
+        $('.room-n').hide();
+        $(type).show();
+//        switch (type){
+//            case 'lt': $('#lt').show(); break;
+//            case 'zb': $('#zb').show(); break;
+//            case 'hf': $('#hf').show(); break;
+//            case 'cy': $('#cy').show(); break;
+//        }
+    })
+    $('.fxa').click(function(){
+        $('.meng').show();
+    })
+    $('.off').click(function(){
+        $('.meng').hide();
+    })
+
+//    var fullScreenOfAndroid = function() {
+//        if(true) {
+//            // 最新5+API的支持
+//            var self = plus.webview.currentWebview();
+//            self.setStyle({
+//                videoFullscreen: 'landscape'
+//            });
+//        } else {
+//            // 如果暂未更新sdk，可以先使用差量升级等方式，做出兼容处理；
+//            // 旧版本下的兼容处理
+//            document.addEventListener('webkitfullscreenchange', function() {
+//                var el = document.webkitFullscreenElement; //获取全屏元素
+//                if(el) {
+//                    plus.screen.lockOrientation('landscape'); //锁死屏幕方向为横屏
+//                } else {
+//                    plus.screen.unlockOrientation(); //解除屏幕方向的锁定
+//                }
+//            });
+//
+//        }
+//    };
+//    // iOS平台的视频全屏旋转
+//    var fullScreenOfIos = function(videoElem) {
+//        // 监听的事件与Android平台有很大区别
+//        videoElem.addEventListener('webkitbeginfullscreen', function() {
+//            plus.screen.lockOrientation('landscape'); //锁死屏幕方向为横屏
+//        });
+//        videoElem.addEventListener('webkitendfullscreen', function() {
+//            plus.screen.unlockOrientation(); //解除屏幕方向的锁定
+//        });
+//    };
+//
+//    $('#window').click(function(){
+//        document.addEventListener('plusready', function() {
+//            var osName = plus.os.name;
+//            if(osName === 'Android') {
+//                fullScreenOfAndroid();
+//            } else if(osName === 'iOS') {
+//                var videoElem = document.getElementById('video');
+//                fullScreenOfIos(videoElem);
+//            }
+//        });
+//    })
+    var params = {
+        appKey :"{:config('rongyun.appKey')}",
+        token : "{$data.r_token}",
+    };
+    var callbacks = {
+
+    };
+
+    init(params,callbacks);
+    var messageName = "UnkownMessage"; // 消息名称。
+    var objectName = "RC:Chatroom:Welcome"; // 消息内置名称，请按照此格式命名。
+    var mesasgeTag = new RongIMLib.MessageTag(true,true);// 消息是否保存是否计数，true true 保存且计数，false false 不保存不计数。
+    var prototypes = ["name","age"]; // 消息类中的属性名。
+    RongIMClient.registerMessageType(messageName,objectName,mesasgeTag,prototypes);
+    // RongIMLib.RongIMClient.init('m7ua80gbmjrnm');
+    // var token = "{$data.r_token}";
+    function init(params, callbacks, modules){
+        var appKey = params.appKey;
+        var token = params.token;
+        var navi = params.navi || "";
+
+        modules = modules || {};
+        var RongIMLib = modules.RongIMLib || window.RongIMLib;
+        var RongIMClient = RongIMLib.RongIMClient;
+        var protobuf = modules.protobuf || null;
+
+        var config = {};
+
+        //私有云切换navi导航，私有云格式 '120.92.10.214:8888'
+        if(navi !== ""){
+            config.navi = navi;
+        }
+
+        //私有云切换api,私有云格式 '172.20.210.38:81:8888'
+        var api = params.api || "";
+        if(api !== ""){
+            config.api = api;
+        }
+
+        //support protobuf url + function
+        if(protobuf != null){
+            config.protobuf = protobuf;
+        };
+
+
+        RongIMLib.RongIMClient.init(appKey,null,config);
+
+        //
+        // /*
+        //  文档：http://www.rongcloud.cn/docs/web.html#3、设置消息监听器
+        //
+        //  注意事项：
+        //  1：为了看到接收效果，需要另外一个用户向本用户发消息
+        //  2：判断会话唯一性 ：conversationType + targetId
+        //  3：显示消息在页面前，需要判断是否属于当前会话，避免消息错乱。
+        //  4：消息体属性说明可参考：http://rongcloud.cn/docs/api/js/index.html
+        //  */
+
+
+        var instance = RongIMClient.getInstance();
+
+        // 连接状态监听器
+        RongIMClient.setConnectionStatusListener({
+            onChanged: function (status) {
+
+                // console.log(status);
+                switch (status) {
+                    case RongIMLib.ConnectionStatus["CONNECTED"]:
+                    case 0:
+                        console.log("连接成功")
+                        callbacks.getInstance && callbacks.getInstance(instance);
+                        break;
+
+                    case RongIMLib.ConnectionStatus["CONNECTING"]:
+                    case 1:
+                        console.log("连接中")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["DISCONNECTED"]:
+                    case 2:
+                        console.log("当前用户主动断开链接")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["NETWORK_UNAVAILABLE"]:
+                    case 3:
+                        console.log("网络不可用")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["CONNECTION_CLOSED"]:
+                    case 4:
+                        console.log("未知原因，连接关闭")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["KICKED_OFFLINE_BY_OTHER_CLIENT"]:
+                    case 6:
+                        console.log("用户账户在其他设备登录，本机会被踢掉线")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["DOMAIN_INCORRECT"]:
+                    case 12:
+                        console.log("当前运行域名错误，请检查安全域名配置")
+                        break;
+                }
+            }
+        });
+
+
+
+        //开始链接
+        var userid;
+        var chatRoomId = "{$data.chat_id_play}"; // 聊天室 Id。
+        console.log(chatRoomId);
+        console.log('test');
+        RongIMClient.connect(token, {
+            onSuccess: function(userId) {
+                callbacks.getCurrentUser && callbacks.getCurrentUser({userId:userId});
+                console.log("链接成功，用户id：" + userId);
+                userid=userId;
+                var conversationtype = RongIMLib.ConversationType.CHATROOM;
+                var count =0;
+                RongIMClient.getInstance().joinChatRoom(chatRoomId, count, {
+                    onSuccess: function() {
+                        console.log(chatRoomId);
+                        // 加入聊天室成功。
+                        console.log('加入聊天室成功。');
+
+                        var order = RongIMLib.GetChatRoomType.REVERSE;// 排序方式。
+                        RongIMClient.getInstance().getChatRoomInfo(chatRoomId, count, order, {
+                            onSuccess: function(chatRoom) {
+                                // chatRoom => 聊天室信息。
+                                // chatRoom.userInfos => 返回聊天室成员。
+                                // chatRoom.userTotalNums => 当前聊天室总人数。
+                                console.log(chatRoom.userInfos);
+                                console.log(chatRoom.userTotalNums);
+                            },
+
+                            onError: function(error) {
+                                // 获取聊天室信息失败。
+                            }
+                        });
+                    },
+                    onError: function(error) {
+                        // 加入聊天室失败
+                        console.log('加入聊天室失败。');
+                    }
+                });
+                // sendMessage('xxxx',chatRoomId);
+
+            },
+            onTokenIncorrect: function() {
+                console.log('token无效');
+            },
+            onError:function(errorCode){
+                console.log(errorCode);
+            }
+        });}
+
+// 发送消息相关参数说明
+var conversationtype = RongIMLib.ConversationType.CHATROOM;
+/*
+PRIVATE 为单聊、
+GROUP 为群组、
+CHATROOM 为聊天室、
+CUSTOMER_SERVICE 为客服、
+SYSTEM 为系统消息、
+APP_PUBLIC_SERVICE 为应用公众账号（应用内私有）、
+PUBLIC_SERVICE 为公众账号 (公有)
+*/
+
+var targetId = "{$data.chat_id_play}"; // 目标 Id，根据不同的 ConversationType，可能是用户 Id、群组 Id。
+
+    function sendMessage(msg) {
+
+        RongIMClient.getInstance().sendMessage(conversationtype, targetId, msg, {
+            // 发送消息成功
+            onSuccess: function (message) {
+                var str = '<p><span>'+message.content.extra.nick_name+'：</span>'+message.content.content+'</p>';
+                $('.room-txt').append(str);
+                // getMessage();
+                // console.log(message)
+                //message 为发送的消息对象并且包含服务器返回的消息唯一Id和发送消息时间戳
+                // console.log("Send successfully");
+            },
+            onError: function (errorCode, message) {
+                var info = '';
+                switch (errorCode) {
+                    case RongIMLib.ErrorCode.TIMEOUT:
+                        info = '超时';
+                        break;
+                    case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                        info = '未知错误';
+                        break;
+                    case RongIMLib.ErrorCode.REJECTED_BY_BLACKLIST:
+                        info = '在黑名单中，无法向对方发送消息';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_DISCUSSION:
+                        info = '不在讨论组中';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_GROUP:
+                        info = '不在群组中';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_CHATROOM:
+                        info = '不在聊天室中';
+                        break;
+                    default:
+                        info = "x";
+                        break;
+                }
+                console.log('发送失败:' + info);
+            }
+        });
+    }
+    // function getMessage() {
+    RongIMClient.setOnReceiveMessageListener({
+        // 接收到的消息
+        onReceived: function(message) {
+
+            // 判断消息类型
+            console.log('messageContent:');
+
+            console.log(message);
+
+            switch (message.messageType) {
+                case RongIMClient.MessageType.TextMessage:
+                    // //console.log(message.content.content)
+                    // //console.log('yyyy');
+                    var extra = eval('(' + message.content.extra + ')');
+                    // var extra = message.content.extra;
+                    if(status == 1){
+                        var str = '<p class="live-msg mg_top10"><span class="blue">'+extra.nick_name+':</span>'+message.content.content+' </p>';
+                        $('.room-txt').append(str);
+                    }else{
+                        var str = '<div class="padding_10 mg_top10"><div class="clearfix"><dl class="clearfix left"><dt class="left"><img class="head" src="'+extra.header_img+'" style="width: 10%;"></dt><dd class="left padding_lr10"><p><strong>'+extra.nick_name+'</strong></p><p class="mg_top5">'+message.content.content+'</p></dd></dl></div></div>';
+                        //发送的消息内容将会被打印
+                        $('.room-txt').append(str);
+                    }
+
+                    // answers(message.content.content,message.senderUserId);
+                    break;
+                case RongIMClient.MessageType.ImageMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.DiscussionNotificationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.LocationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.RichContentMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.DiscussionNotificationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.InformationNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.ContactNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.ProfileNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.CommandNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.CommandMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.UnknownMessage:
+                    if(status == 1){
+                        if(message. senderUserId== 'system'){
+                            if(message.content.message.content.content.type == 'gift' ){
+                                if ((gift_status != 1)) return false;
+                                var st = '';
+                                for(var i=0;i<message.content.message.content.content.data.num.length;i++){
+                                    st += '<img src="__IMG2__/'+message.content.message.content.content.data.num[i]+'.png"/>';
+                                }
+                                var str = '<p class="padding_10"><img class="bg_gife" style="width: 36px;" src="'+message.content.message.content.content.data.img+'"/><img  src="__IMG2__/x.png"/>'+st+'</p>';
+                                $(".gife").html(str);
+                                $(".gife").css('display','block');
+                                $('.gife').addClass('animated slideInRight');
+                                setTimeout(function(){
+                                    $('.gife').removeClass('slideInRight');
+
+                                }, 1000);
+                                $('.gife').delay(1000).fadeOut(200);
+                                return false;
+                            }else if(message.content.message.content.content.type == 'red_package'){
+                                if ((system_status != 1)) return false;
+                                var str = '<p class="live-msg mg_top10"><i class="xi">系</i>'+message.content.message.content.content.data.role_name+'发出了一个红包 <img class="vertical-align_m" id="red" src="__IMG2__/msg_redbag.png" alt=""  onclick="getredPackage(this)" data-id="'+message.content.message.content.content.data.red_id+'" data-name="'+message.content.message.content.content.data.role_name+'" data-type="'+message.content.message.content.content.data.red_type+'" data-img="'+message.content.message.content.content.data.header_img+'"/></p>';
+                            }else if(message.content.message.content.content.type == 'guess'){
+                                if ((system_status != 1)) return false;
+                                var str = '<p class="live-msg mg_top10"><i class="xi">系</i><span class="green">房主发起了一次竞猜</span><img class="vertical-align_m" src="__IMG2__/msg_tv.png" alt="" /></p>';
+                            }else if(message.content.message.content.content.type == 'system'){
+                                if ((system_status != 1)) return false;
+                                var str = '<p class="live-msg mg_top10"><i class="xi">系</i><span class="green">'+message.content.message.content.content.data+'</span><img class="vertical-align_m" src="__IMG2__/msg_tv.png" alt="" /></p>';
+
+                            }else{
+
+                            }
+                            $(".room-txt").append(str);
+                        }
+                    }else {
+                        if (message.senderUserId == 'system') {
+                            if (message.content.message.content.content.type == 'gift') {
+                                var str = '<div class="gife"><p class="padding_10"><img class="bg_gife" src="' + message.content.message.content.content.data.img + '"/><img  src="__IMG2__/x.png"/><img src="__IMG2__/2.png"/></p></div>'
+                            } else if (message.content.message.content.content.type == 'red_package') {
+                                if(message.content.message.content.content.data.role_id == '{$info.role_id}'){
+                                    var str = '<div class="padding_10 mg_top10"><div class="clearfix text-center"><dl class="clearfix left width_100"><dt class="right"><img class="head" src="'+message.content.message.content.content.data.header_img+'"></dt><dd class="right padding_lr10"><div class="red-bag" onclick="getredPackage(this)" data-id="'+message.content.message.content.content.data.red_id+'" data-name="'+message.content.message.content.content.data.role_name+'" data-type="'+message.content.message.content.content.data.red_type+'" data-img="'+message.content.message.content.content.data.header_img+'" style="width: 200px;height: 70px;background: url(__IMG2__/redpackage-right.png)no-repeat;background-size:100% 100% ;position: relative;"><p class="color_ff redfont" style="margin: 0px 0 0 45px;padding-top: 10px;width: 150px;text-align: left;">'+message.content.message.content.content.data.msg+'</p><p class="color_ff redfont" style="margin: 0px 0 0 45px;font-size: 0.5rem;width: 150px;text-align: left;">查看红包</p><p class="redtext" style="position: absolute;bottom: 0px;left: 5px;font-size: 12px;color: #a9a9a9;">聊天室红包</p></div></dd></dl></div></div>';
+                                }else{
+                                    var str = '<div class="padding_10 mg_top10"><div class="clearfix text-center"><dl class="clearfix left width_100"><dt class="left"><img class="head" src="'+message.content.message.content.content.data.header_img+'"></dt><dd class="left padding_lr10"><div class="red-bag left_redbag"  onclick="getredPackage(this)" data-id="'+message.content.message.content.content.data.red_id+'" data-name="'+message.content.message.content.content.data.role_name+'" data-type="'+message.content.message.content.content.data.red_type+'" data-img="'+message.content.message.content.content.data.header_img+'" style="width: 200px;height: 70px;background: url(__IMG2__/redpackage-left.png)no-repeat;position: relative;background-size:100% 100% ;"><p class="color_ff redfont" style="margin: 0px 0 0 45px;padding-top: 10px;width: 150px;text-align: left;">'+message.content.message.content.content.data.msg+'</p><p class="color_ff redfont" style="margin: 0px 0 0 45px;font-size: 0.5rem;width: 150px;text-align: left;">查看红包</p><p class="redtext" style="position: absolute;bottom: 0px;left: 5px;font-size: 12px;color: #a9a9a9;">聊天室红包</p></div></dd></dl></div></div>';
+                                }
+                            } else if (message.content.message.content.content.type == 'guess') {
+                                var str = '<p class="live-msg mg_top10"><i class="xi">系</i>' + message.content.message.content.content.data.role_name + '发出了一个红包 <img class="vertical-align_m" id="red" src="__IMG2__/msg_redbag.png" alt="" /></p>';
+                            } else if (message.content.message.content.content.type == 'system') {
+                                var str = '<p><span>' + message.senderUserId + '：</span>' + message.content.content + '</p>';
+                            } else {
+
+                            }
+                            $(".room-txt").append(str);
+                        }
+                    }
+
+                    //console.log('xxxxx');
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.VoiceMessage:
+                    // //console.log(message);
+                    // getVoice((message.content.duration), (message.content.content));
+
+                    break;
+                case RongIMClient.MessageType.PersonMessage:
+                    // //console.log(message);
+                    // getVoice((message.content.duration), (message.content.content));
+                    var extra = eval('(' + message.content.extra + ')');
+                    // var extra = message.content.extra;
+
+                    var str = '<p class="live-msg mg_top10"><i class="xi">系</i><span class="blue">'+extra.nick_name+'</span> 进入直播间<img class="vertical-align_m" src="__IMG2__/msg_hores.png" alt="" /></p>';
+                    $('.room-txt').append(str);
+                    break;
+                default:
+                //console.log(message);
+
+                // 自定义消息
+                // do something...
+            }
+        }
+    });
+    // }
+    console.log("{$data.role_id}");
+    console.log('role_id');
+    $(function() {
+        var formDatas = new FormData();
+        formDatas.append('id',"{$data.role_id}");
+        var datas = httpPosts('/user/roleInfo',formDatas);
+        $(document).keydown(function (event) {
+            if (event.keyCode == 13) {
+                var msg = new RongIMClient.RegisterMessage.UnkownMessage({
+                    content: 'xxxxx',
+                    extra:{role_id:'{$data.role_id}',nick_name:datas.role_name,header_img:datas.header_img},
+                });
+                $('#talk').val('');
+                sendMessage(msg);
+            }
+        });
+        var formData = new FormData();
+        formData.append('id',"{$data.Homeowner}");
+        var data = httpPosts('/user/roleInfo',formData);
+
+        $("#play_people").html(data.role_name);
+        // console.log(data);
+        $(".top-c").children('img').attr("src",data.header_img);
+        if(data.official == 0){
+            $(".blue").css('display','none');
+        }
+        if(data.sex == 1){
+            $("#sex").attr('src','__IMG__/icon_sex_man.png');
+        }
+        if(data.check == 0){
+            $(".yello").css('display','none');
+        }
+        $('.r').children('b').html(data.fans_num);
+        if(data.is_follow == 1){
+            $('.r').children('a').css('background','#d9d9d9');
+            $('.r').children('a').css('color','#7f7f7f');
+            $('.r').children('a').html('已关注');
+        }
+        if(data.sign == ''){
+            $('#sign').html('这家伙很懒，什么签名都没有');
+        }else{
+            $('#sign').html(data.sign);
+        }
+        var form = new FormData();
+        form.append('room_id',"{$data.room_id}");
+        var notice = httpPosts('/Play/notice_detail',form);
+        $("#gg").html(notice);
+        var forms = new FormData();
+        forms.append('id',"{$data.room_id}");
+        // console.log(formData.get('id'));
+        var list = httpPosts('/Play/actList',forms);
+        // console.log(list);
+
+        var str = '';
+        for(var i=0;i<list.length;i++){
+            var style = '';
+            var status = '';
+            var statues = '';
+            if(list[i]['status'] == 0){
+                status = '活动已结束';
+                statues = '活动已结束';
+                style += "background:#d9d9d9;color:#7f7f7f"
+            }else if(list[i]['status'] == 1){
+                status = '进行中';
+                statues = '进行中';
+                style += "background:#d9d9d9;color:#7f7f7f"
+            }else{
+                status = '预告状态';
+                if(list[i]['activity'] == 0){
+                    statues = '预定';
+                }else{
+                    statues = '已预定';
+                    style += "background:#d9d9d9;color:#7f7f7f"
+                }
+            }
+            str +=  ' <div class="k"><div class="k-n"><h1>'+list[i]["title"]+'<span>'+list[i]["start_time"]+'开始 '+list[i]["charge"]+'人预定</span><a class="order" data-id="'+list[i]['activity_id']+'" onclick="order(this)" style="'+style+'">'+statues+'</a></h1><p class="pic"><img src="'+list[i]["img"]+'" alt=""/><a>'+status+'</a></p><p class="note">'+list[i]["detail"]+'</p></div></div>'
+        }
+        $("#notice").after(str);
+        var Datas = new FormData();
+        Datas.append('role_id',"{$data.Homeowner}");
+        // console.log(Datas.get('role_id'));
+        var result = httpPosts('/Vod/vodlist_now',Datas);
+        var strs = '';
+        for(var i=0;i<result["data"].length;i++){
+            strs += '<li><a href="vod_detail?vod_id='+result["data"][i]['pid']+'"><p><img src="'+result["data"][i]["img"]+'" alt=""/><span>'+result["data"][i]["role_name"]+' <i><img src="__IMG__/hot.png" alt=""/><b>'+result["data"][i]["num"]+'</b></i></span></p><span class="title">'+result["data"][i]["title"]+'</span></a></li>'
+        }
+        $(".room-zb").children('ul').append(strs);
+        var owner = httpPosts('/play/roomAdmins',forms);
+        // console.log(owner);
+        var str = '';
+        for(var i=0;i<owner.length;i++){
+            str += ' <li><img src="'+owner[i]["header_img"]+'" alt=""/><p><span class="ti">'+owner[i]["role_name"]+'</span><span><a class="blue">'+owner[i]["remark"]+'</a></span></p><b class="both"></b></li>';
+        }
+        $("#room_owner").children('ul').html(str);
+        $("#room_owner").children('h1').html('房主、管理员（'+owner.length+'人）');
+        var str = '';
+        var people_list = httpPosts('/play/roomUsers',forms);
+        console.log(people_list);
+        for(var i=0;i<people_list.data.length;i++){
+            str += ' <li><img src="'+people_list["data"][i]["header_img"]+'" alt=""/><p><span class="ti">'+people_list["data"][i]["role_name"]+'</span><span><a class="blue">'+people_list["data"][i]["remark"]+'</a></span></p><b class="both"></b></li>';
+        }
+        if(people_list["hasNext"]){
+            str += '<button class="loading" onclick="load(this)" data-id="{$data.room_id}" data-thispage="1" data-hasnext="1" style="width: 100%;height: 3rem;background-image: -webkit-linear-gradient(top, #ccc, #eee);border: 1px solid #eee;">点击加载更多</button>';
+        }
+        $("#people").children("a").html("成员("+(people_list.num +owner.length)+")");
+        $("#peoples").children('ul').html(str);
+    });
+$("#send").click(function () {
+
+});
+    function order(that) {
+        var html =$(that).html();
+        var id = $(that).data('id');
+        var form = new FormData();
+        form.append('id',id);
+
+        if(html == '预定'){
+            var result = httpPosts('/Play/reserve',form);
+            if(result == null){
+                $(that).css('background','#d9d9d9');
+                $(that).css('color','#7f7f7f');
+                $(that).html('已预定');
+            }
+        }else if(html == '已预定'){
+            var result = httpPosts('/Play/reserve',form);
+            if(result == null){
+                $(that).css('background','#2e89fe');
+                $(that).css('color','#fff');
+                $(that).html('预定');
+            }
+        }
+    }
+$("#look").click(function () {
+    var html = $(this).html();
+    var num = $('.r').children('b').html();
+    if(html == '关注'){
+        var formDatas = new FormData();
+        formDatas.append('role_id','{$data.Homeowner}');
+        var result = httpPosts('/Focus/addFocusRole',formDatas);
+        // console.log(result);
+        if(result == null){
+            $('.r').children('a').css('background','#d9d9d9');
+            $('.r').children('a').css('color','#7f7f7f');
+            $('.r').children('a').html('已关注');
+            num++;
+            $('.r').children('b').html(num);
+        }
+    }else{
+        var formDatas = new FormData();
+        formDatas.append('role_id','{$data.Homeowner}');
+        var result = httpPosts('/Focus/hiddenRole',formDatas);
+        // console.log(result);
+        if(result == null){
+            $('.r').children('a').css('background','#2e89fe');
+            $('.r').children('a').css('color','#fff');
+            $('.r').children('a').html('关注');
+            num--;
+            $('.r').children('b').html(num);
+        }
+    }
+});
+     function load(that) {
+         var forms = new FormData();
+         var page = $(that).data('this-page');
+         var id = $(that).data('id');
+         page++;
+         forms.append('page',page);
+         forms.append('id',id);
+         var people_list = httpPosts('/play/roomUsers',forms);
+         var str = '';
+         $(that).css('display','none');
+         for(var i=0;i<people_list.data.length;i++){
+             str += ' <li><img src="'+people_list["data"][i]["header_img"]+'" alt=""/><p><span class="ti">'+people_list["data"][i]["role_name"]+'</span><span><a class="blue">'+people_list["data"][i]["remark"]+'</a></span></p><b class="both"></b></li>';
+         }
+         if(people_list["hasNext"]){
+             str += '<button class="loading" onclick="load(this)" data-id="{$data.room_id}" data-thispage="'+page+'" data-hasnext="1" style="width: 100%;height: 3rem;background-image: -webkit-linear-gradient(top, #ccc, #eee);border: 1px solid #eee;">点击加载更多</button>';
+         }
+         $("#peoples").children('ul').append(str);
+    }
+//
+
+
+    function  jump() {
+        layer.confirm('即将离开页面？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            location.href = '{:url(login/login)}';
+        }, function(){
+
+        });
+    }
+</script>
+</html>

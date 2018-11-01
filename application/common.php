@@ -1,0 +1,1043 @@
+<?php
+// +----------------------------------------------------------------------
+// | ThinkPHP [ WE CAN DO IT JUST THINK ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2006-2016 http://thinkphp.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: 流年 <liu21st@gmail.com>
+// +----------------------------------------------------------------------
+use Qiniu\Config;
+use Qiniu\Storage\BucketManager;
+use Qiniu\Auth as Auth;
+use Qiniu\Storage\UploadManager;
+use think\Image;
+// 应用公共文件
+
+function curl_post($uri, $data = [])
+{
+// 参数数组
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // 跳过证书检查
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);  // 从证书中检查SSL加密算法是否存在
+    curl_setopt($ch, CURLOPT_URL, $uri);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    //curl_setopt($ch, CURLOPT_PORT, 8081);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+
+function ischeck($data)
+{
+    echo($data == 0 ? '' : 'checked');
+}
+
+
+//将数组生成下拉列表
+function arr2select($name, $rows, $title = '--请选择--', $default, $valueField = 'id', $textField = 'name', $class = 'form-control')
+{
+    //  name       =>数据库对应字段名
+    //  rows       =>要循环的数组
+    //  title      =>默认的无选择状态
+    //  default    => 默认被选中的
+    //  valueField => value的值
+    //  textField  => 要输入的字段
+    $html = "<select class='{$class}' name='{$name}'>";
+    if (!empty($title)) {
+        $html .= "<option value=''>$title</option>";
+    }
+    if (empty($rows)) {
+        echo $html .= "</select>";
+        return;
+    }
+    foreach ($rows as $row) {
+        $selected = '';
+        if ($row[$valueField] == $default) {
+            $selected = "selected=selected";
+        }
+        $html .= "<option {$selected} value='{$row[$valueField]}'>{$row[$textField]}</option>";
+    }
+    $html .= "</select>";
+    echo $html;
+}
+
+
+//将数组生成下拉列表
+function arr4select($name, $rows, $title = '--请选择--', $default, $valueField = 'id', $textField = 'name', $class = 'form-control')
+{
+    //  name       =>数据库对应字段名
+    //  rows       =>要循环的数组
+    //  title      =>默认的无选择状态
+    //  default    => 默认被选中的
+    //  valueField => value的值
+    //  textField  => 要输入的字段
+    $html = "<select class='{$class}' name='{$name}'>";
+    if (!empty($title)) {
+        $html .= "<option value=''>$title</option>";
+    }
+    if (empty($rows)) {
+        echo $html .= "</select>";
+        return;
+    }
+    foreach ($rows as $row) {
+        $selected = '';
+        if ($row[$valueField] == $default) {
+            if (!isEmpty($default)) {
+                $selected = "selected=selected";
+            }
+        }
+        $html .= "<option {$selected} value='{$row[$valueField]}'>{$row[$textField]}</option>";
+    }
+    $html .= "</select>";
+    echo $html;
+}
+
+
+function arr3select($name, $rows, $title = '--请选择--', $default, $valueField = 'id', $textField = 'name', $class = 'form-control')
+{
+    //  name       =>数据库对应字段名
+    //  rows       =>要循环的数组
+    //  title      =>默认的无选择状态
+    //  default    => 默认被选中的
+    //  valueField => value的值
+    //  textField  => 要输入的字段
+    $html = "<select class='{$class}' name='{$name}'>";
+    if (!empty($title)) {
+        $html .= "<option value='0'>$title</option>";
+    }
+    if (empty($rows)) {
+        echo $html .= "</select>";
+    }
+    foreach ($rows as $row) {
+        $selected = '';
+        if ($row[$valueField] == $default) {
+            $selected = "selected=selected";
+        }
+        $html .= "<option {$selected} value='{$row[$valueField]}'>{$row[$textField]}</option>";
+    }
+    $html .= "</select>";
+    echo $html;
+}
+
+//将数组生成下拉列表
+function list2select($name, $rows, $default, $class, $is_all = false)
+{
+    $html = "<select class='{$class}' name='{$name}'>";
+    if ($is_all) {
+        $html .= "<option value=''>--请选择--</option>";
+    }
+    foreach ($rows as $row => $v) {
+        $selected = '';
+        if ($row == $default) {
+            $selected = "selected=selected";
+        }
+        $html .= "<option {$selected} value='{$row}'>{$v}</option>";
+    }
+    $html .= "</select>";
+    return $html;
+}
+
+
+function url_exists($url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    //不下载
+    curl_setopt($ch, CURLOPT_NOBODY, 1);
+    //设置超时
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+    curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($http_code == 200) {
+        return true;
+    }
+    return false;
+}
+
+//二级下拉列表
+function list3select($name, $rows, $default, $class)
+{
+    $html = "<select class='{$class}' name='{$name}'>";
+    $html .= "<option value=''>--请选择--</option>";
+    foreach ($rows as $row) {
+        $selected = '';
+        if ($row == $default) {
+            $selected = "selected=selected";
+        }
+        $html .= "<option {$selected} value='{$row}'>{$row}</option>";
+    }
+    $html .= "</select>";
+    echo $html;
+}
+
+function cate2select($name, $rows, $default, $class, $valueField = 'id', $textField = 'name')
+{
+    $html = "<select class='{$class}' name='{$name}'>";
+    $html .= "<option value='0'>--根分类--</option>";
+    foreach ($rows as $row) {
+        $selected = '';
+        if ($row[$valueField] == $default) {
+            $selected = "selected=selected";
+        }
+        $html .= "<option {$selected} value='{$row[$valueField]}'>{$row[$textField]}</option>";
+    }
+    $html .= "</select>";
+    echo $html;
+}
+
+
+function generateStr($length = 5, $type = "all")
+{
+    //密码字符集，可任意添加你需要的字符
+    $chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_ []{}<>~`+=,.;:/?';
+    if ($type == "num") {
+        $chars = '0123456789';
+    } elseif ($type == "char") {
+        $chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    }
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $chars[mt_rand(0, strlen($chars) - 1)];
+    }
+    return $password;
+}
+
+
+if (!function_exists('array_column')) {
+    function array_column($rows, $column_name)
+    {
+        $values = array();
+        foreach ($rows as $row) {
+            $values[] = $row[$column_name];
+        }
+        return $values;
+    }
+}
+
+function setPageCook()
+{
+    cookie('__forward__', $_SERVER['REQUEST_URI']);
+}
+
+function uploadHtml($name, $value, $type)
+{
+    $timestamp = time();
+    $salt = md5('unique_salt' . $timestamp);
+    $html = '';
+    if ($type == 'single_img') {
+        $html = '<div name="' . $name . '" class="4jUploader" value="' . $value . '" type="single" ext="img" timestamp="' . $timestamp . '" salt="' . $salt . '" app_path="" root_path="" upload="' . config('UPLOAD') . '"></div>';
+    } elseif ($type == 'single_file') {
+        $html = '<div name="' . $name . '" class="4jUploader" value="' . $value . '" type="single" ext="file" timestamp="' . $timestamp . '" salt="' . $salt . '" app_path="" root_path="" ></div>';
+    } elseif ($type == 'multi_img') {
+        $html = '<div name="' . $name . '" class="4jUploader" value="' . $value . '" type="multi" ext="img" timestamp="' . $timestamp . '" salt="' . $salt . '" app_path="" root_path="" upload="' . config('UPLOAD') . '"></div>';
+    } elseif ($type == 'multi_file') {
+        $html = '<div name="' . $name . '" class="4jUploader" value="' . $value . '" type="multi" ext="file" timestamp="' . $timestamp . '" salt="' . $salt . '" app_path="" root_path="" ></div>';
+    }
+    return $html;
+}
+
+
+function combineDika()
+{
+    $data = func_get_args();
+    $data = current($data);
+    $cnt = count($data);
+    $result = array();
+    $arr1 = array_shift($data);
+    foreach ($arr1 as $key => $item) {
+        $result[] = [$item];
+    }
+    foreach ($data as $key => $item) {
+        $result = combineArray($result, $item);
+    }
+    return $result;
+}
+
+
+/**
+ * 两个数组的笛卡尔积
+ * @param unknown_type $arr1
+ * @param unknown_type $arr2
+ */
+function combineArray($arr1, $arr2)
+{
+    $result = array();
+    foreach ($arr1 as $item1) {
+        foreach ($arr2 as $item2) {
+            $temp = $item1;
+            $temp[] = $item2;
+            $result[] = $temp;
+        }
+    }
+    return $result;
+}
+
+
+/**
+ * 格式化时间
+ */
+function fmt_time($value, $type = "full_time")
+{
+    if (!empty($value) || $value != 0) {
+        if ($type == "full_time") {
+            return date("Y-m-d H:i:s", $value);
+        } else {
+            return date("Y-m-d", $value);
+        }
+    }
+    return "";
+}
+
+/**
+ * 判断是否为空，注意  0不为空，为解决 php内0为空问题
+ */
+function isEmpty($val)
+{
+    if ($val === 0 || $val === '0') {
+        return false;
+    } else {
+        return empty($val);
+    }
+}
+
+
+function sub_str($text, $length = 10)
+{
+    $end = '';
+    if (mb_strlen($text) > $length) {
+        $end = '…';
+    }
+    return mb_substr($text, 0, $length) . $end;
+}
+
+function api_return( $code = 0 ,$msg = '', $data = null, array $header = [])
+{
+
+    $result = [
+        'code' => $code,
+        'msg' => $msg,
+        'time' => \think\Request::instance()->server('REQUEST_TIME'),
+        'data' => $data,
+    ];
+
+    $response = \think\Response::create($result, 'json')->header($header);
+
+    throw new think\exception\HttpResponseException($response);
+}
+
+function check_token()
+{
+    $token = input('post.token');
+    $is_token_exist = config($token);
+    if (empty($is_token_exist)) {
+        return false;
+    }
+    config($token, time(), 14400);
+    return true;
+}
+
+function makeToken()
+{
+    $encrypt_key = substr(md5(((float)date("YmdHis") + rand(100, 999)) . rand(1000, 9999)), 8, 16);
+    config('token_' . $encrypt_key, time(), 14400);
+    return $encrypt_key;
+}
+
+
+function hashid($str, $length = 8)
+{
+    $hash = new \Hashids\Hashids(config('hash_key'), $length);
+    return $hash->encode($str);
+}
+
+function dehashid($str, $length = 8)
+{
+    $hash = new \Hashids\Hashids(config('hash_key'), $length);
+    $rs = $hash->decode($str);
+    if (is_null($rs)) {
+        return '';
+    } else {
+        return $rs[0];
+    }
+}
+
+
+//公钥加密
+function hashToken($str)
+{
+    $hash = new \Hashids\Hashids(config('hash_key'), 32);
+    return $hash->encode($str);
+}
+
+function deHashToken($str)
+{
+    $hash = new \Hashids\Hashids(config('hash_key'), 32);
+    $rs = $hash->decode($str);
+    if (is_null($rs)) {
+        return '';
+    } else {
+        return $rs[0];
+    }
+}
+
+
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * 推送
+ * @param $type 1 房间 2 资产 3钱包
+ * @param string $j_push_id
+ * @param string $title
+ * @param $room_id
+ * @return bool
+ *
+ */
+ function Push($type = 0,$j_push_id = '',$title = '来自soha直播的推送消息',$room_id)
+{
+    if (!$j_push_id) return false;
+
+    $extend = [];
+    if ($type == 1){
+        $extend['extras'] = [
+            'type' => 'room',//跳转至房间
+            'room_id' => $room_id,
+        ] ;
+    }elseif ($type == 2){
+        $extend['extras'] = [
+            'type' => 'assets',//跳转至资产
+        ] ;
+    }elseif ($type == 3){
+        $extend['extras'] = [
+            'type' => 'wallet',//跳转至钱包
+        ] ;
+    }
+
+    j_push($title,$j_push_id,$extend);
+}
+
+
+/**
+ * 及时推送
+ */
+function j_push($title = '', $reg_id, $extend = [])
+{
+    $config = config('jpush');
+    $push = new \JPush\Client($config['ak'], $config['mk']);
+
+    try {
+        if ($reg_id == 'all') {
+            $push->push()
+                ->setPlatform('all')
+                ->addAllAudience()
+                ->setNotificationAlert($title)
+                ->send();
+        } else {
+            $push_payload = $push->push()
+                ->setPlatform('all')
+                ->iosNotification($title, $extend)
+                ->androidNotification($title, $extend)
+                ->addRegistrationId($reg_id)
+                ->setNotificationAlert($title);
+            $push_payload->addRegistrationId($reg_id)->send();
+        }
+    } catch (\JPush\Exceptions\APIConnectionException $e) {
+        return false;
+    } catch (\JPush\Exceptions\APIRequestException $e) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * 定时推送
+ */
+function j_push_schedule($title = '', $reg_id, $time, $name)
+{
+    $config = config('jpush');
+    $push = new \JPush\Client($config['ak'], $config['mk']);
+    $payload = $push->push()
+        ->setPlatform("all")
+        ->setNotificationAlert($title);
+    try {
+        if ($reg_id == 'all') {
+            $payload = $payload->addAllAudience()->build();
+        } else {
+            $payload = $payload->addRegistrationId($reg_id)->build();
+        }
+        $result = $push->schedule()
+            ->createSingleSchedule($name, $payload, array("time" => $time));
+    } catch (\JPush\Exceptions\APIConnectionException $e) {
+        //dump($e);
+        return false;
+    } catch (\JPush\Exceptions\APIRequestException $e) {//dump($e);
+        return false;
+    }
+    return $result['body']['schedule_id'];
+}
+
+
+/**
+ * 发送一条短信
+ */
+function sendSms($mobile = 0)
+{
+    ini_set("display_errors", "on");
+    header('content-type:text/html;charset=utf-8');
+    $sendUrl = 'http://v.juhe.cn/sms/send'; //短信接口的URL
+    $val = rand(111111, 999999);
+    $smsConf = array(
+        'key' => config('juhe.smskey'), //您申请的APPKEY
+        'mobile' => $mobile, //接收短信的用户手机号码
+        'tpl_id' => config('juhe.smsid'), //您申请的短信模板ID，根据实际情况修改
+        'tpl_value' => "#code#=$val&#m#=5" //您设置的模板变量，根据实际情况修改
+    );
+    $content = juhecurl($sendUrl, $smsConf, 1); //请求发送短信
+//    dump($content);exit;
+    if ($content) {
+        $result = json_decode($content, true);
+        $error_code = $result['error_code'];
+        if ($error_code == 0) {
+            cache('code'.$mobile, $val, 300);
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+function curl_get($url)
+{
+    header('content-type:text/html;charset=utf-8');
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    //设置头文件的信息作为数据流输出
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $data = curl_exec($curl);
+    curl_close($curl);
+    $result = json_decode($data, true);
+    return $result;
+}
+
+
+function juhecurl($url, $params = false, $ispost = 0)
+{
+    $httpInfo = array();
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22');
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    if ($ispost) {
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+        curl_setopt($ch, CURLOPT_URL, $url);
+    } else {
+        if ($params) {
+            curl_setopt($ch, CURLOPT_URL, $url . '?' . $params);
+        } else {
+            curl_setopt($ch, CURLOPT_URL, $url);
+        }
+    }
+    $response = curl_exec($ch);
+    if ($response === FALSE) {
+        return false;
+    }
+    curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    array_merge($httpInfo, curl_getinfo($ch));
+    curl_close($ch);
+    return $response;
+}
+
+//重命名数组键值
+function array_key($arr, $val)
+{
+    $temp_key = array_column($arr, $val);//数组指定值
+    return array_combine($temp_key, $arr);//修改数组键
+}
+
+//人性化时间
+function formatTime($time)
+{
+    $rtime = date("m-d H:i", $time);
+    $htime = date("H:i", $time);
+    $time = time() - $time;
+    if ($time < 60) {
+        $str = '刚刚';
+    } elseif ($time < 60 * 60) {
+        $min = floor($time / 60);
+        $str = $min . '分钟前';
+    } elseif ($time < 60 * 60 * 24) {
+        $h = floor($time / (60 * 60));
+        $str = $h . '小时前 ';
+    } elseif ($time < 60 * 60 * 24 * 3) {
+        $d = floor($time / (60 * 60 * 24));
+        if ($d == 1) {
+            $str = '昨天 ' . $rtime;
+        } else {
+            $str = '前天 ' . $rtime;
+        }
+    } else {
+        $str = $rtime;
+    }
+    return $str;
+}
+
+
+function time_format($time)
+{
+    $publish_timestamp = strtotime($time);
+    $now = date("Y-m-d H:i:s");
+    $now_timestamp = strtotime($now);
+    $lag = ceil(($now_timestamp - $publish_timestamp) / 60);
+    $format_time = $lag . "分钟前";
+    if ($lag >= 30) {
+        switch ($lag) {
+            case 30:
+                $format_time = "半小时前";
+                break;
+            case $lag > 30 && $lag < 60:
+                $format_time = $lag . "分钟前";
+                break;
+            case $lag >= 60 && $lag < 120:
+                $format_time = "一小时前";
+                break;
+            case ceil($lag / 60) < 24:
+                $format_time = (ceil($lag / 60) - 1) . "小时前";
+                break;
+            case ceil($lag / 60) > 24 && ceil($lag / 60) < 48:
+                $format_time = "昨天" . date("H:i", $publish_timestamp);
+                break;
+            case ceil($lag / 60) > 48:
+                $format_time = date("Y-m-d H:i", $publish_timestamp);
+                break;
+        }
+    }
+    return $format_time;
+}
+
+function filterWord($str, $field)
+{
+    $arr = \think\Db::name('extend')->where('id', 1)->value($field);
+    $array = explode(',', $arr);
+    foreach ($array as $v) {
+        if (strstr($str, trim($v)) != false) {
+            return $v;
+        }
+    }
+    return false;
+}
+
+
+function checkBox($name, $rows, $default, $text)
+{
+    $html = '<div class="checkbox i-checks">';
+    $arr = explode(',', $default);
+    foreach ($rows as $row) {
+        if (in_array($row[$name], $arr)) {
+            $checked = 'checked=""';
+        } else {
+            $checked = '';
+        }
+        $html .= '<label><input ' . $checked . ' name="' . $name . '[]" type="checkbox" value="' . $row[$name] . '"> <i></i> ' . $row[$text] . '</label>';
+    }
+    $html .= '</div>';
+    return $html;
+}
+
+/**
+ *  钱包明细写入
+ */
+function money($id, $money_type, $money,$coin_type = 1,$remark = '',$order_num= '')
+{
+    $data['user_id'] = $id;
+    $data['remark'] = $remark;
+    //1=>红包 2=>竞猜 3=>兑换 4=>拍卖 5=>直播间付费 6=>充值 7=>其它  8=>礼物赠送
+    $data['money_type'] = $money_type;
+    $data['money'] = $money;
+    if ($money < 0) {
+        $data['type'] = 2;
+    } elseif ($money > 0) {
+        $data['type'] = 1;
+    }
+    $data['create_time'] = time();
+    $data['status'] = 1;
+    //金币类型 1=>积分 2=>比特币  3=>以太币 4=>BCDN'
+    $data['coin_type'] = $coin_type;
+    $data['order_num'] = empty($order_num)?'RE'.hashid($id).date("Ymd").rand(1000,9999):$order_num;
+    $result = db('money_detail')->insert($data);
+    if ($result) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param $money  金额
+ * @param int $money_type 金币类型 1=>积分 2=>比特币  3=>以太币 4=>BCDN'
+ * @param int $status  状态 1=>平台流水 2=>用户充值 3=>用户提现
+ * @param string $remark 备注
+ */
+function stream($money,$money_type = 1,$remark = '',$status = 1){
+    if ($money <= 0) return false;
+    $data['money'] = $money;
+    $data['money_type'] = $money_type;
+    $data['status'] = $status;
+    $data['remark'] = $remark;
+    $data['create_time'] = time();
+    $result = \think\Db::name('capital_flow')->insert($data);
+    if ($result !== false){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
+
+
+/**
+ * @param $data
+ * 批量插入资金详情
+ */
+function moneyAll($data){
+
+}
+
+
+function click($pid)
+{
+    $data = replys($pid);
+    return $data;
+}
+
+function replys($pid, $results = array(), $p_id = 0)
+{
+    $result = db('vod_reply')->where(['pid' => $pid, 'p_id' => $p_id])->select();
+    foreach ($result as $k => $v) {
+        $results[] = $result[$k];
+        $results = replys($pid, $results, $v['reply_id']);
+    }
+    return $results;
+}
+
+
+
+/*
+ * 房间热度值获取
+ */
+function hotValue($room_id)
+{
+    $hotRoom = cache('hot_room_'.$room_id);
+    if (!isEmpty($hotRoom)) return $hotRoom;
+    if (!is_numeric($room_id)){
+        $room_id = dehashid($room_id);
+        $hash    = $room_id;
+    }else{
+        $hash    = hashid($room_id);
+    }
+    $fans   = db('room')->where('room_id', $room_id)->value('fans')<100??100;
+    $watch  = chatRoomUserCount('room_'.$hash); //直播间人数 room_ha
+    $online = chatRoomUserCount('play_'.$hash);//聊天室人数
+    $hotVal = num(hotVal($fans, $online, $watch));
+    cache('hot_room_'.$room_id, $hotVal, 300);
+    return $hotVal;
+}
+
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * @param $chat_room
+ * @return bool|int|mixed
+ * 获取融云聊天室成员数量
+ */
+function chatRoomUserCount($chat_room){
+    $num = cache('chatRoomUserCount_'.$chat_room);
+    if ($num) return $num;
+    $RongCloud = new \rongyun\api\RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+    $result = $RongCloud->chatroom()->queryUser($chat_room, '500', '2');
+    $num = $result['total'] < 100??100;
+    if ($num == 100){
+        $num += rand(1,99);
+    }else{
+        $num += rand(99,499);
+    }
+    cache('chatRoomUserCount_'.$chat_room,$num,300);
+    return $num;
+}
+
+
+
+
+/*
+  * 房间热度值算法
+  * 关注人数+在线人数+直播观看人数
+  */
+function hotVal($guan, $zai, $zhi)
+{
+    switch ($guan) {
+        case $guan <= 100;
+            $count1 = $guan * 5;
+            break;
+        case $guan < 500 && $guan > 100;
+            $count1 = $guan * 3;
+            break;
+        case $guan >= 500;
+            $count1 = $guan * 1.5;
+            break;
+        default:
+            break;
+    }
+    switch ($zai) {
+        case $zai <= 100;
+            $count2 = $zai * 10;
+            break;
+        case $zai < 500 && $zai > 100;
+            $count2 = $zai * 5;
+            break;
+        case $zai >= 500;
+            $count2 = $zai * 2;
+            break;
+        default:
+            break;
+    }
+    switch ($zhi) {
+        case $zhi <= 100;
+            $count3 = $zhi * 15;
+            break;
+        case $zhi < 500 && $zhi > 100;
+            $count3 = $zhi * 10;
+            break;
+        case $zhi >= 500;
+            $count3 = $zhi * 5;
+            break;
+        default:
+            break;
+    }
+
+    return $count1 + $count2 + $count3 + rand(1,99);
+}
+
+//获取赠送礼物扣除积分
+function getMoney($giftId, $num)
+{
+    $price = db('gift')->where('gift_id', $giftId)->value('price');
+    return bcmul($price,$num,2);
+}
+
+function redisConnect()
+{
+    $redis = new \Redis();
+    $redis->connect(\think\Config::get('redis_ip'), \think\Config::get('redis_port'));
+    $password = \think\Config::get('redis_pwd');
+    $redis->auth($password);
+    return $redis;
+}
+
+
+//超过一万改为xx万，并返回字符串
+function num($num){
+    $num = abs($num);
+    if($num/10000 >= 1){
+        $nums = round($num/10000,1).'万';
+    }else{
+        $nums = "$num";
+    }
+    return $nums;
+}
+
+//删除视频文件
+function delVod($file)
+{
+    $qiniu_config = config('qiniu');
+    $accessKey = $qiniu_config['ACCESSKEY'];
+    $secretKey = $qiniu_config['SECRETKEY'];
+    $bucket = $qiniu_config['bucket'];
+    $file = substr($file,(strripos($file,'/')+1));
+    $auth = new Auth($accessKey, $secretKey);
+    $config = new Config();
+    $bucketManager = new BucketManager($auth,$config);
+    $data=$bucketManager->delete($bucket,$file);
+    return $data;
+}
+
+
+/**
+ * 莓果api公用请求方法
+ * $Method string 调用方法
+ * $ID string 我方用户id
+ * $arr array 请求参数
+ * ps:严格设置请求参数类型
+ * 例:
+ * $arr['Account'] = "8618780106307";
+ * $arr['Pwd'] = "Wo@123456";
+ * $data = MBerryApi($arr,'api.Login',14);
+ */
+function MBerryApi($arr,$Method = '',$ID = '',$orderby='asc',$url = "http://47.52.207.212:7777/rpc"){
+    $data['Method'] = $Method;
+    $data['ID'] = "$ID";
+    if($orderby == 'asc'){//对数组 $arr 进行排序
+        ksort($arr);
+    }else{
+        krsort($arr);
+    }
+    $str = '';
+    foreach ($arr as $k => $v){
+        $str .= $k.'='.$v.'&';
+    }
+    $str = trim($str,'&');
+    $sign = hash_hmac('md5',$str,'BigFoolYouAreTheBest');
+    $arr['sign'] = $sign;
+    $data['Params'] = $arr;
+    $data_string =  json_encode($data);
+    //curl验证成功
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS,$data_string);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($data_string)
+    ));
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) {
+        return curl_error($ch);
+    }
+    curl_close($ch);
+    return json_decode($result,true);
+}
+
+
+
+/*
+ * 举报理由
+ */
+function report(){
+    $report=db('explain')->where('id',6)->value('content');
+    return explode(',',$report);
+}
+//获取用户余额
+function getEndMoney($user_id){
+    return db('users')->where(['user_id'=>$user_id])->value('money');
+}
+
+
+/**
+ * 计算下级总人数
+ */
+function  junior($user_id = 0){
+    $ClassA = \think\Db::name('users')->where('proxy_id',$user_id)->column('user_id');
+    $num = count($ClassA);
+    if (empty($num)) return $num;
+    $map['proxy_id'] = ['in',$ClassA];
+    $ClassB = \think\Db::name('users')->where($map)->column('user_id');
+    $countB = count($ClassB);
+    if (empty($countB)) return $num;
+    $num += $countB;
+    $where['proxy_id'] = ['in',$ClassB];
+    $num += \think\Db::name('users')->where($where)->count('user_id');
+    return $num;
+}
+
+/**
+ * 计算总收益
+ */
+function  all_money($user_id = 0){
+    $ClassA = \think\Db::name('users')->where('proxy_id',$user_id)->column('user_id');
+    if (empty($ClassA)) return 0;
+    $map['proxy_id'] = ['in',$ClassA];
+    $user['user_id'] = ['in',$ClassA];
+    $num = \think\Db::name('money_detail')->where($user)->where(['money_type'=>8])->sum('money');
+    $ClassB = \think\Db::name('users')->where($map)->column('user_id');
+    if (empty($countB)) return $num;
+    $where['proxy_id'] = ['in',$ClassB];
+    $user['user_id'] = ['in',$ClassB];
+    $num += \think\Db::name('money_detail')->where($user)->where(['money_type'=>8])->sum('money');
+    $ClassC = \think\Db::name('users')->where($where)->column('user_id');
+    if (empty($ClassC)) return $num;
+    $wheres['proxy_id'] = ['in',$ClassC];
+    $user['user_id'] = ['in',$ClassC];
+    $num += \think\Db::name('money_detail')->where($user)->where(['money_type'=>8])->sum('money');
+    return $num;
+}
+
+
+/**
+ *  生成邀请二维码
+ */
+
+function code($value = '',$codeName = ''){
+    if (empty($codeName)) $codeName = time().rand(1000,9999);
+    import('code.phpqrcode');
+    $errorCorrectionLevel = 'L';//容错级别
+    $matrixPointSize = 6;//生成图片大小
+    $model = new \QRcode();
+    $path =    "./public/upload/code/$codeName.png";
+    //生成二维码图片
+    $model->png($value, $path, $errorCorrectionLevel, $matrixPointSize, 2);
+    $qiniu_config = config('qiniu');
+    $accessKey = $qiniu_config['ACCESSKEY'];
+    $secretKey = $qiniu_config['SECRETKEY'];
+    $key = $codeName.'.png';
+    $auth = new Auth($accessKey, $secretKey);
+    $token = $auth->uploadToken($qiniu_config['bucket']);
+    $uploadMgr = new UploadManager();
+    list($ret, $err) = $uploadMgr->putFile($token,$key,$path);
+    if ($err !== null) {
+        return false;
+    } else {
+//                api_return(0,'test',['ret'=>$ret,'err'=>$err]);
+       return config('qiniu.domain').'/'.$ret['key'];
+    }
+}
+
+
+function get_rand_num($left,$right,$that)
+{
+    $num = rand($left,$right);
+    if($num == $that)
+    {
+        $num = get_rand_num($left,$right,$that);
+    }
+    return $num;
+}
+
+function block_list($room_id,$role_id=0,$type= 0){
+
+    $RongCloud = new \rongyun\api\RongCloud('m7ua80gbmjrnm','cWPdDytpyx4');
+    if(cache('block_list_'.$room_id)){
+        $user = cache('block_list_'.$room_id);
+    }else{
+        $result = $RongCloud->chatroom()->getListBlockUser('play_'.hashid($room_id));
+        $result = json_decode($result,true);
+        $user = $result['users'];
+        cache('block_list_'.$room_id,$user,5);
+    }
+
+    $userId = array();
+    foreach($user as $k=>$v){
+        $userId[] = $v['userId'];
+    }
+    if($type){
+            if(in_array(hashid($role_id),$userId)){
+                return true;
+            }else{
+                return false;
+            }
+    }else{
+        return $user;
+    }
+
+}

@@ -1,0 +1,25 @@
+<div class="main-left text-center left">
+    <div class="main-leftlist">
+        <ul class="mg_top20">
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/accountinfo.html' "}class="active"{/if}  data-id='01'><a  href="{:url('/personal/accountinfo')}"><i class="my-01"></i>账户信息</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/roleinfo.html' "}class="active"{/if}  data-id='02'><a  href="{:url('personal/roleinfo')}"><i class="my-02"></i>当前角色</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/message.html' "}class="active"{/if}  data-id='03'><a   href="{:url('personal/message')}"><i class="my-03"></i>系统消息</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/focusroom.html' "}class="active"{/if}  data-id='04'><a  href="{:url('personal/focusroom')}"><i class="my-04"></i>我的关注</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/watchhistory.html' "}class="active"{/if}  data-id='05'><a  href="{:url('personal/watchhistory')}"><i class="my-05"></i>观看历史</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/myroom.html' "}class="active"{/if}  data-id='06'><a  href="{:url('personal/myroom')}"><i class="my-06"></i>我的房间</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/vodupload.html' "}class="active"{/if} data-id='18'><a  href="{:url('personal/vodupload')}"><i class="my-18"></i>上传视频</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/mywallet.html' "}class="active"{/if} data-id='07'><a  href="{:url('personal/mywallet')}"><i class="my-07"></i>我的钱包</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/activity.html' "}class="active"{/if} data-id='08'><a  href="{:url('personal/activity')}"><i class="my-08"></i>发起活动</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/uction.html' "}class="active"{/if}  data-id='09'><a  href="{:url('personal/uction')}"><i class="my-09"></i>我的拍卖</a></li>
+            <li   {if strstr($_SERVER["REQUEST_URI"],'/personal/money') or strstr($_SERVER["REQUEST_URI"],'/personal/giftdetails')  }class="active"{/if} data-id='10'><a  href="{:url('personal/money')}"><i class="my-10"></i>我的资产</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/myred.html' "}class="active"{/if} data-id='11'><a  href="{:url('personal/myred')}"><i class="my-11"></i>我的红包</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/guess.html' "}class="active"{/if} data-id='12'><a  href="{:url('personal/guess')}"><i class="my-12"></i>我的竞猜</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/collect.html' "}class="active"{/if} data-id='13'><a  href="{:url('personal/collect')}"><i class="my-13"></i>我的收藏</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/mgroom.html' "}class="active"{/if} data-id='14'><a  href="{:url('personal/mgroom')}"><i class="my-14"></i>管理直播间</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/chatroom.html' "}class="active"{/if} data-id='15'><a  href="{:url('personal/chatroom')}"><i class="my-15"></i>管理聊天室</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/invite.html' "}class="active"{/if} data-id='16'><a  href="{:url('personal/invite')}"><i class="my-16"></i>邀请好友</a></li>
+            <li   {if condition="$_SERVER['REQUEST_URI'] eq '/personal/about.html' "}class="active"{/if} data-id='17'><a  href="{:url('personal/about')}"><i class="my-17"></i>关于我们</a></li>
+        </ul>
+    </div>
+
+</div>

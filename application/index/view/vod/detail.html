@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Expires" CONTENT="-1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>视频回放</title>
+		<script src="__JS__/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+		{include file="public/js" /}
+		<link rel="shortcut icon" href="__IMG__/favicon.ico" />
+		<link rel="bookmark" href="__IMG__/favicon.ico" type="image/x-icon" 　/>
+		<link rel="stylesheet" type="text/css" href="__CSS__/common.css" />
+		<link rel="stylesheet" type="text/css" href="__CSS__/index.css" />
+		<link rel="stylesheet" type="text/css" href="__CSS__/dm.css"/>
+		{include file="public/sharejs" /}
+	</head>
+	<body>
+		{include file='public/header' /}
+		<div class="content">
+			<div class="padding_10 bg_ff mg_top10">
+				<h4 class="mg_top10 font_18"><strong>{$result.vod.title}</strong></h4>
+				<h6 class="mg_top10 color_9">{$result.vod.create_time|date="m/d",###}&nbsp; {$result.vod.num}次播放</h6>
+				<p class="mg_top10">{$result.vod.detail}</p>
+			</div>
+			<div class="live-video" id="video">
+				<!--<div id="video"></div>-->
+				<!--<div class="dm">-->
+						<!--<div class="d_screen">-->
+							<!--<div class="d_show">-->
+								<!--<div>发红包！</div>-->
+								<!--<div>发红包</div>-->
+								<!--<div>GOOD！！</div>-->
+								<!--<div>Yes！！</div>-->
+								<!--<div>发红包</div>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="send">-->
+							<!--<div class="s_fiter">-->
+								<!--<div class="s_con">-->
+									<!--<input type="text" class="s_txt" /><input type="button" value="发布评论" class="s_sub" />-->
+								<!--</div>-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+		    	<video width="100%" height="600" src="{$result.vod.play_url}" autoplay type="video/mp4" id="player" poster="{$result.vod.img}" controls="controls" preload="none"  >
+
+		    	</video>
+		    </div>
+			<div class="clearfix bg_ff">
+				<div class="share-box mg_top10 left">
+					<span class="">分享至</span>
+					<!--<a href="javascript:;"><img src="__IMG__/share_1.png"/></a>-->
+					<a href="javascript:;" onclick="showQrcode('{$result.information.shareUrl}')"><img src="__IMG__/share_2.png"/></a>
+					<a href="javascript:;" onclick="qqShareToP('{$result.vod.title}','{$result.vod.detail}','{$result.information.shareUrl}','{$result.vod.img}')"><img src="__IMG__/share_3.png"/></a>
+					<a href="javascript:;" onclick="qqzoneShare('{$result.vod.title}','{$result.vod.detail}','{$result.information.shareUrl}','{$result.vod.img}')"><img src="__IMG__/share_4.png"/></a>
+				</div>
+				<div class="right padding_lr10">
+					<a href="javascript:;"><img src="{if $result.information.up_status eq 0}__IMG__/zan.png{else}__IMG__/zan-ok.png{/if}" id="up" data-id="{$result.information.up_status}"/></a>
+					<p class="mg_top10 text-center" id="up_show">赞({$result.vod.up})</p>
+					<input type="hidden" id="up_num" value="{$result.vod.up}">
+				</div>
+			</div>
+			<dl class="clearfix padding_10 live-box1 bg_ff mg_top10" >
+		    	<dt class="left "><img class="head-home vertical-align_m" src="{$result.information.header_img}"></dt>
+		    	<dd class="left padding_lr10 clearfix live-dd">
+		    		<div class="left">
+		    			<p>{$result.information.role_name}</p>
+		    			<p >
+				    		<i class="user-rz mg_top10">
+								{if ($result.information.official eq 1)}<span class="mg_top10 color_ff">官方认证</span>{/if}
+								{if ($result.information.check eq 1)}<span class="mg_lr10 color_ff">主播认证</span>{/if}
+							    <img class="vertical-align_m " src="{if ($result.information.sex eq 0)}__IMG__/icon-woman.png{else}__IMG__/icon-man.png{/if}">
+							</i>
+			    		</p>
+		    		</div>
+		    		<div class="right">
+		    			<p  id="notice"><a href="javascript:;" class="basic_a bg_blue btn_rudis" {if $result.information.fans_status eq 1}style="background: rgb(217, 217, 217); color: rgb(127, 127, 127);"{/if}>{if $result.information.fans_status eq 0}关注{else}已关注{/if}</a></p>
+		    			<p class="mg_top10 text-center" id="notice_num">{$result.information.fans_num}</p>
+		    		</div>
+		    	</dd>
+		    </dl>
+			<div class="padding_10 bg_ff mg_top10">
+				<h4 class="bor_b">全部评论({$result.vod.reply_num})</h4>
+				<div class="comments">
+					{volist name='$result.reply' id='vo'}
+					<div class="comment-list bor_b padding_tb10">
+						<dl class="clearfix padding_10 ">
+							<dt class="left"><img class="head" src="{$vo.header_img}"/></dt>
+							<dd class="left">
+								<p>{$vo.role_name}</p>
+								<p class="mg_top10">{$vo.content}</p>
+							</dd>
+						</dl>
+						{volist name='vo.detail' id='v'}
+						<div class="comment-msg">
+							<div class="clearfix">
+								<p class="left comment-msgtext">{$v.role_name}：{$v.content}</p>
+								<div class=" right text-center">
+									<p class=""><a href="javascript:;">回复</a> </p>
+									<p class="mg_top10">{$vo.create_time|date="Y/m/d",strtotime(###)}</p>
+								</div>
+							</div>
+						</div>
+						{/volist}
+					</div>
+					{/volist}
+			    <!--<p class="text-center padding_10 mg_top20">-->
+			      	<!--<a href="javascript:;"><img src="__IMG__/down.png"/> 显示全部</a>-->
+			    <!--</p>-->
+			</div>
+		</div>
+		</div>
+		<!-- 微信分享扫码-->
+		<div id="wx_code" class="basic_spring key">
+			<h4 class="clearfix text-center bg_e padding_tb10 color_55">
+				<a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG2__/icon-dell.png"/></a>
+			</h4>
+
+			<div class="text-center bg_ff">
+				<p class="mg_top20"><strong>微信扫码分享</strong></p>
+
+				<p id="qrcode"><img class="drcode" id="drcode" src=""/></p>
+
+				<!--<p><a href="javascript:;" class="btn-a ">确定</a></p>-->
+			</div>
+		</div>
+		{include file='public/footer' /}
+	    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+	    <!--<script src="__JS__/TcPlayer-2.2.2.js" type="text/javascript" charset="utf-8"></script>-->
+	    <script src="__JS__/dm.js" type="text/javascript" charset="utf-8"></script>
+	    <script type="text/javascript">
+	     // var player = new TcPlayer('video', {
+			// 'live': true,
+			// "m3u8":  "http://pili-live-hls.play.51soha.com/soha/play_8.m3u8",
+			// "m3u8_hd" :"http://pili-live-hls.play.51soha.com/soha/play_8@720p.m3u8",
+			// "m3u8_sd" : "http://pili-live-hls.play.51soha.com/soha/play_8@480p.m3u8",
+			// "autoplay" : true,
+			// "coverpic" :  "http://pili-live-snapshot.play.51soha.com/soha/play_8.jpg",
+			// "clarityLabel" : { od: '原画', hd: '高清', sd: '标清' },
+			// "clarity" : 'od',
+			// "width" : '100%',
+			// "height" : '600'
+			// });
+			var no_login_status = '{$no_login}';
+	        var html='<img src="__IMG__/check_no.png"/>';
+            $(".vcp-timelabel").html(html)
+            
+            $(document).on('click','.vcp-timelabel',function(){
+            	console.log(111)
+            	if($(this).hasClass('active')){
+            		$(this).removeClass('active');
+            		$(this).children('img').attr('src','__IMG__/check_no.png');
+            	}else{
+            		$(this).addClass('active');
+            		$(this).children('img').attr('src','__IMG__/check_check.png');
+            	}
+            	$(".dm").toggle(500);
+            })
+         $("#notice").click(function () {
+             if(no_login_status == 1){
+                 location.href = '{:url("login/login")}';
+             }else{
+                 var notice = $(this).children('a').html();
+                 var form = new FormData();
+                 form.append('role_id','{$result.information.role_id}');
+                 if(notice == '关注'){
+                     var result = httpPosts('/Focus/addFocusRole',form);
+                     if(result == null) {
+                         $("#notice").children('a').css('background', '#d9d9d9');
+                         $("#notice").children('a').css('color', '#7f7f7f');
+                         $("#notice").children('a').html('已关注');
+                         var num = $('#notice_num').html();
+                         num++;
+                         $('#notice_num').html(num);
+                     }
+                 }else{
+                     var result = httpPosts('/Focus/hiddenRole',form);
+                     if(result == null) {
+                         $("#notice").children('a').css('background', '#2e89fe');
+                         $("#notice").children('a').css('color', '#fff');
+                         $("#notice").children('a').html('关注');
+                         var num = $('#notice_num').html();
+                         num--;
+                         $('#notice_num').html(num);
+                     }
+                 }
+			 }
+         })
+         $("#up").click(function () {
+             if(no_login_status == 1){
+                 location.href = '{:url("login/login")}';
+             }else{
+                 var up_status = $(this).data('id');
+                 // alert(up_status);
+                 var form = new FormData();
+                 form.append('pid','{$result.vod.pid}');
+                 httpPosts('/Vod/up',form);
+                 if(up_status){
+                     $("#up").data('id',0);
+                     $("#up").attr('src','__IMG__/zan.png');
+                     var num = $("#up_num").val();
+                     num--;
+                     $("#up_show").html("赞("+num+')');
+                     $("#up_num").val(num);
+                 }else{
+                     $("#up").data('id',1);
+                     $("#up").attr('src','__IMG__/zan-ok.png');
+                     var num = $("#up_num").val();
+                     num++;
+                     $("#up_show").html("赞("+num+')');
+                     $("#up_num").val(num);
+                 }
+			 }
+         });
+	     </script>
+	</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+        <!--系统消息-->
+        <div class="mg_top20 personal_div  bg_e" style="display: block">
+            <div class="msg-box bor_b">
+                <!--<a href="javascript:;" class="active" >聊天信息</a>-->
+                <a href="javascript:void (0);" onclick="sysMessage(this)" class="active">系统公告</a>
+                <a href="javascript:;" onclick="activitySms(this)">活动消息</a>
+                <!--<a href="javascript:;">私聊</a>-->
+            </div>
+            <!--聊天信息-->
+            <!--<div class="msg_div  bg_ff">-->
+            <!--<div class="bor_b padding_10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">恭喜你，累计分达到50分</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--<div class="right">-->
+            <!--<p class="">2.12</p>-->
+
+            <!--<p class="mg_top5"><img src="__IMG2__/dell.png"/></p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="bor_b padding_10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">恭喜你，累计分达到50分</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--<div class="right">-->
+            <!--<p class="">2.12</p>-->
+
+            <!--<p class="mg_top5"><img src="__IMG2__/dell.png"/></p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="bor_b padding_10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">恭喜你，累计分达到50分</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--<div class="right">-->
+            <!--<p class="">2.12</p>-->
+
+            <!--<p class="mg_top5"><img src="__IMG2__/dell.png"/></p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="bor_b padding_10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">恭喜你，累计分达到50分</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--<div class="right">-->
+            <!--<p class="">2.12</p>-->
+
+            <!--<p class="mg_top5"><img src="__IMG2__/dell.png"/></p>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--系统公告-->
+            <div id="sys" class="msg_div active bg_ff">
+
+                {volist name = 'sys.data' id= 'vo'}
+                <div class="bor_b padding_10">
+                    <div class="clearfix">
+                        <dl class="clearfix left msg-box1">
+                            <dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>
+                            <dd class="left padding_lr10">
+                                <p><strong>{$vo.title}</strong></p>
+
+                                <p class="mg_top5 text">{$vo.content}</p>
+                            </dd>
+                        </dl>
+                        <div class="right">
+                            <p class="">{$vo.create_time}</p>
+                        </div>
+                    </div>
+                </div>
+                {/volist}
+
+            </div>
+            <!--活动消息-->
+            <div class="msg_div clearfix">
+
+                {volist name='actmsg.data' id='vo'}
+                <div class="msg-activity bg_ff">
+                    <p class="clearfix ">
+                        <strong class="left font_16">{$vo.title}</strong>
+                        <a href="javascript:;" class="basic_a right bg_blue">{if $vo.is_reserve==1}进入直播间{else
+                            /}未预定{/if}</a>
+                    </p>
+                    <h6 class="mg_tb10">{$vo.start_time}开始 {$vo.reserve}人预定 </h6>
+                    <dl>
+                        <a href="javascript:;">
+                            <dt>
+                                <img class="width_100" src="__IMG2__/img1.png">
+                                <i class="mark">{switch name="vo.status"}
+                                    {case value="1"}进行中{/case}
+                                    {case value="2"}预告{/case}
+                                    {default /}已结束
+                                    {/switch}</i>
+                            </dt>
+                            <dd>{$vo.detail}</dd>
+                        </a>
+                    </dl>
+                </div>
+                {/volist}
+            </div>
+            <!--私聊-->
+            <!--<div class="msg_div bg_ff">-->
+            <!--<div class="msg-chat padding_10">-->
+            <!--<div class="padding_10 mg_top10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">区块链技术不可篡改的特性</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="padding_10 mg_top10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">区块链技术不可篡改的特性</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="padding_10 mg_top10">-->
+            <!--<div class="clearfix text-center">-->
+            <!--<dl class="clearfix left width_100">-->
+            <!--<dt class="right"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="right padding_lr10">-->
+            <!--<p class="text_right"><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">区块链技术不可篡改的特性</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="padding_10 mg_top10">-->
+            <!--<div class="clearfix text-center">-->
+            <!--<dl class="clearfix left width_100">-->
+            <!--<dt class="right"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="right padding_lr10">-->
+            <!--<p class="text_right"><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">区块链技术不可篡改的特性</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="padding_10 mg_top10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">区块链技术不可篡改的特性</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="padding_10 mg_top10">-->
+            <!--<div class="clearfix">-->
+            <!--<dl class="clearfix left">-->
+            <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>-->
+            <!--<dd class="left padding_lr10">-->
+            <!--<p><strong>小胡子</strong></p>-->
+
+            <!--<p class="mg_top5">区块链技术不可篡改的特性</p>-->
+            <!--</dd>-->
+            <!--</dl>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div class="padding_10 chat-inp bg_e text-center">-->
+            <!--<input type="text" name="" id="" value="" placeholder="文字"/>-->
+            <!--<input type="button" id="" class="bg_blue" value="发送"/>-->
+            <!--</div>-->
+
+            <!--</div>-->
+        </div>
+
+    </div>
+</div>
+<script>
+    function sysMessage(th) {
+//        $('.msg-box a').attr('class','');
+//        $(th).attr('class','active');
+        data = data = httpPosts('/message/systemmessage', false, false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            html = '';
+            $.each(data.data, function (i, va) {
+                html += '<div class="bor_b padding_10">' +
+                        '<div class="clearfix">' +
+                        '<dl class="clearfix left">' +
+                        '<dt class="left"><img class="head" src="__IMG2__/icon-head.png"/></dt>' +
+                        '<dd class="left padding_lr10">' +
+                        '<p><strong>' + va.title + '</strong></p>' +
+
+                        '<p class="mg_top5">' + va.content + '</p>' +
+                        '</dd>' +
+                        '</dl> <div class="right">' +
+                        '<p class="">' + va.create_time + '</p> </div> </div> </div>';
+            });
+            $('#sys').html(html);
+        }
+    }
+
+    function activitySms() {
+
+    }
+
+</script>
+
+</body>
+</html>

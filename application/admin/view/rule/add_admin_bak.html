@@ -1,0 +1,106 @@
+{include file='Common/header.html'}
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/statics/font-awesome-4.4.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/statics/base.css" />
+<link rel="stylesheet" href="{$smarty.const.STATIC_URL}/statics/iCheck-1.0.2/skins/all.css">
+<style>
+    .modal.in .modal-dialog{
+        margin-top: 20%;
+        z-index: 10000;
+    }
+    .modal-backdrop{
+        z-index: 0;
+    }
+    input[type=checkbox], input[type=radio] {
+         opacity: 1;
+         position: inherit;
+         left: -9999px;
+         z-index: -1;
+         cursor: pointer;
+    }
+
+</style>
+<div class="page-content">
+    <!-- Page Breadcrumb -->
+    <div class="page-breadcrumbs">
+<div class="bjy-admin-nav"><a href="{$smarty.const.__MODULE__}/Index/index"><i class="fa fa-home"></i> 首页</a> &gt; 后台管理 &gt; 添加管理员</div>
+<ul id="myTab" class="nav nav-tabs">
+    <li><a href="{$smarty.const.__MODULE__}/Rule/admin_user_list">管理员列表</a></li>
+    <li class="active"><a href="{$smarty.const.__MODULE__}/Rule/add_admin">添加管理员</a></li>
+</ul>
+<form class="form-inline" method="post">
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="home">
+    <table class="table table-striped table-bordered table-hover table-condensed">
+        <tr>
+            <th>管理组</th>
+            <td>
+                {foreach $data as $v} {$v['title']} <input class="xb-icheck" type="checkbox" name="group_ids[]"
+                                                                    value="{$v['id']}"> &emsp;{/foreach}
+            </td>
+        </tr>
+        <tr>
+            <th>姓名</th>
+            <td><input class="form-control" type="text" name="username"></td>
+        </tr>
+        <tr>
+            <th>手机号</th>
+            <td><input class="form-control" type="text" name="phone"></td>
+        </tr>
+        <tr>
+            <th>邮箱</th>
+            <td><input class="form-control" type="text" name="email"></td>
+        </tr>
+        <tr>
+            <th>初始密码</th>
+            <td><input class="form-control" type="text" name="password"></td>
+        </tr>
+        <tr>
+            <th>状态</th>
+            <td><span class="inputword ">允许登录</span> <input class="xb-icheck" type="radio" name="status" value="1"
+                                                           checked="checked"> &emsp; <span class="inputword ">禁止登录</span>
+                <input class="xb-icheck" type="radio" name="status" value="0"></td>
+        </tr>
+        <tr>
+            <th></th>
+            <td><input class="btn btn-success" type="submit" value="添加"></td>
+        </tr>
+    </table>
+
+</form>
+    </div></div></div></div>
+<script src="{$smarty.const.STATIC_URL}/statics/base.js"></script>
+<!--Basic Scripts-->
+<script src="{$smarty.const.JS_URL}jquery-2.0.3.min.js"></script>
+<script src="{$smarty.const.JS_URL}bootstrap.min.js"></script>
+
+<!--Beyond Scripts-->
+<script src="{$smarty.const.JS_URL}beyond.min.js"></script>
+
+
+<!--Page Related Scripts-->
+<!--Sparkline Charts Needed Scripts-->
+<script src="{$smarty.const.JS_URL}charts/sparkline/jquery.sparkline.js"></script>
+<script src="{$smarty.const.JS_URL}charts/sparkline/sparkline-init.js"></script>
+
+<!--Easy Pie Charts Needed Scripts-->
+<script src="{$smarty.const.JS_URL}charts/easypiechart/jquery.easypiechart.js"></script>
+<script src="{$smarty.const.JS_URL}charts/easypiechart/easypiechart-init.js"></script>
+
+<!--Flot Charts Needed Scripts-->
+<script src="{$smarty.const.JS_URL}charts/flot/jquery.flot.js"></script>
+<script src="{$smarty.const.JS_URL}charts/flot/jquery.flot.resize.js"></script>
+<script src="{$smarty.const.JS_URL}charts/flot/jquery.flot.pie.js"></script>
+<script src="{$smarty.const.JS_URL}charts/flot/jquery.flot.tooltip.js"></script>
+<script src="{$smarty.const.JS_URL}charts/flot/jquery.flot.orderBars.js"></script>
+<script src="{$smarty.const.STATIC_URL}/statics/iCheck-1.0.2/icheck.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.xb-icheck').iCheck({
+            checkboxClass: "icheckbox_minimal-blue",
+            radioClass: "iradio_minimal-blue",
+            increaseArea: "20%"
+        });
+    });
+</script>
+</body>
+</html>

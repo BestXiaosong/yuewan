@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <!--发起活动-->
+    <div class="main-right left bg_ff">
+        <div class="mg_top20 personal_div" style="display: block">
+            <h4 class="padding_10 bg_e clearfix">
+                <span class="left"><img class="vertical-align_m mg_lr10" src="__IMG2__/my-zl.png" alt=""/>发起活动</span>
+                <!--<a href="javascript:;" onclick="findAll()" class="right basic_a bg_blue">查看全部</a>-->
+            </h4>
+            <!---->
+
+            <div class="initiate-activities">
+                <form id="sponsor">
+                    <div class="mg_top20">
+                        <span>房间：</span>
+                        <select id="IsTurnOut" name="id">
+                            {volist name='glroom' id='vo'}
+                            <option value="{$vo.room_id}">{$vo.room_name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div class="mg_top20">
+                        <span>推流码：</span>
+                        <span id="pushUrl"></span>
+                        <!--<input type="text" name="" id="pushUrl" value=""/>-->
+                        <!--<a href="javascript:;" class="blue">查看教程</a>-->
+                    </div>
+                    <div class="mg_top20">
+                        <span>请输入标题：</span>
+                        <input type="text" name="title" id="" value=""/>
+                    </div>
+                    <div class="mg_top20">
+                        <span>请设置开始时间：</span>
+                        <input type="date">
+                        <input type="datetime" name="start_time" id="da" value=""/>
+                    </div>
+                    <div class="mg_top20">
+                        <span>请输入简介：</span>
+                        <textarea name="detail" rows="10" cols="50"></textarea>
+                    </div>
+                    <div class="mg_top20">
+                        <span>请选择图片/视频：</span>
+                        <input type="file" name="file" id="file" hidden="hidden" onchange="filechange()"  value=""/>
+                        <label for="file" class="file" >选择文件</label>
+                        <input type="hidden" name="img" id="input" value=""/>
+                        <img id="img" src="/public/index/img2/addtp.png" style="width: 300px;height: 200px"/>
+                        <input type="hidden" name="detail_img" id="detail_img"  value="http://file.51soha.com/53d35201809121152165142.jpg"/>
+
+                    </div>
+                    <div class="mg_top20">
+                        <span>设置活动收费：</span>
+                        <input type="hidden" hidden="hidden" name="charge" id="checkbox" value="0"/>
+                        <label for="checkbox"><img class="check_img" src="__IMG2__/check_no.png" alt=""/></label>
+                    </div>
+                    <div class="mg_top20" id="charge_id" style="display: none">
+                        <span>请输入收费金额：</span>
+                        <input type="number" name="money" id="" value=""/>
+                    </div>
+                    <div class="mg_top20">
+                        <span>活动状态：</span>
+                        <select id="" name="status">
+                            <option value="">请选择房间</option>
+                            <option value="1">马上开启</option>
+                            <option value="2">预告</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mg_top20">
+                        <a href="javascript:;" onclick="sponsor()" class="btn-a initiate-a share-a">发起</a>
+                    </div>
+                </form>
+            </div>
+
+            <!--查看全部-->
+            <div class="initiate-box clearfix" style="display: none;">
+                <div class="msg-activity bg_ff">
+                    <p class="clearfix ">
+                        <strong class="left font_16">区块链和比特币</strong>
+                        <a href="javascript:;" class="basic_a right bg_blue">预定</a>
+                    </p>
+                    <h6 class="mg_tb10">7月26日 12:00开始 123人预定 </h6>
+                    <dl>
+                        <a href="javascript:;">
+                            <dt>
+                                <img class="width_100" src="__IMG2__/img1.png">
+                                <i class="mark">待开始</i>
+                            </dt>
+                            <dd>天涯社区创始人：区块链不是救命稻草，而是天涯重新崛起的核武器是天涯重新崛起的核武器</dd>
+                        </a>
+                    </dl>
+                </div>
+                <div class="msg-activity bg_ff">
+                    <p class="clearfix ">
+                        <strong class="left font_16">区块链和比特币</strong>
+                        <a href="javascript:;" class="basic_a right bor_blue">进入直播间</a>
+                    </p>
+                    <h6 class="mg_tb10">7月26日 12:00开始 123人预定 </h6>
+                    <dl>
+                        <a href="javascript:;">
+                            <dt>
+                                <img class="width_100" src="__IMG2__/img1.png">
+                                <i class="mark">待开始</i>
+                            </dt>
+                            <dd>天涯社区创始人：区块链不是救命稻草，而是天涯重新崛起的核武器是天涯重新崛起的核武器</dd>
+                        </a>
+                    </dl>
+                </div>
+                <div class="msg-activity bg_ff">
+                    <p class="clearfix ">
+                        <strong class="left font_16">区块链和比特币</strong>
+                        <a href="javascript:;" class="basic_a right bg_gray">已预定</a>
+                    </p>
+                    <h6 class="mg_tb10">7月26日 12:00开始 123人预定 </h6>
+                    <dl>
+                        <a href="javascript:;">
+                            <dt>
+                                <img class="width_100" src="__IMG2__/img1.png">
+                                <i class="mark">待开始</i>
+                            </dt>
+                            <dd>天涯社区创始人：区块链不是救命稻草，而是天涯重新崛起的核武器是天涯重新崛起的核武器</dd>
+                        </a>
+                    </dl>
+                </div>
+                <div class="msg-activity bg_ff">
+                    <p class="clearfix ">
+                        <strong class="left font_16">区块链和比特币</strong>
+                        <a href="javascript:;" class="basic_a right bg_blue">观看回放</a>
+                    </p>
+                    <h6 class="mg_tb10">7月26日 12:00开始 123人预定 </h6>
+                    <dl>
+                        <a href="javascript:;">
+                            <dt>
+                                <img class="width_100" src="__IMG2__/img1.png">
+                                <i class="mark">待开始</i>
+                            </dt>
+                            <dd>天涯社区创始人：区块链不是救命稻草，而是天涯重新崛起的核武器是天涯重新崛起的核武器</dd>
+                        </a>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#IsTurnOut").change(function () {
+        formData = new FormData;
+
+        var room = $(this).children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        formData.append('id', room);
+        data = httpPosts('/play/pushUrl', formData, false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            $('#pushUrl').text(data);
+        }
+    });
+
+    function sponsor() {
+        formData = new FormData(document.querySelector("form"));
+
+        var room = $(this).children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        $date1 = $('#da').val();
+        var date = new Date(date1);
+        var time3 = Date.parse(date)/1000;
+        formData.append('start_time',time3);
+        data = httpPosts('/play/act', formData, false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            zcAlert('发起成功', 1);
+        }
+    }
+
+    function filechange() {
+        console.log($('#sponsor'));
+        var formData = new FormData($('#sponsor')[0]);
+        formData.append('phone', "{$phone}");
+        formData.append('token', "{$token}");
+        $.ajax({
+            type: 'post',
+            url: "{$API}" + '/upload/index',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+        }).success(function (res) {
+            if (res.code == 1) {
+                //上传完毕回调
+                $("#input").val(res.data);
+                $('#img').attr('src', res.data);
+            } else if (res.code == -1) { //登录过期
+                if ("{:request()->isMobile}") { //手机访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                } else { //pc访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                }
+            } else {
+                zcAlert(res.msg, 0);
+                layer.closeAll("loading");
+            }
+        }).error(function () {
+            zcAlert("上传失败");
+        });
+    }
+
+    function findAll(){
+        formData = new FormData;
+
+        var room = $('#IsTurnOut').children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        formData.append('id', room);
+
+        data = httpPosts('/play/actList', formData, false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            var html = '';
+            var status1 = '';
+            $.each(data,function(i,va){
+                if(va.status==1){
+                    status1 = '进行中';
+                }else if(va.status==2){
+                    status1 = '预告';
+                }else{
+                    status1 = '活动已结束';
+                }
+                html += ' <div class="msg-activity bg_ff">'+
+                        '<p class="clearfix ">'+
+                        '<strong class="left font_16">'+va.title+'</strong>'+
+                        '<a href="javascript:;" class="basic_a right bg_blue">'+ status1 +'</a>'+
+                        '</p>'+
+                        '<h6 class="mg_tb10">'+va.start_time+'开始 123人预定 </h6>'+
+                '<dl>'+
+                '<a href="javascript:;">'+
+                        '<dt>'+
+                        '<img class="width_100" src="__IMG2__/img1.png">'+
+                        '<i class="mark">待开始</i>'+
+                       '</dt>'+
+                        '<dd>天涯社区创始人：区块链不是救命稻草，而是天涯重新崛起的核武器是天涯重新崛起的核武器</dd>'+
+                '</a>'+
+                '</dl>'+
+                '</div>';
+            });
+
+
+
+
+            zcAlert('发起成功', 1);
+
+            $('.initiate-box').show();
+        }
+
+
+
+
+    }
+
+</script>
+
+</body>
+</html>

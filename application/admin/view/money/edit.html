@@ -1,0 +1,115 @@
+
+{extend name="public:common_edit"/}
+{block name="css"}
+<style>
+    .form-control {
+        max-width: 350px;
+    }
+
+    .tb-name {
+        width: 238px;
+    }
+    .error{
+        color: red;
+        margin-top: 10px;
+        display: none;
+    }
+    .select{
+        margin-bottom: 10px;
+    }
+    .doctor{
+        display: none;
+    }
+</style>
+{/block}
+{block name="main"}
+<section class="content">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default"
+               data-original-title="返回"><i class="fa fa-reply"></i></a>
+            <a href="javascript:void(0);" class="btn btn-default"
+               data-url="javascript:;"
+               onclick="get_help(this)"><i class="fa fa-question-circle"></i> 帮助</a>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+            </div>
+            <div class="panel-body">
+                <!--表单数据-->
+                <form action="" method="post" class="form-horizontal"
+                      id="category_form">
+
+                    <!--通用信息-->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_tongyong">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>手机号码:</td>
+                                    <td>{$data.phone}</td>
+                                </tr>
+                                <tr>
+                                    <td>提现货币类型:</td>
+                                    <td>{$data.money_type}</td>
+                                </tr>
+                                <tr>
+                                    <td>金额:</td>
+                                    <td>{$data.money}</td>
+                                </tr>
+                                <tr>
+                                    <td>提现地址:</td>
+                                    <td>{$data.ETHAddr}</td>
+                                </tr>
+                                <tr>
+                                    <td>提现发起时间:</td>
+                                    <td>{$data.create_time}</td>
+                                </tr>
+                                <tr>
+                                    <td>支付钱包:</td>
+                                    <td><textarea name="Keystore" class="form-control"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <td>密码钱包:</td>
+                                    <td><input type="text" class="form-control" name="Pwd" value="" placeholder="请输入钱包密码" ></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <label class="control-label col-sm-2"></label>
+                        <input type="hidden" name="id" value="{$data.b_id}">
+                        {if condition="$data.status == 2"}
+                        <input type="hidden" class="is_pass" name="status" value="">
+                        <input style="display: none" class="btn btn-primary submit"  type="submit" value="审核通过">
+                        <button type="button" class="btn btn-success success">通过</button>
+                        <button type="button" class="btn btn-danger danger">驳回</button>
+                        {else /}
+                        <button type="button" class="btn btn-success">此内容已审核</button>
+                        {/if}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="js"}
+<script>
+    $(function () {
+        $('.success').click(function () {
+            $('.is_pass').val(1);
+            $('.submit').click();
+        });
+        $('.danger').click(function () {
+            $('.is_pass').val(0);
+            $('.submit').click();
+        });
+    })
+</script>
+
+
+
+{/block}

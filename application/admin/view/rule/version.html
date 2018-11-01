@@ -1,0 +1,87 @@
+{extend name="public:common_edit"/}
+{block name="css"}
+    <link href="/public/plugs/switch-button/css/bootstrap-switch.css" rel="stylesheet">
+{/block}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i>{$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>id</td>
+                                <td>版本号</td>
+                                <td>版本名</td>
+                                <td>强制更新</td>
+                                <td>链接地址</td>
+                                <td>上次修改时间</td>
+                                <td>上传时间</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row"}
+                            <tr>
+                                <td>{$row.id}</td>
+                                <td>{$row.versionCode}</td>
+                                <td>{$row.versionName}</td>
+                                <td><input type="checkbox" class="checkbox is_top" {:ischeck($row.force)} data-size="small" data-id="{$row.id}"></td>
+                                <td>{$row.url}</td>
+                                <td>{$row.update_time}</td>
+                                <td>{$row.create_time}</td>
+                                <td>
+                                    <a href="{:url('version_edit',['id'=>$row.id])}" class="btn btn-primary ">修改</a>
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+
+    </div>
+{/block}
+
+{block name="js"}
+<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
+<script>
+    $(document).ready(function(){
+        $(".checkbox").bootstrapSwitch({
+            onText:'是',
+            offText:'否'
+        });
+        $('.is_top').on('switchChange.bootstrapSwitch', function (event,state){
+            var val = state?1:0;
+            var id = $(this).attr('data-id');
+            $.post("{:url('top')}",{id:id,val:val},function (data) {
+                if(data.code!=1){layer.msg('改变状态失败', {icon: 5, time: 2000});}
+            });
+        });
+    });
+    $(function () {
+        var force   = "{:input('get.force')}";
+        if(force != ''){
+            $('#force'+force).attr('selected',true)
+        }
+    })
+</script>
+
+
+
+{/block}
+
+
+

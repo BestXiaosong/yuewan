@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Expires" CONTENT="-1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>拍卖中心</title>
+		<script src="__JS__/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+		{include file="public/js" /}
+		<link rel="shortcut icon" href="__IMG__/favicon.ico" />
+		<link rel="bookmark" href="__IMG__/favicon.ico" type="image/x-icon" 　/>
+		<link rel="stylesheet" type="text/css" href="__CSS__/common.css" />
+		<link rel="stylesheet" type="text/css" href="__CSS__/index.css" />
+
+	</head>
+	<body>
+	{include file='public/header' /}
+		<div class="content ">
+			<div class="clearfix">
+				<div class="auction-box">
+				  	<div class="tittle bor_b clearfix bg_ff">
+					    <h4 class="padding_tb10 left"><img class="vertical-align_m mg_lr10" src="__IMG__/index-home.png"><strong>房间拍卖</strong></h4>
+					    <div class="right nav-right">
+							<input type="text" name="room_name" id="room" value="{$Request.get.room_name|default=''}" placeholder="请输入房间名称">
+							<a href="{:url('index')}" class="soso"><img src="__IMG__/icon-find.png"></a>
+						</div>
+					</div>
+					<table border="" cellspacing="" cellpadding="" class="auction-tab bg_ff ">
+						<tr>
+							<th>房间名称</th>
+							<th>房间价格</th>
+							<th>上次竞价时间</th>
+							<th>操作</th>
+						</tr>
+						{volist name="room[data]" id="v"}
+						<tr>
+							<td>{$v.room_name}</td>
+							<td>{$v.money}</td>
+							<td>{$v.update_time}</td>
+							{if isset($v.status) and $v.status eq 1}<td><a href="javascript:;" style="color:#3683F3;">使用中</a></td>{else}<td><a href="javascript:;" class="basic_a approve-a" style="color:#3683F3;" data-name="{$v.room_name}" data-type="1">立即加价</a></td>{/if}
+						</tr>
+						{/volist}
+					</table>
+					<!--<h4 class="search_tittle clearfix  padding_10 ">-->
+						<!--<strong class="left font_16"><i></i>正在进行的拍卖</strong>-->
+					<!--</h4>-->
+					<!--<table border="" cellspacing="" cellpadding="" class="auction-tab bg_ff ">-->
+						<!--<tr>-->
+							<!--<th>房间名称</th>-->
+							<!--<th>房间价格</th>-->
+							<!--<th>上次竞价时间</th>-->
+						<!--</tr>-->
+						<!--{volist name="room[data]" id="v"}-->
+						<!--<tr>-->
+							<!--<td>{$v.room_name}</td>-->
+							<!--<td>{$v.money}</td>-->
+							<!--<td>{$v.update_time|date='Y-m-d H:i',###}</td>-->
+						<!--</tr>-->
+						<!--{/volist}-->
+
+					<!--</table>-->
+				</div>
+				<div class="auction-box">
+				  	<div class="tittle bor_b clearfix bg_ff">
+					    <h4 class="padding_tb10 left"><img class="vertical-align_m mg_lr10" src="__IMG__/index-home.png"><strong>角色拍卖</strong></h4>
+					    <div class="right nav-right">
+							<input type="text" name="role_name" id="role" value="{$Request.get.role_name|default=''}" placeholder="请输入角色名称">
+							<a href="{:url('index')}" class="soso"><img src="__IMG__/icon-find.png"></a>
+						</div>
+					</div>
+					<table border="" cellspacing="" cellpadding="" class="auction-tab bg_ff ">
+						<tr>
+							<th>角色名称</th>
+							<th>角色价格</th>
+							<th>上次竞价时间</th>
+							<th>操作</th>
+						</tr>
+						{volist name='role[data]' id="v"}
+						<tr>
+							<td>{$v.role_name}</td>
+							<td>{$v.money}</td>
+							<td>{$v.update_time}</td>
+							{if isset($v.status) and $v.status eq 1}<td><a href="javascript:;" style="color:#3683F3;">使用中</a></td>{else}<td><a href="javascript:;" class=" basic_a approve-a" style="color:#3683F3;" data-name="{$v.role_name}" data-type="0">立即加价</a></td>{/if}
+						</tr>
+						{/volist}
+
+
+					</table>
+					<!--<h4 class="search_tittle clearfix  padding_10 ">-->
+						<!--<strong class="left font_16"><i></i>正在进行的拍卖</strong>-->
+					<!--</h4>-->
+					<!--<table border="" cellspacing="" cellpadding="" class="auction-tab bg_ff ">-->
+						<!--<tr>-->
+							<!--<th>角色名称</th>-->
+							<!--<th>角色价格</th>-->
+							<!--<th>上次竞价时间</th>-->
+						<!--</tr>-->
+						<!--{volist name='role[data]' id="v"}-->
+						<!--<tr>-->
+							<!--<td>{$v.role_name}</td>-->
+							<!--<td>{$v.money}</td>-->
+							<!--<td>{$v.update_time|date="Y-m-d H:i",###}</td>-->
+						<!--</tr>-->
+						<!--{/volist}-->
+					<!--</table>-->
+				</div>
+			</div>
+			<div class="mg_top40">
+				<h4 class="text-center"><strong>拍卖规则</strong></h4>
+				<div class="rule lin_25">
+					{$rule}
+				</div>
+			</div>
+		</div>
+
+	<div class="basic_spring approve" style="display: none;">
+		<h4 class="clearfix text-center bg_e padding_tb10 color_55">加价
+			<a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG__/icon-dell.png"></a>
+		</h4>
+		<div class="text-center bg_ff">
+			<input type="text" placeholder="请输入竞价价格" style="margin: 20px;" id="money">
+			<input type="hidden" id="name">
+			<input type="hidden" id="types">
+			<p><a href="javascript:;" class="btn-a ">确定</a></p>
+		</div>
+	</div>
+	{include file='public/footer' /}
+	   <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+	   <script>
+		   $("#room").blur(function () {
+		       var value = $(this).val();
+			  $(this).siblings('a').attr('href', '{:url("index")}?room_name='+value);
+           })
+           $("#role").blur(function () {
+               var value = $(this).val();
+               $(this).siblings('a').attr('href', '{:url("index")}?role_name='+value);
+           })
+           $('.approve-a').click(function(){
+               $('.approve').fadeIn(200);
+               $('.overlay').show();
+               $("#types").val($(this).data('type'));
+               $("#name").val($(this).data('name'));
+           });
+           var forms = new FormData();
+		   $("#money").blur(function () {
+
+               forms.append('type',$("#types").val());
+               forms.append('name',$("#name").val());
+               forms.append('money',$(this).val());
+           })
+           $(".dell_a").click(function(){
+               $('.overlay').hide()
+               $(this).parent().parent().fadeOut(200)
+           })
+		   $(".btn-a").click(function () {
+               $('.basic_spring').css('display','none');
+               if($("#types").val() == 0){
+                   var result = httpPosts('/Sale/sale_role_add',forms);
+
+               }else{
+                   var result = httpPosts('/Sale/sale_room_add',forms);
+               }
+               if(result == null){
+					zcAlert('竞价成功');
+               }
+			   $(".layui-layer-btn0").click(function () {
+				   history.go(0);
+               })
+           })
+	   </script>
+	</body>
+	
+</html>

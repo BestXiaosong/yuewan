@@ -1,0 +1,118 @@
+{extend name="public:common_index"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i>竞猜内容</h3>
+        </div>
+        <div class="panel-body">
+
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <!--通用信息-->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_tongyong">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>房间名称:</td>
+                                    <td>{$data.room_name}</td>
+                                </tr>
+                                <tr>
+                                    <td>竞猜话题:</td>
+                                    <td>{$data.title}</td>
+                                </tr>
+                                <tr>
+                                    <td>选项A:</td>
+                                    <td>{$data.answer_A}</td>
+                                </tr>
+                                <tr>
+                                    <td>选项A投注总额:</td>
+                                    <td>{$data.amoney}</td>
+                                </tr>
+                                <tr>
+                                    <td>选项A赔率:</td>
+                                    <td>{$data.odds_A}</td>
+                                </tr>
+                                <tr>
+                                    <td>选项B:</td>
+                                    <td>{$data.answer_B}</td>
+                                </tr>
+                                <tr>
+                                    <td>选项B投注总额:</td>
+                                    <td>{$data.bmoney}</td>
+                                </tr>
+                                <tr>
+                                    <td>选项B赔率:</td>
+                                    <td>{$data.odds_B}</td>
+                                </tr>
+                                <tr>
+                                    <td>正确选项:</td>
+                                    <td>{$data.right}</td>
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-list"></i>明细</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>id</td>
+                                <td>用户</td>
+                                <td>选项</td>
+                                <td>投注金额</td>
+                                <td>结果</td>
+                                <td>创建时间</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$key}</td>
+
+                                <td>{$row.role_name}</td>
+                                <td>{$row.answer}</td>
+                                <td>{$row.money}</td>
+                                <td>{$row.s_money}</td>
+                                <td>{$row.create_time|fmt_time}</td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+    $(function () {
+        var type   = "{$Think.get.type}";
+        if(type != ''){
+            $('#type'+type).attr('selected',true)
+        }
+
+        var status   = "{$Think.get.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+
+</script>
+
+
+
+{/block}
+
+
+

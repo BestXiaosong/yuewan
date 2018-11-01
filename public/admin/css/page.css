@@ -1,0 +1,14 @@
+#pagerarea{width: 100%;text-align: center;}
+#pagerarea span,#pagerarea a{padding: 4px 10px;display: inline-block; color:#999;border:1px solid #ddd;border-radius: 2px;margin:0 2px;background: #fff}
+#pagerarea a:hover,#pagerarea .current{border-color:#2A95DD;background: #2A95DD;color: #fff }
+#pagerarea .current{background: #0E7AC3;border-color: #0E7AC3}
+#pagerarea .current span{background: #0E7AC3;border-color: #0E7AC3;color:white;}
+#pagerarea .active{background: #0E7AC3;border-color: #0E7AC3}
+#pagerarea .disabled{border-color: #eee;color: #ccc}
+#pagerarea .page_sub{cursor: pointer}
+#pagerarea input{width:40px;}
+
+#pagerarea .choose{border:0; }
+
+
+.addbtn{background-color: #68C964;width: 96px;height: 32px;line-height: 32px;color: #FFF;border-radius: 8px;font-weight: bold;display: block;float: right;text-align: center;margin-top:3px;margin-right: 10px;}

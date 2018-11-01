@@ -1,0 +1,251 @@
+
+{extend name="public:common_edit"/}
+{block name="css"}
+<style>
+    .form-control {
+        max-width: 350px;
+    }
+
+    .tb-name {
+        width: 238px;
+    }
+    .error{
+        color: red;
+        margin-top: 10px;
+        display: none;
+    }
+    .select{
+        margin-bottom: 10px;
+    }
+    .doctor{
+        display: none;
+    }
+</style>
+{/block}
+{block name="main"}
+<section class="content">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default"
+               data-original-title="返回"><i class="fa fa-reply"></i></a>
+            <a href="javascript:void(0);" class="btn btn-default"
+               data-url="javascript:;"
+               onclick="get_help(this)"><i class="fa fa-question-circle"></i> 帮助</a>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+            </div>
+            <div class="panel-body">
+                <!--表单数据-->
+                <form action="" method="post" class="form-horizontal"
+                      id="category_form">
+
+                    <!--通用信息-->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_tongyong">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>封面图片:</td>
+                                    <td>{:uploadHtml('img',$data.img,'single_img')}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>点播标题:</td>
+                                    <td><input placeholder="点播标题" class="form-control" name="title" type="text" value="{$data.title}"></td>
+                                </tr>
+                                <tr>
+                                    <td>点播内容:</td>
+                                    <td><input placeholder="点播内容" class="form-control" name="detail" type="text" value="{$data.detail}"></td>
+                                </tr>
+                                <tr>
+                                    <td>播放地址:</td>
+                                    <td >
+                                        <div style="position: relative;max-width: 300px">
+                                            <video autoplay style="max-width: 300px !important;" class="play_url" controls="controls" muted  src="{$data.play_url}">
+                                                对不起；您的浏览器不支持HTML5视频在WebM和VP8 / VP9或MP4
+                                            </video>
+                                            <a style="position: absolute;top: 5%;right: 2%;" class="del" data-url="{$data.play_url}">删除视屏</a>
+                                        </div>
+                                        <input  class="form-control" name="play_url" type="hidden" value="{$data.play_url}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>视频上传:</td>
+                                    <td><input id="file" name="file" class="file-container" style="float: left"  type="file" value="文件上传"><span class="btn btn-primary qiniu">点击上传视频</span><span style="color: red;">ps:上传视频前请先删除原视频</span></td>
+                                </tr>
+
+                                <tr>
+                                    <td>直播分类:</td>
+                                    <td>{:arr2select('cid',$cate,'',$data.cid,'cid','cate_name')}</td>
+                                </tr>
+                                <tr>
+                                    <td>状态:</td>
+                                    <td>
+                                        <select class="form-control" name="status">
+                                            <option id="status1" value="1"> 启用</option>
+                                            <option id="status0" value="0">禁用</option>
+                                        </select>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <label class="control-label col-sm-2"></label>
+                        <input type="hidden" name="id" value="{$data.pid}">
+                        <input class="btn btn-primary submit" type="submit" value="保存">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="js"}
+<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
+<script type="text/javascript" src="/public/plugs/jQuery-Tags-Input/src/jquery.tagsinput.js"></script>
+<script type="text/javascript" src="https://unpkg.com/qiniu-js@v2.4.0/dist/qiniu.min.js"></script>
+<script>
+
+    $('.qiniu').click(function () {
+        var file = $('#file')[0].files[0];
+        if (!file){
+            layer.msg('您未选择文件', {icon: 5, time: 2000});return false;
+        }
+        var btn = $(this);
+        btn.attr('disabled', 'disabled');
+        layer.msg('上传中', {
+            icon: 16
+            ,shade: [0.3,'#999999'],
+            time:21600000
+        });
+        var token = "{$token}";
+        var index = file.name.lastIndexOf(".");
+        var ext = file.name.substring(index);
+        var key = takeName('vod',2)+ext;
+        var config = {
+            useCdnDomain: true,
+            region: qiniu.region.z0,
+            concurrentRequestLimit:3,
+        };
+        var putExtra = {
+            fname: file.name,
+            params: {},
+            mimeType:  null
+        };
+        var observer = {
+            next(res){
+                $('.layui-layer-padding').html('<i class="layui-layer-ico layui-layer-ico16"></i>上传中 '+res.total.percent.toFixed(2)+'%');
+            },
+            error(err){
+                layer.msg('上传失败,请稍后重试'+err.message, {icon: 5, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+            },
+            complete(res){
+                var domain = "{$domain}";
+                var url = domain+'/'+res.key;
+                $('.play_url').attr("src",url);
+                $('.del').attr('data-url',url);
+                $("input[name='play_url']").val(url);
+                layer.msg('上传成功', {icon: 1, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+                removeFile('file');
+            }
+        };
+        var observable = qiniu.upload(file, key, token, putExtra, config)
+        var subscription = observable.subscribe(observer)
+
+    });
+
+
+
+
+    $('.del').click(function () {
+        var btn = $(this);
+        btn.attr('disabled', 'disabled');
+        var load=layer.load(1, {
+            shade: [0.3,'#999999'] //0.1透明度的白色背景
+        });
+        var url = $(this).data('url');
+        $.get("{:url('/upload/delete1')}"+'?file='+url, function(result){
+            if (result.code == 1){
+                layer.msg('删除成功', {icon: 1, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+                $('.playUrl').attr("src",'');
+                $('.del').attr('data-url','');
+                $("input[name='playUrl']").val('');
+            } else{
+                layer.msg('删除失败,请稍后重试', {icon: 5, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+            }
+        });
+
+    })
+
+    $('.submits').click(function () {
+        var btn = $(this);
+        btn.attr('disabled', 'disabled');
+        var load=layer.load(1, {
+            shade: [0.3,'#999999'] //0.1透明度的白色背景
+        });
+        var form = btn.closest("form");
+        var id = btn.parents('form').attr('id');
+        var formData =  new FormData($('#'+id)[0]);
+        // formData.delete('file');
+        var url = form.attr("action");
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 1) {
+                    successRedirect(result.msg, result.url, 1);
+                }
+                else if (result.code == 3){
+                    topRedirect(result.msg, result.data, 1);
+                }
+                else {
+                    zcAlert(result.msg,0);
+                    layer.closeAll("loading");
+                    btn.attr('disabled', false);
+                }
+            },
+            error: function () {
+                layer.msg('请求失败,网络连接超时', {icon: 5, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+            }
+        });
+        return false;
+    });
+
+
+    $(function () {
+        var top   = "{$data.top}";
+        if(top != ''){
+            $('#top'+top).attr('selected',true)
+        }
+
+        var status   = "{$data.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+
+</script>
+
+
+
+{/block}

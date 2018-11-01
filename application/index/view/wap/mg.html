@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>soha</title>
+    <link rel="stylesheet" href="__CSS__/css.css"/>
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+<div class="login">
+    <img src="__IMG__/logo.png" alt=""/>
+    <ul>
+        <li>
+            <input name="phone" placeholder="请输入账号" type="text"/>
+        </li>
+        <li>
+            <input name="password" placeholder="请输入密码" type="password"/>
+        </li>
+
+    </ul>
+    <div id="slider">
+        <div id="slider_bg"></div>
+        <span id="label">&gt;&gt;</span> <span id="labelTip">拖动滑块验证</span>
+        <input type="hidden" id="code" value="0"/>
+    </div>
+    <a  class="sub">登录</a>
+    <p class="res-box">
+        <a href="res.html">立即注册</a>
+        <!--<a href="getpass.html" class="res">忘记密码？</a>-->
+    </p>
+
+    <p class="lo-txt">
+        登录即代表同意SOHA直播平台服务协议
+    </p>
+</div>
+<script src="__JS__/jquery.slideunlock.js"></script>
+<script>
+    $('.sub').click(function () {
+        var phone = $("input[name='phone']").val();
+        if (!phone){
+            layer.msg('请输入手机号码');
+            return false;
+        }else{
+            if (!verify.is_phone(phone)){
+                layer.msg('请输入正确的手机号码');
+                return false;
+            }
+        }
+        var password = $("input[name='password']").val();
+        if (!password){
+            layer.msg('请输入密码');
+            return false;
+        }
+        var formData = new FormData();
+        formData.append('phone',phone);
+        formData.append('password',password);
+        var btn = $(this);
+        var data = httpPost('/login/MBerry',formData,btn,true);
+        if (data !== false){
+            $.post("{:url('index/setUserInfo')}",{phone:data.phone,token:data.token},function (data) {
+                if (data.code == 1){
+                    //TODO 登录成功后的跳转页面更改
+                    successRedirect('登录成功', "{:url('user/play')}", 1);
+                }else if(data.code == 101){
+                    layer.msg('该账号未绑定平台账号,请前往app绑定', {icon: 5, time: 2000});
+                    layer.closeAll("loading");
+                    btn.attr('disabled', false);
+                }else{
+                    layer.msg('网络连接错误', {icon: 5, time: 2000});
+                    layer.closeAll("loading");
+                    btn.attr('disabled', false);
+                }
+            })
+        }
+
+
+
+    })
+
+
+
+
+
+
+
+
+    $(function () {
+        var slider = new SliderUnlock("#slider",{
+            successLabelTip : "验证成功"
+        },function(){
+            $('#code').val(1);
+//                alert("验证成功");
+//                window.location.href=""
+        });
+        slider.init();
+    })
+</script>
+</body>
+</html>

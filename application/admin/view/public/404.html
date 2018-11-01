@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>提示</title>
+<style type="text/css">
+	body{margin:0;padding:0;font-family:"Microsoft YaHei";color:#ccc;font-size:18px;background:#fcfcfc;}
+	.box{width:700px;height:400px;margin:100px auto;background:url(__IMG__/404/tip.png) center 50px no-repeat;}
+	.top_notice{text-align:center;}
+	.sub_title{position:relative;top:100px;text-align:center;color:#ccc}
+	.notice{position:relative;top:180px;color:#999;text-align:center;}
+	.notice a{color:#5FA2DA;text-decoration:none;margin:0 5px;}
+	.notice a:hover{color:#0099FF;text-decoration:underline;}
+	#time{font-weight: bold;color: red;}
+</style>
+<script language="JavaScript" type="text/javascript">
+	function delayURL(url) {
+		var delay = document.getElementById("time").innerHTML;
+		if(delay > 0) {
+			delay--;
+			document.getElementById("time").innerHTML = delay;
+		} else {
+			window.top.location.href = url;
+		}
+		setTimeout("delayURL('" + url + "')", 1000);
+	}
+</script>
+</head>
+<body>
+	<div class="box">
+		<div class="top_notice">首先，我很高兴你能来到我的网站，但是很抱歉</div>
+		<div class="sub_title">网站改版换程序了，以前的地址不能用了，<span id="time">30</span>&nbsp;秒钟后将自动跳转到网站首页</div>
+		<div class="notice">你也可以选择<a href="/">立即进入首页</a>或者<a href="javascript:window.open('about:blank','_self').close();">关闭本页</a></div>
+	</div>
+	<script type="text/javascript">
+		delayURL("/");
+	</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+{extend name="public:common_index"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="input-order-id">手机号码</label>
+                        <div class="input-group">
+                            <input type="text" name="phone" value="{$Think.get.phone}" placeholder="手机号码"
+                                   id="input-order-id" class="form-control">
+                        </div>
+                        <label class="control-label" for="input-order-id">状态</label>
+                        {:arr2select('status',$status,'全部',input('status'),'status','msg')}
+                    </div>
+                    <!--<div class="form-group">-->
+                    <!--<label class="control-label" for="input-order-id">时间筛选</label>-->
+                    <!--<div class="input-group">-->
+                    <!--<input type="text" name="startDate" value="{$Think.get.startDate}" placeholder="选择开始时间"-->
+                    <!--class="form-control timepicker">-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                    <!--<div class="input-group">-->
+                    <!--<input type="text" name="endDate" value="{$Think.get.endDate}" placeholder="选择结束时间"-->
+                    <!--class="form-control timepicker">-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>ID</td>
+                                <td>手机号码</td>
+                                <td>提现货币</td>
+                                <td>金额</td>
+                                <td>状态</td>
+                                <td>提现申请时间</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" }
+                            <tr>
+                                <td>{$row.b_id}</td>
+                                <td>{$row.phone}</td>
+                                <td>{$row.money_type}</td>
+                                <td>{$row.money}</td>
+                                <td>{$status[$row.status]['msg']}</td>
+                                <td>{$row.create_time}</td>
+                                <td>
+                                    {if condition="$row.status == 2"}
+                                        <a class="btn btn-primary " href="{:url('money/edit',['id'=>$row.b_id])}">审核</a>
+                                    {else /}
+                                        <a class="btn btn-primary " href="{:url('money/detail',['id'=>$row.b_id])}">查看详情</a>
+                                    {/if}
+
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+    $(function () {
+        var type   = "{$Think.get.type}";
+        if(type != ''){
+            $('#type'+type).attr('selected',true)
+        }
+
+        var status   = "{$Think.get.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+
+</script>
+
+
+
+{/block}
+
+
+

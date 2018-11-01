@@ -1,0 +1,91 @@
+{extend name="public:common_edit"/}
+{block name="css"}
+    <link href="/public/plugs/switch-button/css/bootstrap-switch.css" rel="stylesheet">
+{/block}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i>{$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <label class="control-label" for="input-order-id">空间过期用户电话</label>
+                    <div class="input-group">
+                        <input type="text" name="phone" value="{$Think.get.phone}" placeholder="空间过期用户电话"
+                               id="input-order-id" class="form-control">
+                    </div>
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td style="text-align: center">id</td>
+                                <td style="text-align: center">空间过期用户电话</td>
+                                <td style="text-align: center">操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row"}
+                            <tr>
+                                <td style="text-align: center">{$row.user_id}</td>
+                                <td style="text-align: center">{$row.phone}</td>
+                                <td style="text-align: center">
+                                    <span class="btn btn-danger check_del" data-url="{:url('del',['id'=>$row['user_id']])}">一键删除</span>
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+
+    </div>
+{/block}
+
+{block name="js"}
+<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
+<script>
+    $(document).ready(function(){
+        $(".checkbox").bootstrapSwitch({
+            onText:'是',
+            offText:'否'
+        });
+        $('.is_top').on('switchChange.bootstrapSwitch', function (event,state){
+            var val = state?1:0;
+            var id = $(this).attr('data-id');
+            $.post("{:url('top')}",{id:id,val:val},function (data) {
+                if(data.code!=1){layer.msg('改变状态失败', {icon: 5, time: 2000});}
+            });
+        });
+    });
+    $(function () {
+        var top   = "{:input('get.top')}";
+        if(top != ''){
+            $('#top'+top).attr('selected',true)
+        }
+
+        var status   = "{:input('get.status')}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+</script>
+
+
+
+{/block}
+
+
+

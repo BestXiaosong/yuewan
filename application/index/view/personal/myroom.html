@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+
+        <!--我的房间-->
+        <div class="mg_top20 personal_div" style="display: block">
+            <div class="msg-box bor_b">
+                <a href="javascript:;" class="active"><strong>我创建的</strong></a>
+                <a href="javascript:;"><strong>我管理的</strong></a>
+                <a href="javascript:;"><strong>我的回放</strong></a>
+                <span class="right">可使用空间{$space['bucket_space']}，当前已使用{$space.use_space},<i
+                        class="blue upgrade">立即升级</i></span>
+            </div>
+            <!--我创建的-->
+            <div class="home-box entrance-box active clearfix ">
+                {volist name = 'creroom' id='vo'}
+                <dl style="margin: 0 0.5%;">
+                    <a href="javascript:;" class="width_100">
+                        <dt>
+                            <img class="width_100" src="{$vo.img}">
+                        </dt>
+                        <dd>
+                            <div class="clearfix font-box padding_tb10">
+                                <img class="left head" src="{$vo.header_img}">
+
+                                <div class="left font-info ">
+                                    <p class="color_55 mg_top10 text"><strong>{$vo.room_name}</strong></p>
+
+                                    <p class="clearfix">
+                                        <span class="right"><img src="__IMG2__/icon-huo.png"> {$vo.hotval}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </dd>
+                    </a>
+                </dl>
+                {/volist}
+            </div>
+            <!--我管理的-->
+            <div class="home-box entrance-box  clearfix ">
+                {volist name='glroom' id='vo'}
+                <dl style="margin: 0 0.5%">
+                    <a href="javascript:;">
+                        <dt>
+                            <img class="width_100" src="{$vo.img}">
+                        </dt>
+                        <dd>
+                            <div class="clearfix font-box padding_tb10">
+                                <img class="left head" src="{$vo.header_img}">
+
+                                <div class="left font-info ">
+                                    <p class="color_55 mg_top10"><strong>{$vo.room_name}</strong></p>
+
+                                    <p class="clearfix">
+                                        <span class="right"><img src="__IMG2__/icon-huo.png"> {$vo.hotval}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </dd>
+                    </a>
+                </dl>
+                {/volist}
+            </div>
+            <!--我的回放-->
+            <div class="home-box entrance-box  clearfix ">
+                {volist name='history' id = 'vo'}
+                <dl class="del_status" style="margin: 0 0.5%">
+                    <a href="javascript:;">
+                        <dt>
+                            <img class="width_100" src="{$vo.img}">
+                        </dt>
+                    </a>
+                    <dd>
+                        <p class="color_55 mg_top5 clearfix">
+                            <img class="left head" src="{$user.header_img}">
+                            <strong class="left mg_top10">{$vo.title}</strong>
+                            <span class="right"><a href="javascript:;" play_url="{$vo.play_url}" pid="{$vo.pid}"   onclick="delHis(this)" class="basic_a bor_blue">删除</a></span>
+                        </p>
+                    </dd>
+                </dl>
+                {/volist}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--升级空间-->
+<div class="basic_spring upgrade-box">
+    <h4 class="clearfix text-center bg_e padding_tb10 color_55">升级空间
+        <a href="javascript:;" class="right padding_lr10 dell_a" ><img src="__IMG2__/icon-dell.png"/></a>
+    </h4>
+    <form id="ss">
+    <div class="information-main bg_ff">
+        <p class="mg_top20 code-box text-center">
+					<span class="upgrade-select">
+						<select id="space" name="size">
+                            <option value="">请选择容量</option>
+                            <option value="1">1G</option>
+                            <option value="2">2G</option>
+                            <option value="3">3G</option>
+                            <option value="4">4G</option>
+                            <option value="5">5G</option>
+
+                        </select>
+					</span>
+					<span class="upgrade-input">
+                        <select id="IsTurnOut" name="date">
+                            <option value="">请选择容量</option>
+                            <option value="1">1个月</option>
+                            <option value="2">2个月</option>
+                            <option value="3">3个月</option>
+                            <option value="4">4个月</option>
+                            <option value="5">5个月</option>
+                            <option value="6">6个月</option>
+                            <option value="7">7个月</option>
+                            <option value="8">8个月</option>
+                            <option value="9">9个月</option>
+                            <option value="10">10个月</option>
+                            <option value="11">11个月</option>
+                            <option value="12">12个月</option>
+                        </select>
+
+						<!--<input type="date" id="IsTurnOut"  name="date" id="" value="" placeholder="请选择时间"/>-->
+					</span>
+        </p>
+        <p class="mg_top20 code-box">
+            <label for="">交易码 ：</label>
+            <input type="text"  name="psw" id="pw" value="" placeholder="请输入交易码"/>
+        </p>
+        <p class="mg_top20 code-box">
+            <label for="">需支付 ：</label>
+            <span id="need_pay">123B</span>
+        </p>
+        <p class="mg_top40 text-center"><a href="javascript:;" onclick="spaceLevel()" class="btn-a ">立即升级</a></p>
+    </div>
+    </form>
+</div>
+<script>
+    $("#IsTurnOut").change(function () {
+        formData = new FormData;
+        var date = $(this).val();
+        var space = $('#space').children('option:selected').val();
+        if(space==''){
+            zcAlert('请选择升级空间');
+        }
+        formData.append('date',''+date);
+        formData.append('size',''+space);
+        data = httpPosts('/Vod/space_level',formData,false);
+        if(data !== false){
+            layer.closeAll("loading");
+            $('#need_pay').text(data);
+        }
+    });
+
+
+
+    function spaceLevel(){
+        formData = new FormData(document.querySelector("form"));
+        data = httpPosts('/Vod/need',formData,false);
+        if(data!==false){
+            layer.closeAll("loading");
+            zcAlert('升级成功',1);
+            $('.information-main').hide();
+        }
+    }
+
+    function delHis(ty){
+        formData = new FormData;
+        play_url = $(ty).attr('play_url');
+        pid = $(ty).attr('pid');
+        formData.append('file',play_url);
+        formData.append('pid',pid);
+        data = httpPosts('/self_room/delVod',formData,false);
+        if(data!==false){
+            layer.closeAll("loading");
+            zcAlert('删除成功',1);
+        }
+
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+/*login*/
+body{
+    /*background-image: url(images/login_bg.png);
+    -moz-background-image: url(images/login_bg.png);
+    -ms-background-image: url(images/login_bg.png);
+    -o-background-image: url(images/login_bg.png);*/
+    background:url(../images/login_bg.png) top center no-repeat; background-size:cover;
+}
+input:focus{
+    border-color:#3083ec;
+}
+.login-contain{
+    /*background-image: url(images/login_con.png);
+    -moz-background-image: url(images/login_con.png);
+    -ms-background-image: url(images/login_con.png);
+    -o-background-image: url(images/login_con.png);*/
+    background-color: #fff;
+    border-radius:5px;
+    width:600px;
+    height:573px;
+    margin:0 auto;
+    margin-top:8%;
+    -moz-box-shadow: 0px 7px 7px #3268a0;
+    -webkit-box-shadow: 0px 7px 7px #3268a0;
+    box-shadow: 0px 7px 7px #3268a0;
+    /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#3268a0')";
+    /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#3268a0');
+    position:relative;
+    overflow:hidden;
+    z-index:999;
+}
+.logo_img{
+    padding:20px;
+}
+.for-control{
+    font-size:20px;
+    padding: 9px 0 9px 5px;
+    border-radius: 2px;
+    border: 2px solid #cccccc;
+	color:#dcdcdc;
+}
+.for-control option{
+	color:#dcdcdc;
+}
+.wd2{width:370px}
+.pd{padding-left:120px;}
+.wd{width:360px;}
+.yanz{float:left;}
+.fl{float:left;}
+.mt30{margin-top:30px}
+.ml10{margin-left:10px;}
+.mt20{margin-top:20px;}
+.rush{font-size:18px;padding:10px 0;}
+.btn-cust{
+    background-image: url(../images/button_login.png);
+    -moz-background-image: url(../images/button_login.png);
+    -o-background-image: url(../images/button_login.png);
+    -ms-background-image: url(../images/button_login.png);
+    width:364px;
+    height:64px;
+    border:none;
+    position:relative;
+
+}
+.btn-cust:active{
+    top:3px;
+}
+.regist{
+    background:#f2f7fa;
+    height:50px;
+    line-height:50px;
+    border-top:1px solid #ebebeb;
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    z-index:0;
+}
+.regist p{
+    text-align:center;
+    font-size:20px;
+    color:#cacacb;
+}

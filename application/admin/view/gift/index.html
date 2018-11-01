@@ -1,0 +1,113 @@
+{extend name="public:common_index"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> 礼物列表</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="input-order-id">礼物名称</label>
+                        <div class="input-group">
+                            <input type="text" name="gift_name" value="{$Think.get.title}" placeholder="礼物名称"
+                                   id="input-order-id" class="form-control">
+                        </div>
+                        <label class="control-label" for="input-order-id">状态</label>
+                        <select class="form-control" name="status">
+                            <option id="status2" value="">全部</option>
+                            <option id="status1" value="1"> 启用</option>
+                            <option id="status0" value="0">禁用</option>
+                        </select>
+                        <!--<label class="control-label" for="input-order-id">类型</label>-->
+                        <!--{:arr2select('cid',$data,'全部',input('cid'),'cid','cate_name')}-->
+                    </div>
+                    <!--<div class="form-group">-->
+                    <!--<label class="control-label" for="input-order-id">时间筛选</label>-->
+                    <!--<div class="input-group">-->
+                    <!--<input type="text" name="startDate" value="{$Think.get.startDate}" placeholder="选择开始时间"-->
+                    <!--class="form-control timepicker">-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="form-group">-->
+                    <!--<div class="input-group">-->
+                    <!--<input type="text" name="endDate" value="{$Think.get.endDate}" placeholder="选择结束时间"-->
+                    <!--class="form-control timepicker">-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                    <a href="{:Url('gift_edit')}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                    <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>礼物序号</td>
+                                <td>礼物名称</td>
+                                <td>礼物图片</td>
+                                <td>礼物价格</td>
+                                <td>创建时间</td>
+                                <td>更新时间</td>
+                                <td>状态</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$key}</td>
+                                <td>{$row.gift_name}</td>
+                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.img}" alt=""></td>
+                                <td>{$row.price}元</td>
+                                <td>{$row.create_time}</td>
+                                <td>{$row.update_time}</td>
+                                <td>{if condition="$row.status == 1"} 显示 {else /} 隐藏 {/if}</td>
+
+                                <td>
+                                    <a class="btn btn-primary " href="/gift/gift_edit/id/{$row.gift_id}">编辑</a>
+
+                                    {/*:url('gift/gift_delete',['id'=>$row.gift_id])*/}
+                                    <!--<span class="btn btn-danger check_del" data-message="" data-url="">删除</span>-->
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+    $(function () {
+        var type   = "{$Think.get.type}";
+        if(type != ''){
+            $('#type'+type).attr('selected',true)
+        }
+
+        var status   = "{$Think.get.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+
+</script>
+
+
+
+{/block}
+
+
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>Qiniu Web Player in HTML5</title>
+  <link href="__CSS__/qiniuplayer.min.css" rel="stylesheet">
+<script src="__JS__/qiniuplayer.min.js"></script>
+  </head>
+  <body>
+
+    <h1>Qiniu Web Player</h1>
+    <div style="width:500px;height:500px;">
+<video id="demo-video"  class="video-js vjs-big-play-centered"></video>
+    </div>
+    
+    <script>
+
+    		var options = {
+                poster:'',
+    controls: true,
+    url: 'http://pili-live-hls.play.51soha.com/soha/xiaosongtest@720p.m3u8',
+    type: '',
+    preload: true,
+    autoplay: true // 如为 true，则视频将会自动播放
+};
+var player = new QiniuPlayer('demo-video', options);
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+{extend name="public:common_edit"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+
+
+                    <a href="{:url('coin_edit',['id'=>$row.coin_id])}"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>id</td>
+                                <td>图标</td>
+                                <td>货币名</td>
+                                {/**
+                                <td>目标存储表</td>
+                                <td>目标字段</td>
+                                **/}
+                                <td>发红包最低金额</td>
+                                <td>小数位数</td>
+                                <td>排序</td>
+                                <td>是否发行</td>
+                                <td>创建时间</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$row.coin_id}</td>
+                                <td><img src="{$row.img}" style="max-width: 100px" alt=""></td>
+                                <td>{$row.coin_name}</td>
+                                {/**
+                                <td>$row.table</td>
+                                <td>$row.field</td>
+                                **/}
+                                <td>{$row.red_mini}</td>
+                                <td>{$row.length}</td>
+                                <td>{$row.sort}</td>
+                                <td>{$row.status}</td>
+                                <td>{$row.create_time}</td>
+                                <td>
+                                    <a href="{:url('coin_edit',['id'=>$row.coin_id])}" class="btn btn-primary ">编辑</a>
+
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--<div class="pull-right">-->
+                        <!--<label class="control-label col-sm-2"></label>-->
+
+                        <!--<input class="btn btn-primary submit" type="submit" value="保存">-->
+                    <!--</div>-->
+                </form>
+            </div>
+
+        </div>
+    </div>
+<div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                <h4 class="modal-title" id="myModalLabe"> 添加说明</h4></div>
+            <div class="modal-body">
+                <form id="bjy-form" class="form-inline" action="{:url('rule/ex_add')}" method="post">
+                    <table class="table table-striped table-bordered table-hover table-condensed">
+                        <tr>
+                            <th width="12%">介绍：</th>
+                            <td><input class="form-control" type="text" name="msg"></td>
+                        </tr>
+                        <tr>
+                            <th>内容：</th>
+                            <td><input class="form-control" type="text" name="content">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td><input class="btn btn-success submit" type="submit" value="保存"></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    function add(obj) {
+
+        $("input[name='msg']").val('');
+        $("input[name='content']").val('');
+        $('#bjy-add').modal('show');
+    }
+    $(function () {
+        // 添加子菜单
+
+
+        var type   = "{$Think.get.type}";
+        if(type != ''){
+            $('#type'+type).attr('selected',true)
+        }
+
+        var status   = "{$Think.get.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+
+</script>
+
+
+
+{/block}
+
+
+

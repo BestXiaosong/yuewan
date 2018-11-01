@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Expires" CONTENT="-1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>梭哈直播-资讯</title>
+		<link rel="shortcut icon" href="img/favicon.ico" />
+		<link rel="bookmark" href="img/favicon.ico" type="image/x-icon" 　/>
+		<link rel="stylesheet" type="text/css" href="__CSS__/common.css" />
+		<link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+		<link rel="stylesheet" type="text/css" href="__CSS__/index.css" />
+		<!--公用js-->
+		{include file="public/js" /}
+	</head>
+	<body>
+		<div class="headerpage"></div>
+		<div class="content bg_ff">
+			<h4 class="padding_10">
+				<strong class=" font_18"><img class="vertical-align_m mg_lr10" src="__IMG2__/icon-zx.png"/>资讯详情</strong>
+			</h4>
+			<div class="padding_b40">
+				<h4 class="font_18 clearfix text-center"><strong>{$data.title}</strong> <a href="javascript:;" onclick="collect()" class="collection-a right">收藏</a></h4>
+			    <p class="text-center color_b">{$data.cata_name} {$data.create_time}</p>
+			    <p class="lin_25 padding_10">
+			    	{$data.detail}
+			    </p>
+			    <div class="text-center mg_top40  ">
+			    	<a href="javascript:;" class="padding_lr30" onclick="comment(1)">
+			    		<img src="__IMG2__/icon-up.png" alt="" />
+			    		<p>移多({$data.lihao})</p>
+			    	</a>
+			    	<a href="javascript:;"  class="padding_lr30" onclick="comment(2)">
+			    		<img src="__IMG2__/icon-down.png" alt="" />
+			    		<p>利空({$data.likong})</p>
+			    	</a>
+			    </div>
+		    </div>
+		</div>
+		<div class="footerpage"></div>
+	    <script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		var ss = {$data.collect_status};
+		function collect(){
+			if(ss!=0){
+				zcAlert('咨讯已收藏');
+			}
+			news_id = "{$data.news_id}"
+			formData = new FormData;
+
+			formData.append('news_id', news_id);
+			data = httpPosts('/news/collect', formData, false);
+			if (data !== false) {
+				layer.closeAll("loading");
+				zcAlert('收藏成功',1);
+			}
+
+		}
+        var cstatus = {$data.type};
+		function comment(type){
+			if(cstatus!=0){
+				zcAlert('咨讯已评论');
+			}
+			news_id = "{$data.news_id}"
+			formData = new FormData;
+
+			formData.append('news_id', news_id);
+			formData.append('type', type);
+			data = httpPosts('/news/comments', formData, false);
+			if (data !== false) {
+				layer.closeAll("loading");
+				zcAlert('评论成功',1);
+			}
+		}
+	</script>
+
+	</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+        <!--我的收藏-->
+        <div class="mg_top20 personal_div" style="display: block">
+            <p class="padding_10  bg_e"><img class="vertical-align_m mg_lr10" src="__IMG2__/my-zl.png">我的收藏</p>
+
+            {volist name='list' id='vo'}
+
+            <div class="clearfix bor_b padding_10">
+                <div class="left collection_left">
+                    <p>
+                        <a class="font_16" href="/news/details/new_id/{$vo.news_id}">
+                            <strong>{$vo.title}</strong>
+                        </a>
+                    </p>
+                    <p class="mg_top10"> {$vo.detail|strip_tags|mb_substr=0,40}</p>
+                </div>
+                <div class="right">
+                    <p>{$vo.cate_name} {$vo.create_time|substr=0,10}</p>
+                    <a href="javascript:;" class="mg_top10 del" id="del" collect-id="{$vo.collect_id}"><img src="__IMG2__/dell.png"/></a>
+                </div>
+            </div>
+
+            <!--<div class="clearfix bor_b padding_10">-->
+                <!--<div class="left collection_left">-->
+                    <!--<p>-->
+                        <!--<a class="font_16" href="/news/details/new_id/{$vo.news_id}">-->
+                                <!--<strong> {$vo.title}</strong>-->
+                        <!--</a>-->
+                    <!--</p>-->
+                    <!--<p class="mg_top10"> {$vo.detail|strip_tags|substr=0,50} </p>-->
+                <!--</div>-->
+                <!--<div class="right">-->
+                    <!--<p> {$vo.cate_name} {$vo.create_time} </p>-->
+                    <!--<a href="javascript:;" id="del" collect-id="{$vo.collect_id}" class="mg_top10 del"><img src="__IMG2__/dell.png"/></a>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            {/volist}
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(".del").click(function () {
+        layer.confirm('确定要删除收藏？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            var id = $("#del").attr('collect-id');
+            var phone = '{$phone}';
+            var token = '{$token}';
+            $.post('{$API}/news/delcollect', {cids: id, phone: phone, token: token}, function (data) {
+                if (data.code == 1) {
+                    layer.msg('删除成功', {icon: 1})
+                    window.location.reload();
+                } else {
+                    layer.msg('删除失败', {icon: 5, time: 2000});
+                }
+            })
+
+        })
+    })
+</script>
+</html>

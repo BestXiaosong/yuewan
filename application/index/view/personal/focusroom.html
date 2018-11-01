@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<div>
+    {include file="public/header" /}
+    <div class="main-all clearfix" id="personal">
+
+        {include file="/personal/left" /}
+        <div class="main-right left bg_ff">
+            <!--我的关注-->
+            <div class="mg_top20 personal_div" style="display: block">
+                <div class="msg-box bor_b">
+                    <a href="javascript:;" class="active"><strong>房间</strong></a>
+                    <a href="javascript:;"><strong>角色</strong></a>
+                </div>
+                <!--房间-->
+                <div class="Focus-box entrance-box active clearfix ">
+                    {volist name='room' id='vo'}
+
+                    <dl>
+                        <a href="javascript:;" class="width_100">
+                            <dt>
+                                <img class="width_100" src="{$vo.img}">
+                                <i class="mark bg_red bor_none">{$vo.remark}</i>
+                            </dt>
+                            <dd>
+                                <div class="clearfix font-box padding_tb10">
+                                    <img class="left head" src="{$vo.header_img}">
+
+                                    <div class="left font-info ">
+                                        <p class="color_55"><strong>{$vo.title|mb_substr= ###,0,10}</strong></p>
+
+                                        <p>
+                                            <span class="left">{$vo.brief}</span>
+                                            <span class="right"><img src="__IMG2__/icon-huo.png"> {$vo.fans_num}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </dd>
+                        </a>
+                    </dl>
+
+
+                    {/volist}
+
+
+                    <!--<dl>-->
+                    <!--<a href="javascript:;">-->
+                    <!--<dt>-->
+                    <!--<img class="width_100" src="__IMG2__/img2.png">-->
+                    <!--<i class="mark">活动</i>-->
+                    <!--</dt>-->
+                    <!--<dd>-->
+                    <!--<div class="clearfix font-box padding_tb10">-->
+                    <!--<img class="left head" src="__IMG2__/icon-head.png">-->
+
+                    <!--<div class="left font-info">-->
+                    <!--<p class="color_55"><strong>区块链和比特币</strong></p>-->
+
+                    <!--<p>-->
+                    <!--<span class="left">区块链的意思是什么</span>-->
+                    <!--<span class="right"><img src="__IMG2__/icon-huo.png"> 1.2万</span>-->
+                    <!--</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</dd>-->
+                    <!--</a>-->
+                    <!--</dl>-->
+                    <!--<dl>-->
+                    <!--<a href="javascript:;">-->
+                    <!--<dt>-->
+                    <!--<img class="width_100" src="__IMG2__/img2.png">-->
+                    <!--<i class="mark color_55">已关闭</i>-->
+                    <!--</dt>-->
+                    <!--<dd>-->
+                    <!--<div class="clearfix font-box padding_tb10">-->
+                    <!--<img class="left head" src="__IMG2__/icon-head.png">-->
+
+                    <!--<div class="left font-info">-->
+                    <!--<p class="color_55"><strong>区块链和比特币</strong></p>-->
+
+                    <!--<p>-->
+                    <!--<span class="left">区块链的意思是什么</span>-->
+                    <!--<span class="right"><img src="__IMG2__/icon-huo.png"> 1.2万</span>-->
+                    <!--</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</dd>-->
+                    <!--</a>-->
+                    <!--</dl>-->
+                    <!--<dl>-->
+                    <!--<a href="javascript:;">-->
+                    <!--<dt>-->
+                    <!--<img class="width_100" src="__IMG2__/img2.png">-->
+                    <!--<i class="mark">预告</i>-->
+                    <!--</dt>-->
+                    <!--<dd>-->
+                    <!--<div class="clearfix font-box padding_tb10">-->
+                    <!--<img class="left head" src="__IMG2__/icon-head.png">-->
+
+                    <!--<div class="left font-info">-->
+                    <!--<p class="color_55"><strong>区块链和比特币</strong></p>-->
+
+                    <!--<p>-->
+                    <!--<span class="left">区块链的意思是什么</span>-->
+                    <!--<span class="right"><img src="__IMG2__/icon-huo.png"> 1.2万</span>-->
+                    <!--</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</dd>-->
+                    <!--</a>-->
+                    <!--</dl>-->
+                    <!--<dl>-->
+                    <!--<a href="javascript:;">-->
+                    <!--<dt>-->
+                    <!--<img class="width_100" src="__IMG2__/img3.png">-->
+                    <!--<i class="mark">活动</i>-->
+                    <!--</dt>-->
+                    <!--<dd>-->
+                    <!--<div class="clearfix font-box padding_tb10">-->
+                    <!--<img class="left head" src="__IMG2__/icon-head.png">-->
+
+                    <!--<div class="left font-info">-->
+                    <!--<p class="color_55"><strong>区块链和比特币</strong></p>-->
+
+                    <!--<p>-->
+                    <!--<span class="left">区块链的意思是什么</span>-->
+                    <!--<span class="right"><img src="__IMG2__/icon-huo.png"> 1.2万</span>-->
+                    <!--</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</dd>-->
+                    <!--</a>-->
+                    <!--</dl>-->
+                    <!--<dl>-->
+                    <!--<a href="javascript:;">-->
+                    <!--<dt>-->
+                    <!--<img class="width_100" src="__IMG2__/img4.png">-->
+                    <!--<i class="mark">竞猜</i>-->
+                    <!--</dt>-->
+                    <!--<dd>-->
+                    <!--<div class="clearfix font-box padding_tb10">-->
+                    <!--<img class="left head" src="__IMG2__/icon-head.png">-->
+
+                    <!--<div class="left font-info">-->
+                    <!--<p class="color_55"><strong>区块链和比特币</strong></p>-->
+
+                    <!--<p>-->
+                    <!--<span class="left">区块链的意思是什么</span>-->
+                    <!--<span class="right"><img src="__IMG2__/icon-huo.png"> 1.2万</span>-->
+                    <!--</p>-->
+                    <!--</div>-->
+                    <!--</div>-->
+                    <!--</dd>-->
+                    <!--</a>-->
+                    <!--</dl>-->
+                </div>
+                <!--角色-->
+                <div class="Focus-box clearfix">
+                    <div class="focus-list">
+                        {volist name='role' id='v'}
+                        <dl class="cancel_status">
+                            <dt><img class="head-home" src="{$v.header_img}"/></dt>
+                            <dd>
+                                <p><strong>{$v.role_name|mb_substr=###,0,10}...</strong></p>
+                                <h6 class="mg_top5">关注{$v.fans_num}</h6>
+
+                                <p class="mg_top10"><a href="javascript:void (0);" onclick="cancelFocus(this)"
+                                                       class="Focus-a active" role_id="{$v.role_id}">取消关注</a></p>
+                            </dd>
+                        </dl>
+                        {/volist}
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a ">已关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a ">已关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                        <!--<dl>-->
+                        <!--<dt><img class="head-home" src="__IMG2__/icon-head.png"/></dt>-->
+                        <!--<dd>-->
+                        <!--<p><strong>小樱桃</strong></p>-->
+                        <!--<h6 class="mg_top5">关注11.2万</h6>-->
+
+                        <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function cancelFocus(ty) {
+            var a = $(ty);
+            formData = new FormData
+            formData.append('role_id', a.attr('role_id'));
+
+            data = httpPost('/Focus/hiddenRole', formData, a, false);
+
+            if (data != false) {
+                layer.closeAll("loading");
+
+                zcAlert('取消关注成功', 1);
+                $(ty).parent().parents().parent('.cancel_status').remove();
+            }
+        }
+
+
+
+
+    </script>
+
+
+    </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__//favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__//favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+
+        <!--礼物兑换-->
+        <div class="basic_spring exchange-box">
+            <h4 class="clearfix text-center bg_e padding_tb10 color_55">礼物兑换
+                <a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG2__/icon-dell.png"/></a>
+            </h4>
+
+            <div class="information-main bg_ff padding_lr30">
+                <p class="padding_10">当前可兑换礼物&nbsp;<span style="color:red;" id="aa" data-num="{$row.num}">{$row.num}</span>  &nbsp;件</p>
+
+                <p class="mg_top10 padding_10 code-box">
+                    <span>平台手续费 ：</span>&nbsp;&nbsp;<span style="color:red;">{$row.rate}</span>
+
+                </p>
+                <p class=" padding_10">可获得&nbsp;&nbsp;<span style="color:red;" id="bb" data-money="{$row.money}">{$row.money}</span>&nbsp;&nbsp;</p>
+
+                <p class="mg_top40 text-center"><a href="javascript:;" class="btn-a ">确认兑换</a></p>
+            </div>
+        </div>
+        <!--我的资产-->
+        <div class="mg_top20 personal_div" style="display: block;">
+
+            <!--角色-->
+            <div class="funds active">
+                <div class="gift left">
+                    <h4 class="padding_10 bor_b tittle_gift clearfix">
+                        <span class="left">我{if condition="input('type') eq 1"}收到{else /}送出{/if}的礼物</span>
+                        {if condition="input('type') eq 1"}<a href="javascript:;" class="right exchange-a">兑换</a>{else / }{/if}
+                    </h4>
+
+                    <div class="gift-box">
+
+                        {volist name='list' id='vo'}
+                        <div class="padding_10 bor_b">
+                            <dl class="clearfix">
+                                <dt class="left"><img class="head" src="{$vo.img}"/></dt>
+                                <dd class="left clearfix ">
+                                    <div class="left">
+                                        <p><strong>{$vo.role_name}</strong></p>
+                                        <h6>  {$vo.gift_name}</h6>
+                                    </div>
+                                    <h4 class="right font_16 mg_top10">
+                                        <buttion type="button">  + {$vo.num}</buttion>
+                                    </h4>
+
+                                </dd>
+                            </dl>
+                        </div>
+                        {/volist}
+                    </div>
+                </div>
+            </div>
+
+
+            </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $(".btn-a").on("click",function () {
+        var money=$('#bb').attr('data-money');
+        var num=$('#aa').attr('data-num');
+        var gift_id='{$id}';
+        var phone='{$phone}';
+        var token='{$token}';
+        if(money==0||money==''){
+            layer.msg('暂无礼物兑换');
+            return false;
+        }else{
+            if(num==0||num==''){
+                layer.msg('暂无礼物兑换');
+                return false;
+            }
+        }
+         money=money.replace('GB','');
+
+        layer.confirm('确定要兑换？', {
+            btn: ['确定', '取消'] //按钮
+        }, function () {
+            $.post('{$API}/gift/complateMoney', {gift_id: gift_id, phone: phone, token: token,money:money,num:num}, function (data) {
+                if (data.code == 1) {
+                    layer.msg('兑换成功', {icon: 1, time: 20000})
+                    window.location.reload();
+                } else {
+                    layer.msg('兑换失败', {icon: 5, time: 20000});
+                }
+            })
+
+        })
+    })
+
+</script>
+</html>

@@ -1,0 +1,131 @@
+
+html, body, ul, li, ol, dl, dd, dt, p, h1, h2, h3, h4, h5, h6, form, fieldset, legend, img { margin:0; padding:0; font-weight: normal}
+ul{  list-style: none;  }
+body {  font-family: "Microsoft Yahei";  }
+.clearfix:after{clear:both;}
+.clearfix{
+    *zoom:1;/*IE/7/6*/
+}
+.content {
+    background-color: #fff;
+    width: 1000px;
+    margin: 0 auto;
+}
+.container-fluid {
+    padding-right: 0;
+    padding-left: 0;
+}
+.list-group {
+    margin-bottom: 0;
+}
+.list-group .item-list span {
+    color: #cccccc;
+    margin-right: 16px;
+}
+.list-group .item-list img {
+    width: 25px;
+    height: 25px;
+}
+.list-group .item-list.current span {
+    color: #26a9e3;
+}
+.list-group .item-list i{
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background-image: url(../images/icon_r.png);
+}
+.list-group .item-list {
+    float: left;
+    border: none;
+    padding: 25px 25px 25px 0;
+    font-size: 20px;
+}
+.list-group .item-list img {
+    vertical-align: middle;
+    margin-top: -2px;
+}
+.panel-content {
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 1px;
+}
+.panel-content .cate-menu-content {
+    float: left;
+    margin-left: 17px;
+}
+.panel-content .cate-menu {
+    width: 300px;
+    background-color: #fff;
+    overflow-y: scroll;
+    height: 350px;
+
+    border: 1px solid #000;
+}
+.panel-content .panel-body {
+    padding: 25px 15px;
+}
+.panel-content .cate-menu-content:first-child {
+    margin-left: 0;
+}
+.panel-content .cate-menu li {
+    line-height: 26px;
+    color: #000;
+    font-size: 14px;
+    padding-left: 15px;
+    cursor: pointer;
+
+}
+.panel-content .cate-menu li.selected {
+    background-color: #26a9e3;
+    color: #fff;
+}
+.crumbs span a,.current-location span {
+    color: #000;
+    font-size: 16px;
+}
+.current-location {
+    padding-left: 16px;
+}
+.step {
+    width: 100%;
+    text-align: center;
+}
+.step .step-btn {
+    display: block;
+    width: 296px;
+    height: 40px;
+    background-color: #ccc;
+    color: #fff;
+    line-height: 40px;
+    text-align: center;
+    margin: 20px auto;
+    border-radius: 5px;
+}
+/*.panel-content .cate-menu-content ul {
+    float: left;
+    width: 300px;
+    background-color: #fff;
+    overflow-y: scroll;
+    height: 350px;
+    border: 1px solid #000;
+    margin-left: 17px;
+}
+.panel-content .cate-menu-content ul:first-child {
+    margin-left: 0;
+}
+.cate-menu-content ul li {
+    line-height: 26px;
+    color: #000;
+    font-size: 14px;
+    padding-left: 15px;
+}
+.cate-menu-content ul li.selected {
+    background-color: #26a9e3;
+}
+.cate-menu-content ul li.selected a {
+    color: #fff;
+}
+.cate-menu-content ul li a {
+    color: #000;
+}*/

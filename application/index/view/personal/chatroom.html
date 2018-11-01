@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+        <!--管理聊天室-->
+        <div class="mg_top20 personal_div" style="display: block">
+            <p class="padding_10  bg_e clearfix">
+                <span class="left"><img class="vertical-align_m mg_lr10" src="__IMG2__/my-zl.png">管理聊天室</span>
+							<span class="right">
+								<a href="javascript:;" class="basic_a btn_rudis bg_blue up-a">升级房间</a>
+								<a href="javascript:;" class="basic_a btn_rudis bor_blue auction-a">拍卖房间</a>
+							</span>
+            </p>
+
+            <div class="clearfix">
+                <div class="initiate-activities live_room">
+                    <div class="mg_top20">
+                        <span>房间：</span>
+                        <select id="room_ch" name="id">
+                            {volist name='glroom' id='vo'}
+                            <option value="{$vo.room_id}">{$vo.room_name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                    <div class="mg_top20">
+                        <span>请输入直播公告：</span>
+                        <input type="text" name="content" id="content" value="">
+                    </div>
+                    <div class="mg_top20">
+                        <span>全员禁言：</span>
+                        <input type="checkbox" hidden="hidden" name="" id="checkbox" onchange="dey(this)" value="">
+                        <label for="checkbox"><img class="check_img" src="__IMG2__/check_no.png" alt=""></label>
+                    </div>
+                    <div class="mg_top20">
+                        <a href="javascript:;" onclick="notice()" class="btn-a initiate-a share-a">确定</a>
+                    </div>
+                </div>
+                <!--<div class="live_room">-->
+
+                    <!--<h4 class="padding_10 font_16 bor_b">禁言名单</h4>-->
+
+                    <!--<div class="live_room_list">-->
+                        <!--{volist name = 'banlist' id='vo'}-->
+                        <!--<div class="padding_10 clearfix bor_b gift-box">-->
+                            <!--<dl class="clearfix">-->
+                                <!--<dt class="left"><img class="head" src="{$vo.header_img}" alt=""/></dt>-->
+                                <!--<dd class="left">-->
+                                    <!--<div class="clearfix">-->
+                                        <!--<div class="left">-->
+                                            <!--<p><strong>{$vo.role_name}</strong></p>-->
+                                            <!--<h6 class="mg_top10">{$vo.time}</h6>-->
+                                        <!--</div>-->
+                                        <!--<a href="javascript:;" class="right" room_id="{$vo.room_id}"-->
+                                           <!--role_id="{$vo.role_id}" onclick="cancelBnned(this)"><strong>解除禁言</strong></a>-->
+                                    <!--</div>-->
+                                <!--</dd>-->
+                            <!--</dl>-->
+                        <!--</div>-->
+                        <!--{/volist}-->
+                        <!--<h4 class="padding_10 font_16 bor_b clearfix">-->
+                            <!--<span class="left">本次活动收到的礼物(10)</span>-->
+                            <!--<a class="right">查看全部</a>-->
+                        <!--</h4>-->
+
+                        <!--<div class="padding_10 clearfix bor_b gift-box">-->
+                            <!--<dl class="clearfix">-->
+                                <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png" alt=""/></dt>-->
+                                <!--<dd class="left">-->
+                                    <!--<div class="clearfix">-->
+                                        <!--<div class="left">-->
+                                            <!--<p><strong>张小二</strong></p>-->
+                                            <!--<h6 class="mg_top10">飞机 12:00</h6>-->
+                                        <!--</div>-->
+                                        <!--<a href="javascript:;" class="right"><strong>+1</strong></a>-->
+                                    <!--</div>-->
+                                <!--</dd>-->
+                            <!--</dl>-->
+                        <!--</div>-->
+                        <!--<div class="padding_10 clearfix bor_b gift-box">-->
+                            <!--<dl class="clearfix">-->
+                                <!--<dt class="left"><img class="head" src="__IMG2__/icon-head.png" alt=""/></dt>-->
+                                <!--<dd class="left">-->
+                                    <!--<div class="clearfix">-->
+                                        <!--<div class="left">-->
+                                            <!--<p><strong>张小二</strong></p>-->
+                                            <!--<h6 class="mg_top10">飞机 12:00</h6>-->
+                                        <!--</div>-->
+                                        <!--<a href="javascript:;" class="right"><strong>+1</strong></a>-->
+                                    <!--</div>-->
+                                <!--</dd>-->
+                            <!--</dl>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--拍卖房间-->
+<div class="basic_spring auction-box">
+    <h4 class="clearfix text-center bg_e padding_tb10 color_55">拍卖房间
+        <a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG2__/icon-dell.png"></a>
+    </h4>
+
+    <div class="text-center bg_ff">
+        <p class="mg_top10">
+            <label for="">房间：</label>
+            <select id="rtt" name="id">
+                <option value="">请选择房间</option>
+                {volist name='glroom' id='vo'}
+                <option value="{$vo.room_id}">{$vo.room_name}</option>
+                {/volist}
+            </select>
+        </p>
+        <!--<p class="mg_top10">-->
+        <!--<label for="">房间名称：</label>-->
+        <!--<input type="text" name="" id="" value="">-->
+        <!--</p>-->
+        <p class="mg_top10">
+            <label for="">房间管理员数：</label>
+            <input type="number" name="" id="" value="">
+        </p>
+
+        <p class="mg_top10">
+            <label for="">房间粉丝数：</label>
+            <input type="number" name="" id="" value="">
+        </p>
+
+        <p class="mg_top10">
+            <label for="">请设置低价：：</label>
+            <input type="number" name="money" id="pr" value="">
+        </p>
+
+        <p class="mg_top10">
+            <label for="">交易码：：</label>
+            <input type="text" name="psw" id="pw" value="">
+        </p>
+
+        <p class="mg_top40"><a href="javascript:;" onclick="saleRoom()" class="btn-a ">确认拍卖</a></p>
+    </div>
+</div>
+<!--升级房间-->
+<div class="basic_spring up-box">
+    <h4 class="clearfix text-center bg_e padding_tb10 color_55">升级房间
+        <a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG2__/icon-dell.png"></a>
+    </h4>
+
+    <div class="text-center bg_ff">
+        <p class="mg_top10 text-center"><strong>升级成为VIP房间</strong></p>
+
+        <p class="mg_top10">
+            <label for="">房间：</label>
+            <select id="rm" name="id">
+                <option value="">请选择房间</option>
+                {volist name='glroom' id='vo'}
+                <option value="{$vo.room_id}">{$vo.room_name}</option>
+                {/volist}
+            </select>
+        </p>
+        <p class="mg_top10">
+            <label for="">请输入抵押资产：</label>
+            <input type="number" name="" id="cha" value="">
+        </p>
+        <!--<p class="mg_top10">-->
+        <!--<label for="">房间粉丝数：</label>-->
+        <!--<input type="number" name="" id="" value="">-->
+        <!--</p>-->
+        <p class="mg_top10 text_left padding_10">
+            升级须知升级须知升级须知升级须知升级须知升级须知升级须知
+        </p>
+
+        <p class="mg_top40"><a href="javascript:;" onclick="vip()" class="btn-a ">提交申请</a></p>
+    </div>
+</div>
+<script>
+
+    $("#room_ch").change(function () {
+        formData = new FormData;
+
+        var room = $(this).children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        formData.append('room_id', 'play_' + room);
+
+        //        data = httpPosts('/chat_room/bannedlist', formData, false);
+//        if (data !== false) {
+//            var html = '';
+//            $.each(data, function (i, vo) {
+//                html += '  <div class="padding_10 clearfix bor_b gift-box">' +
+//                        '<dl class="clearfix">' +
+//                        '<dt class="left"><img class="head" src="' + vo.header_img + '" alt=""/></dt>' +
+//                        '<dd class="left">' +
+//                        '<div class="clearfix">' +
+//                        '<div class="left">' +
+//                        '<p><strong>' + vo.role_name + '</strong></p>' +
+//                        '<h6 class="mg_top10">' + vo.time + '</h6> </div>' +
+//                        '<a href="javascript:;" class="right" room_id=' + vo.room_id + ' "role_id="' + vo.role_id + '"' + ' onclick="cancelBnned(this)">' + '<strong>解除禁言</strong></a>' +
+//                        '</div> </dd></dl> </div>';
+//            })
+//
+//            $('.live_room_list').html(html);
+//
+//            layer.closeAll("loading");
+//
+//        }
+    });
+
+    //发表公告
+
+    function notice(){
+        var room = $("#room_ch").children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        formData = new FormData;
+        var content = $('#content').val();
+
+        formData.append('room_id',room);
+        formData.append('content',content);
+        data = httpPosts('/Play/changeDetail', formData, false);
+
+        if(data!==false){
+            zcAlert('发布公告成功',1);
+        }
+    }
+
+    function dey(ty){
+        var room = $("#room_ch").children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        var  stats = $(ty).val()
+        if(stats==1){
+            formData.append('id',room);
+            data = httpPosts('/play/roomClose', formData, false);
+
+            if(data!==false){
+                zcAlert('禁言成功',1);
+            }
+        }else{
+            formData.append('id',room);
+            data = httpPosts('/play/roomOpen', formData, false);
+
+            if(data!==false){
+                zcAlert('解除禁言成功',1);
+            }
+        }
+
+    }
+
+
+    function cancelBnned(th) {
+        room_id = $(th).attr('room_id');
+        role_id = $(th).attr('role_id');
+
+        formData = new FormData;
+        formData.append('room_id', room_id);
+        formData.append('role_id', role_id);
+        data = httpPosts('/chat_room/cancelbanned', formData, false);
+        if(data!==false){
+            zcAlert('解除禁言成功',1);
+            $(th).parent().parent().parent().parent('.gift-box').remove();
+
+        }
+    }
+
+
+
+
+
+    function saleRoom() {
+        formData = new FormData;
+
+        var room = $('#rtt').children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        formData.append('id', room);
+        formData.append('pws', $('#pw').val());
+        formData.append('money', $('#pr').val());
+        data = httpPosts('/Sale/initiate_sale_room', formData, false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            zcAlert('发起成功', 1);
+            $('.auction-box').hide();
+        }
+    }
+
+    function vip() {
+        formData = new FormData;
+
+        var room = $('#rm').children('option:selected').val();
+        if (room == '') {
+            zcAlert('请选择房间');
+        }
+        formData.append('id', room);
+        formData.append('money', $('#cha').val());
+        data = httpPosts('/play/VIP', formData, false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            zcAlert('升级成功', 1);
+            $('.up-box').hide();
+        }
+
+    }
+</script>
+
+
+</body>
+</html>

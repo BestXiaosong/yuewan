@@ -1,0 +1,307 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Administrator
+ * Date: 2018/8/28
+ * Time: 11:35
+ */
+
+namespace app\admin\controller;
+
+
+use app\common\model\Bankroll;
+use app\common\model\CapitalFlow;
+use think\Db;
+use think\Exception;
+
+class Money extends Base
+{
+
+    protected $status = [
+        2 => ['status' => '2' ,'msg' => '提现待审核'],
+        3 => ['status' => '3' ,'msg' => '提现处理中'],
+        4 => ['status' => '4' ,'msg' => '提现驳回'],
+        5 => ['status' => '5' ,'msg' => '提现成功'],
+    ];
+
+    /**
+     * 金币类型1=>积分 2=>比特币  3=>以太币 4=>BCDN'
+     */
+    protected $money_type = [
+        1 => ['key' => '1' ,'val' => '积分'],
+        2 => ['key' => '2' ,'val' => '比特币'],
+        3 => ['key' => '3' ,'val' => '以太币'],
+        4 => ['key' => '4' ,'val' => 'BCDN'],
+    ];
+
+
+    /**
+     * 流水类型
+     */
+    protected $stream_status = [
+        1 => ['key' => '1' ,'val' => '平台流水'],
+        2 => ['key' => '2' ,'val' => '用户充值'],
+        3 => ['key' => '3' ,'val' => '用户提现'],
+    ];
+
+
+
+
+    /**
+     * 充值记录列表
+     */
+    public function index()
+    {
+        $where = [];
+        if (!empty($_GET['status'])) $where['a.status']  = input('get.status');
+        if (!empty($_GET['phone'])) $where['a.status']  = ['like','%'.trim(input('get.phone')).'%'];
+        $where['a.type'] = 1;
+        $model = new Bankroll();
+        $rows  = $model->cashList($where);
+        $this->assign([
+            'title' => '充值记录',
+            'rows' => $rows,
+            'pageHTML' => $rows->render(),
+        ]);
+        return view();
+    }
+
+    /**
+     * 充值详情
+     */
+    public function detail2()
+    {
+        $model = new Bankroll();
+        $where['a.b_id'] = input('id');
+        $data = $model->getDetail($where);
+        $this->assign([
+            'data' => $data,
+            'title' => '充值',
+            'status' => $this->status,
+        ]);
+        return view();
+    }
+
+
+    /**
+     * 提现申请列表
+     */
+    public function cash()
+    {
+        $where = [];
+        if (!empty($_GET['status'])) $where['a.status']  = input('get.status');
+        if (!empty($_GET['phone'])) $where['a.status']  = ['like','%'.trim(input('get.phone')).'%'];
+        $where['a.type'] = 2;
+        $model = new Bankroll();
+        $rows  = $model->cashList($where);
+        $this->assign([
+            'title' => '提现申请列表',
+            'rows' => $rows,
+            'pageHTML' => $rows->render(),
+            'status' => $this->status
+        ]);
+        return view();
+    }
+
+    /**
+     * 提现审核
+     */
+    public function edit()
+    {
+        $model = new Bankroll();
+        if (request()->isPost()){
+            $data = input('post.');
+            $repeat = cache('cash_edit_repeat_'.$data['id']);
+            if ($repeat){ //防止重复操作
+                $this->error('请求过于频繁,请稍后重试');
+            }else{
+                cache('cash_edit_repeat_'.$data['id'],1,3);
+            }
+            $cash = $model->getDetail(['b_id'=>$data['id']]);
+            if ($cash['status'] !== 2) $this->error('该申请已处理,请勿重复操作');
+            if ($data['status'] == 1){//审核通过
+                if (empty($data['Keystore'])) $this->error('请输入付款钱包');
+                if (empty($data['Pwd'])) $this->error('请输入钱包密码');
+                $row['Sym']    = $cash['money_type'];
+                $row['Amount'] = $cash['money'];
+                $row['Nonce']  = -1;
+                $eth_cash = Db::name('extend')->where('id',1)->cache(60)->value($cash['money_type'].'_cash');
+                //手续费比例
+                $ratio = bcdiv($eth_cash,100);
+                //应付手续费
+                $charge = bcmul($cash['money'],$ratio,2);
+                $row['Gas']      = $charge;
+                $row['Limit']    = $charge;
+                $row['Pwd']      = $data['Pwd'];
+                $row['ETHAddr']  = $cash['ETHAddr'];
+                $row['Keystore'] = $data['Keystore'];
+                $data = MBerryApi($row,'api.WithDraw');
+                if ($data['Msg'] == 'success'){
+                    $update['status'] = 3;
+                    $update['TxHash'] = $data['Data']['TxHash'];
+                    $result = Db::name('bankroll')->where('b_id',$data['id'])->update($update);
+                    //写入平台流水
+                    stream($cash['money'],4,"用户(".$cash['phone'].')提现'.$cash['money'].$cash['money_type'],3);
+                    stream($charge,4,"用户(".$cash['phone'].')提现'.$cash['money'].$cash['money_type']."付出手续费$ratio%".$charge.$cash['money_type']);
+                    if (!$result)  $this->error('系统错误');
+                }else{
+                    $this->error($data['Msg']);
+                }
+            }else{//驳回
+                Db::startTrans();
+                try{
+                    $update['status'] = 4;
+                    Db::name('bankroll')->where('b_id',$data['id'])->update($update);
+                    Db::name('users')->where('user_id',$cash['user_id'])->setInc($cash['money_type'],$cash['money']);
+                    Db::commit();
+                }catch (Exception $e){
+                    Db::rollback();
+                    $this->error('系统错误');
+                }
+            }
+            $this->success('审核成功',url('cash'));
+        }
+        $where['a.b_id'] = input('id');
+        $data = $model->getDetail($where);
+        $this->assign([
+            'title' => '提现审核',
+            'data' => $data,
+            'status' => $this->status,
+        ]);
+        return view();
+    }
+
+
+    /**
+     * 提现详情
+     */
+    public function detail()
+    {
+        $model = new Bankroll();
+        $where['a.b_id'] = input('id');
+        $data = $model->getDetail($where);
+        $this->assign([
+            'data' => $data,
+            'title' => '提现详情',
+            'status' => $this->status,
+        ]);
+        return view();
+    }
+        /*
+         * 统计图
+         */
+    public function map(){
+        $map=[];
+        if(!empty($_GET['status'])){
+            $map['status']=intval(trim(input('get.status')));
+        }else{
+            $map['status'] = ['in','1,5'];
+        }
+        if(!empty($_GET['startDate'])){
+            $startDate=strtotime(trim(input('get.startDate')));
+        }
+        if(!empty($_GET['endDate'])){
+            $endDate=strtotime(trim(input('get.endDate')));
+        }
+        if($startDate&&$endDate){
+            $map['create_time']=['between time',[$startDate,$endDate]];
+        }else if($startDate&&empty($endDate)){
+            $map['create_time']=['> time',$startDate];
+        }else if($endDate&&empty($startDate)){
+            $map['create_time']=['< time',$endDate];
+        }
+        $res  = Db::name('bankroll')->where($map)->field('create_time,money,status')->order('create_time')->select();
+        $rows = [];
+        foreach ($res as $k => $v){
+            $date = date('Y-m-d',$v['create_time']);
+            if ($v['status'] == 1){ //充值
+                if(array_key_exists($date,$rows)){
+                    $rows[$date]['recharge'] += $v['money'];
+                }else{
+                    $rows[$date]['recharge']  = $v['money'];
+                    $rows[$date]['cash'] = 0;
+                }
+            }else{ //提现
+                if(array_key_exists($date,$rows)){
+                    $rows[$date]['cash'] += $v['money'];
+                }else{
+                    $rows[$date]['cash']  = $v['money'];
+                    $rows[$date]['recharge'] = 0;
+                }
+            }
+        }
+        $recharge = json_encode(array_column($rows,'recharge'));
+        $cash = json_encode(array_column($rows,'cash'));
+        $days  = json_encode(array_keys($rows));
+        $this->assign([
+            'days'=>$days,
+            'recharge'=>$recharge,
+            'cash'=>$cash,
+            'status'=>input('get.status')
+        ]);
+        return view();
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 平台资金流水
+     */
+    public function stream()
+    {
+        $where = [];
+
+        if (!isEmpty(input('status'))){
+            $where['a.status'] = input('status');
+        }
+
+        if (!isEmpty(input('money_type'))){
+            $where['a.money_type'] = input('money_type');
+        }
+
+
+        if (!empty(input('startDate'))){
+            if (empty(input('endDate'))){
+                $where['a.create_time'] = ['> time',input('startDate')];
+            }else{
+                $where['a.create_time'] = ['between time',[input('startDate'),input('endDate')]];
+            }
+        }elseif (!empty(input('endDate'))){
+            $where['a.create_time'] = ['<= time',input('endDate')];
+        }
+//        dump($where);exit;
+
+
+        $model = new CapitalFlow();
+        $rows  = $model->getList($where);
+
+        $where['a.status'] = 1;
+        //平台流水统计
+        $stream = $model->alias('a')->where($where)->sum('money');
+
+        //充值统计
+        $where['a.status'] = 2;
+        $recharge = $model->alias('a')->where($where)->sum('money');
+
+        //提现统计
+        $where['a.status'] = 3;
+        $cash = $model->alias('a')->where($where)->sum('money');
+
+
+        $coin = Db::name('coin')->select();
+        $money_type = array_key($coin,'coin_id');
+        $this->assign([
+            'title' => '平台流水',
+            'rows' => $rows,
+            'pageHTML' => $rows->render(),
+            'money_type' => $money_type,
+            'status' => $this->stream_status,
+            'stream' => $stream,
+            'recharge' => $recharge,
+            'cash' => $cash,
+        ]);
+        return view();
+    }
+    
+    
+}

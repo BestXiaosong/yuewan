@@ -1,0 +1,195 @@
+<script src="__JS__/jquery-2.1.0.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+<script src="__JS__/common.js"></script>
+<script src="__PUBLIC__/layer/zc_util.js"></script>
+<script src="__JS__/verify.js"></script>
+<script>
+
+    var errorMsg = '';//接口调用错误信息公用变量
+
+    // 接口请求公用公用方法
+    // formData formData obj 除phone token外的请求参数
+    // method string 除域名外的接口地址
+    // btn 当前被点击的button  只能为button才有效
+    // type 未登录状态为type赋值true
+
+    function httpPost(method,formData,btn,type) {
+        if (!formData){
+            formData = new FormData
+        }
+
+        var data = false;
+         if (!type){
+             formData.append('phone',"{$phone}");
+             formData.append('token',"{$token}");
+         }
+        var url = "{$API}"+method;
+        btn.attr('disabled', 'disabled');
+        var load=layer.load(1, {
+            shade: [0.3,'#999999'] //0.1透明度的白色背景
+        });
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 1) {
+                    data = result.data;
+                }
+                else if (result.code == -1){ //登录过期
+                    if ("{:request()->isMobile}"){ //手机访问登录过期
+                        window.location.href = "{:url('wap/login')}"
+                    } else { //pc访问登录过期
+                        window.location.href = "{:url('login/login')}"
+                    }
+                } else {
+                    zcAlert(result.msg,0);
+                    layer.closeAll("loading");
+                    btn.attr('disabled', false);
+                }
+            },
+            error: function () {
+                layer.msg('请求失败,网络连接超时', {icon: 5, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+            }
+        });
+
+        return data;
+    }
+
+    function httpPosts(method,formData,type) {
+        if (!formData){
+            formData = new FormData
+        }
+
+        var data = false;
+        if (!type){
+            formData.append('phone',"{$phone}");
+            formData.append('token',"{$token}");
+        }
+        var url = "{$API}"+method;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 1) {
+                    data = result.data;
+                }
+                else if (result.code == -1){ //登录过期
+                    if ("{:request()->isMobile}"){ //手机访问登录过期
+                        window.location.href = "{:url('wap/login')}"
+                    } else { //pc访问登录过期
+                        window.location.href = "{:url('login/login')}"
+                    }
+                } else {
+                    zcAlert(result.msg,0);
+                }
+            },
+            error: function () {
+                layer.msg('请求失败,网络连接超时', {icon: 5, time: 2000});
+
+            }
+        });
+        return data;
+    }
+    //红包领取专属方法
+    function httpPost_red(method,formData,type) {
+        if (!formData){
+            formData = new FormData
+        }
+
+        var data = false;
+        if (!type){
+            formData.append('phone',"{$phone}");
+            formData.append('token',"{$token}");
+        }
+        var url = "{$API}"+method;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+              if (result.code == -1){ //登录过期
+                    if ("{:request()->isMobile}"){ //手机访问登录过期
+                        window.location.href = "{:url('wap/login')}"
+                    } else { //pc访问登录过期
+                        window.location.href = "{:url('login/login')}"
+                    }
+                } else {
+                    data = result.code;
+                }
+            },
+            error: function () {
+                layer.msg('请求失败,网络连接超时', {icon: 5, time: 2000});
+
+            }
+        });
+        return data;
+    }
+    function httpPost_other(method,formData,btn,type) {
+        if (!formData){
+            formData = new FormData
+        }
+
+        var data = false;
+        if (!type){
+            formData.append('phone',"{$phone}");
+            formData.append('token',"{$token}");
+        }
+        var url = "{$API}"+method;
+        btn.attr('disabled', 'disabled');
+        var load=layer.load(1, {
+            shade: [0.3,'#999999'] //0.1透明度的白色背景
+        });
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result.code == 1) {
+                    data = result;
+                }
+                else if (result.code == -1){ //登录过期
+                    if ("{:request()->isMobile}"){ //手机访问登录过期
+                        window.location.href = "{:url('wap/login')}"
+                    } else { //pc访问登录过期
+                        window.location.href = "{:url('login/login')}"
+                    }
+                } else if(result.code != 0 ) {
+                    data = result;
+                }else{
+                    zcAlert(result.msg,0);
+                    layer.closeAll("loading");
+                    btn.attr('disabled', false);
+                }
+            },
+            error: function () {
+                layer.msg('请求失败,网络连接超时', {icon: 5, time: 2000});
+                layer.closeAll("loading");
+                btn.attr('disabled', false);
+            }
+        });
+
+        return data;
+    }
+</script>

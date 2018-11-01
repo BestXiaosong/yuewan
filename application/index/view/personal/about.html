@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__/favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__/favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+
+        <!--关于我们-->
+        <div class="mg_top20 personal_div" style="display: block">
+            <p class="padding_10  bg_e"><img class="vertical-align_m mg_lr10" src="__IMG2__/my-zl.png">关于我们</p>
+
+            <div class="about_me text-center">
+                <p><img class="about_melogo" src="__IMG2__/logo1.png"/></p>
+
+                <p class=" mg_top10 font_16"> 梭哈直播</p>
+                <h6 class=" mg_top10 ">v.1.0.0</h6>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<script src="__JS__/ajaxfileupload.js"></script>
+
+<script>
+    function filechange() {
+        var formData = new FormData($('#uploadForm')[0]);
+        formData.append('phone', "{$phone}");
+        formData.append('token', "{$token}");
+        $.ajax({
+            type: 'post',
+            url: "{$API}" + '/upload/index',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+        }).success(function (res) {
+            if (res.code == 1) {
+                //上传完毕回调
+                $("#input").val(res.data);
+                $('#img').attr('src', res.data);
+            } else if (res.code == -1) { //登录过期
+                if ("{:request()->isMobile}") { //手机访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                } else { //pc访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                }
+            } else {
+                zcAlert(res.msg, 0);
+                layer.closeAll("loading");
+            }
+        }).error(function () {
+            zcAlert("上传失败");
+        });
+    }
+
+    /**
+     * 角色编辑
+     * @param aid
+     */
+
+    function editRole(aid) {
+        console.log($('form#uploadForm'));
+        var formData = new FormData();
+        $.each($('#uploadForm').serializeArray(), function (i, v) {
+            formData.append(v.name, v.value);
+        });
+        data = httpPost('/user/editRole', formData, $(aid), false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            zcAlert('修改成功', 1);
+            window.location.reload();
+        }
+
+    }
+
+    function getNexFans(th) {
+        var thi = $(th);
+        var Page = thi.attr('thisPage') + 1;
+
+        var formData = new FormData();
+        formData.append('page', page);
+        formData.append('list_num', 1);
+        $data = httpPost('/User/my_fans', formData, thi, false);
+
+        var html = '';
+
+        if (data !== false) {
+            layer.closeAll("loading");
+            $.each(data.data, function (i, va) {
+                html += '<li><a href="javascript:;"><img src="' + va.header_img + '"/>' +
+                        '<p>' + va.role_name + '</p></a></li>';
+
+            });
+            $('.fans-box').append(html);
+            if ($data.hasNext == false) {
+                thi.remove();
+            } else {
+                thi.attr('thisPage', data.thisPage);
+            }
+
+
+        }
+    }
+
+</script>
+
+</body>
+</html>

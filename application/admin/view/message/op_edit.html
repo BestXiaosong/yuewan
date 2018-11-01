@@ -1,0 +1,101 @@
+
+{extend name="public:common_edit"/}
+{block name="css"}
+<style>
+    .form-control {
+        max-width: 350px;
+    }
+    .alert{
+        padding: 5px;
+        border: 1px solid #999999;
+    }
+
+
+    .tb-name {
+        width: 238px;
+    }
+    .error{
+        color: red;
+        margin-top: 10px;
+        display: none;
+    }
+    .select{
+        margin-bottom: 10px;
+    }
+    .doctor{
+        display: none;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="/public/plugs/jQuery-Tags-Input/src/jquery.tagsinput.css" />
+<link rel="stylesheet" href="/public/admin/ueditor/themes/default/css/ueditor.min.css">
+{/block}
+{block name="main"}
+<section class="content">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default"
+               data-original-title="返回"><i class="fa fa-reply"></i></a>
+            <a href="javascript:void(0);" class="btn btn-default"
+               data-url="javascript:;"
+               onclick="get_help(this)"><i class="fa fa-question-circle"></i> 帮助</a>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+            </div>
+            <div class="panel-body">
+                <!--表单数据-->
+                <form action="{:URL('op_edit')}" method="post" class="form-horizontal"
+                      id="category_form">
+
+                    <!--通用信息-->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_tongyong">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td width="10%">用户电话:</td>
+                                    <td>
+                                        {$data.phone}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>内容:</td>
+                                    <td>{$data.content}</td>
+                                </tr>
+                                <tr>
+                                    <td>联系邮箱:</td>
+                                    <td>{$data.e_mail}</td>
+                                </tr>
+                                <input type="hidden" name="url" value="{:request()->query()}">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <label class="control-label col-sm-2"></label>
+                        <input type="hidden" name="id" value="{$data.oid}">
+                        <input class="btn btn-primary submit" type="submit" value="确认处理">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="js"}
+<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
+<script type="text/javascript" src="/public/plugs/jQuery-Tags-Input/src/jquery.tagsinput.js"></script>
+<script type="text/javascript" src="/public/admin/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="/public/admin/ueditor/ueditor.all.min.js"></script>
+<script>
+    $(function () {
+
+
+    })
+
+</script>
+
+
+
+{/block}

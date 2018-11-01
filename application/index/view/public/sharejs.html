@@ -1,0 +1,159 @@
+
+<script src="__JS__/jquery.qrcode.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+
+    //分享到QQ空间
+    function qqzoneShare(title,brief,url,img){
+        if(no_login_status == 1){
+            location.href = '{:url("login/login")}'
+        }else{
+            var share1=new ShareTip();
+            share1.sharetoqqzone(
+                title,
+                brief,
+                url,
+                img
+            );
+        }
+    }
+
+    //QQ群和QQ好友
+    function qqShareToP(title,brief,web_url,pic){
+        if(no_login_status == 1){
+            location.href = '{:url("login/login")}'
+        }else{
+            window.open('http://connect.qq.com/widget/shareqq/index.html?url='+web_url+'&desc='+brief+'&title='+title+'&summary='+brief+'&pics='+pic+'&flash=&site=邀请人或网站&callback="  title="QQ登')
+        }
+    }
+
+
+    //新浪微博
+    function two(title,url,img){
+        if(no_login_status == 1){
+            location.href = '{:url("login/login")}'
+        }else{
+            var share1=new ShareTip();
+            share1.sharetosina(
+                title,
+                url,
+                img
+            );
+        }
+    }
+
+
+    var ShareTip = function()  {};
+
+    //分享到新浪微博
+    ShareTip.prototype.sharetosina=function(title,url,picurl)
+    {
+        var sharesinastring='http://v.t.sina.com.cn/share/share.php?title='+title+'&url='+url+'&content=utf-8&sourceUrl='+url+'&pic='+picurl;
+        window.open(sharesinastring,'newwindow','height=400,width=400,top=100,left=100');
+    }
+    //分享到QQ空间
+    ShareTip.prototype.sharetoqqzone=function(title,summary,url,picurl)
+    {
+        var shareqqzonestring='http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?title='+title+'&summary='+summary+'&url='+url+'&pics='+picurl;
+        window.open(shareqqzonestring,'newwindow','height=400,width=400,top=100,left=100');
+    }
+
+
+    function showQrcode(url){
+        if(no_login_status == 1){
+            location.href = '{:url("login/login")}'
+        }else{
+            $('#qrcode').empty();
+            $("#qrcode").qrcode(
+                {
+                    render: "canvas",    //设置渲染方式，有table和canvas，使用canvas方式渲染性能相对来说比较好
+                    text: url,    //扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接
+                    width: "200",            // //二维码的宽度
+                    height: "200",              //二维码的高度
+                    background: "#ffffff",       //二维码的后景色
+                    foreground: "#000000",        //二维码的前景色
+//                                    src: '../img/pm.jpg'             //二维码中间的图片
+                }
+            );
+
+
+//
+//        formData = new FormData
+//
+//        formData.append('url', url);
+//        $data = httpPosts('/index/shareQrcode',formData,false);
+//
+//        $("#drcode").attr('src',data);
+            $('#wx_code').show();
+        }
+    }
+
+
+    /* utf.js - UTF-8 <=> UTF-16 convertion
+     *
+     * Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+     * Version: 1.0
+     * LastModified: Dec 25 1999
+     * This library is free.  You can redistribute it and/or modify it.
+     */
+
+    /*
+     * Interfaces:
+     * utf8 = utf16to8(utf16);
+     * utf16 = utf16to8(utf8);
+     */
+
+    function utf16to8(str) {
+        var out, i, len, c;
+
+        out = "";
+        len = str.length;
+        for(i = 0; i < len; i++) {
+            c = str.charCodeAt(i);
+            if ((c >= 0x0001) && (c <= 0x007F)) {
+                out += str.charAt(i);
+            } else if (c > 0x07FF) {
+                out += String.fromCharCode(0xE0 | ((c >> 12) & 0x0F));
+                out += String.fromCharCode(0x80 | ((c >>  6) & 0x3F));
+                out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+            } else {
+                out += String.fromCharCode(0xC0 | ((c >>  6) & 0x1F));
+                out += String.fromCharCode(0x80 | ((c >>  0) & 0x3F));
+            }
+        }
+        return out;
+    }
+
+    function utf8to16(str) {
+        var out, i, len, c;
+        var char2, char3;
+
+        out = "";
+        len = str.length;
+        i = 0;
+        while(i < len) {
+            c = str.charCodeAt(i++);
+            switch(c >> 4)
+            {
+                case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+                // 0xxxxxxx
+                out += str.charAt(i-1);
+                break;
+                case 12: case 13:
+                // 110x xxxx   10xx xxxx
+                char2 = str.charCodeAt(i++);
+                out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+                break;
+                case 14:
+                    // 1110 xxxx  10xx xxxx  10xx xxxx
+                    char2 = str.charCodeAt(i++);
+                    char3 = str.charCodeAt(i++);
+                    out += String.fromCharCode(((c & 0x0F) << 12) |
+                            ((char2 & 0x3F) << 6) |
+                            ((char3 & 0x3F) << 0));
+                    break;
+            }
+        }
+
+        return out;
+    }
+</script>

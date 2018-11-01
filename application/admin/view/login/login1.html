@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <title>登陆</title>
+
+    <!-- <link href="css/bootstrap.min.css?v=3.4.0" rel="stylesheet"> -->
+    
+
+    <!--自定义-->
+    <link href="/public/admin/login/css/custom.css" rel="stylesheet">
+</head>
+<body>
+<div class="login-contain">
+    <div class="logo_img"></div>
+    <div class="form clearfix">
+        <form id="login_frm" action="#" method="post">
+            <div class="pd mt20 fl">
+                <input name="user_name" type="text" placeholder="请输入您的用户名" class="for-control wd">
+            </div>
+            <div class="pd mt20 fl">
+                <input type="password" name="password" placeholder="请输入密码"  class="for-control wd" >
+            </div>
+            <div class="pd mt30 fl">
+                <button type="button" class="btn-submit btn-cust"></button>
+            </div>
+        </form>
+    </div>
+   
+</div>
+
+<!-- Mainly scripts -->
+<script src="/public/admin/plugins/jQuery/jquery-2.2.3.min.js"></script>
+
+<script>
+    $(function(){
+        $("#admin").focus();
+        $('.btn-submit').click(function () {
+            var btn = $(this);
+            //btn.attr('disabled', 'disabled');
+            var form = btn.closest("form");
+            var formData = new FormData($("form")[0]);
+            var url = form.attr("action");
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result.code == 1) {
+                        window.location.href = '/index/index';
+                    } else {
+                        alert(result.msg);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

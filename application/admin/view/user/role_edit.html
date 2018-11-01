@@ -1,0 +1,131 @@
+
+{extend name="public:common_edit"/}
+{block name="css"}
+<link  type="text/css" rel="stylesheet" href="__TIMEPICKER__/bootstrap-datetimepicker.min.css" />
+<style>
+    .form-control {
+        max-width: 350px;
+    }
+
+    .tb-name {
+        width: 238px;
+    }
+    .error{
+        color: red;
+        margin-top: 10px;
+        display: none;
+    }
+    .select{
+        margin-bottom: 10px;
+    }
+    .doctor{
+        display: none;
+    }
+</style>
+{/block}
+{block name="main"}
+<section class="content">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default"
+               data-original-title="返回"><i class="fa fa-reply"></i></a>
+            <a href="javascript:void(0);" class="btn btn-default"
+               data-url="javascript:;"
+               onclick="get_help(this)"><i class="fa fa-question-circle"></i> 帮助</a>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+            </div>
+            <div class="panel-body">
+                <!--表单数据-->
+                <form action="" method="post" class="form-horizontal"
+                      id="category_form">
+
+                    <!--通用信息-->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_tongyong">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td>头像:</td>
+                                    <td>{:uploadHtml('header_img',$data.header_img,'single_img')}</td>
+                                </tr>
+                                <tr>
+                                    <td>角色昵称:</td>
+                                    <td><input placeholder="角色昵称" class="form-control" name="role_name" type="text" value="{$data.role_name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>所在地:</td>
+                                    <td><input placeholder="所在地" class="form-control" name="place" type="text" value="{$data.place}"></td>
+                                </tr>
+                                <tr>
+                                    <td>签名:</td>
+                                    <td><input placeholder="签名" class="form-control" name="sign" type="text" value="{$data.sign}"></td>
+                                </tr>
+                                <tr>
+                                    <td>出生日期:</td>
+                                    <td><input type="text" name="birthday" value="{$data.birthday}" placeholder="出生日期" class="form-control timepicker"></td>
+                                </tr>
+                                <tr>
+                                    <td>第一次接触区块链的日期:</td>
+                                    <td><input type="text" name="first_time" value="{$data.first_time}" placeholder="第一次接触区块链的日期" class="form-control timepicker">
+                                </tr>
+                                <tr>
+                                    <td>性别:</td>
+                                    <td>
+                                        <select class="form-control" name="sex">
+                                            <option id="sex1" value="1">男</option>
+                                            <option id="sex0" value="0">女</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>粉丝数量:</td>
+                                    <td>{$data.fans_num}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <label class="control-label col-sm-2"></label>
+                        <input type="hidden" name="id" value="{$data.role_id}">
+                        <input class="btn btn-primary submit" type="submit" value="保存">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="js"}
+<script src="__TIMEPICKER__/bootstrap-datetimepicker.js?{$stamp}"></script>
+<script src="__TIMEPICKER__/bootstrap-datetimepicker.zh-CN.js?{$stamp}"></script>
+<script>
+    $(function(){
+        var sex   = "{$data.sex}";
+        if(sex != ''){
+            $('#sex'+sex).attr('selected',true)
+        }
+        //防止事件冒泡
+        $(document).delegate('.timepicker','focusin', function(){
+            $('.timepicker').datetimepicker({
+                format: 'yyyy-mm-dd',
+                minView: "month",
+                language:  'zh-CN',
+                weekStart: 1,
+                todayBtn:  0,
+                autoclose: 1,
+                startDate:'2015-01-01',
+                maxView:3,
+                endDate:0,
+                todayHighlight: 1,
+                startView: 2,
+                forceParse: 0,
+                showMeridian: 1
+            });
+        });
+    });
+</script>
+{/block}

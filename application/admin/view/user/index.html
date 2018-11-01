@@ -1,0 +1,125 @@
+{extend name="public:common_edit"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> 用户列表</h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="input-order-id">手机号码</label>
+                        <div class="input-group">
+                            <input type="text" name="phone" value="{$Think.get.phone}" placeholder="用户手机号码"
+                             class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                    <a href="{:url('user_edit')}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                    <a  onclick="add()" class="btn btn-primary pull-right"><i class="fa fa-volume-up"></i>发布推送</a>
+                    <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>用户id</td>
+                                <td>手机号码</td>
+                                <td>积分余额</td>
+                                <td>BCDN余额</td>
+                                <td>下级人数</td>
+                                <td>注册日期</td>
+                                <td>状态</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$row.user_id}</td>
+                                <td>{$row.phone}</td>
+                                <td>{$row.money}</td>
+                                <td>{$row.BCDN}</td>
+                                <td>{:junior($row.user_id)}</td>
+                                <td>{$row.create_time}</td>
+                                <td>{if condition="$row.status == 1"} 启用 {else /} 禁用 {/if}</td>
+                                <td>
+                                    <a class="btn btn-primary " href="/user/user_edit/id/{$row.user_id}">编辑</a>
+                                    <a class="btn btn-primary"  href="/user/detail/id/{$row.user_id}">资金明细</a>
+                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-message="" data-url="/user/change/id/{$row.user_id}/type/0">禁用 </span>
+                                    {else /} <span class="btn btn-primary change" data-message="" data-url="/user/change/id/{$row.user_id}/type/1">启用</span> {/if}
+
+
+                                    {/*:url('user/user_pass',['id'=>$row.user_id])*/}
+                                    <!--<span class="btn btn-danger check_del" data-message="" data-url="">删除</span>-->
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                            <h4 class="modal-title" id="myModalLabel"> 发布推送</h4></div>
+                        <div class="modal-body">
+                            <form id="bjy-form" class="form-inline" action="{:url('user/Push')}" method="post"><input
+                                    type="hidden" name="pid" value="0">
+                                <table class="table table-striped table-bordered table-hover table-condensed">
+                                    <tr>
+                                        <th>推送内容：</th>
+                                        <td><input class="form-control" type="text" name="title"></td>
+                                    </tr>
+                                    <tr>
+                                        <th width="20%">指定用户：</th>
+                                        <td>
+                                            <input class="form-control" placeholder="用户手机号码" type="text" name="phone">
+                                            <span style="color: red">ps:不填手机号码默认推送给所有用户</span>
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <td><input class="btn btn-success submit" type="submit" value="发布"></td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+{block name="js"}
+<script>
+    function add() {
+        $("input[name='title'],input[name='name']").val('');
+        $("input[name='pid']").val(0);
+        $('#bjy-add').modal('show');
+    }
+    $(function () {
+        // 添加菜单
+
+        var is_agent = "{$Think.get.is_agent}";
+        $('#is_agent'+is_agent).attr('selected','selected')
+    })
+</script>
+{/block}
+
+
+
+

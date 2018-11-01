@@ -1,0 +1,93 @@
+{extend name="public:common_index"/}
+{block name="main"}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> 用户列表</h3>
+    </div>
+    <div class="panel-body">
+
+        <div class="navbar navbar-default">
+            <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                <div class="form-group">
+                    <label class="control-label" for="input-order-id">时间筛选</label>
+                    <div class="input-group">
+                        <input type="text" name="start" value="{$Think.get.start}" placeholder="选择开始时间"
+                               class="form-control timepicker">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" name="end" value="{$Think.get.end}" placeholder="选择结束时间"
+                               class="form-control timepicker">
+                    </div>
+                </div>
+                <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                        id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                </button>
+                <a href="{:url('index')}" class="btn btn-primary pull-right"><i class="fa "></i>返回</a>
+                <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
+            </form>
+        </div>
+        <div id="ajax_return">
+            <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <td style="text-align: center">序号</td>
+                            <td style="text-align: center">资金类型</td>
+                            <td style="text-align: center">具体金额</td>
+                            <td style="text-align: center">来源</td>
+                            <td style="text-align: center">备注</td>
+                            <td style="text-align: center">使用时间</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 列表循环开始 -->
+                        {volist name="rows" id="row" key="key"}
+                        <tr>
+                            <td style="text-align: center">{$key}</td>
+                            <td style="text-align: center">{if $row.type eq 1}收入{else}支出{/if}</td>
+                            <td style="text-align: center">{$row.money}</td>
+                            <td >{if $row.money_type eq 1}
+                                        红包
+                                {elseif $row.money_type eq 2}
+                                        竞猜
+                                {elseif $row.money_type eq 3}
+                                        兑换
+                                {elseif $row.money_type eq 4}
+                                        拍卖
+                                {elseif $row.money_type eq 5}
+                                        直播间付费
+                                {elseif $row.money_type eq 6}
+                                        充值
+                                {elseif $row.money_type eq 7}
+                                        其他
+                                {/if}
+                            </td>
+                            <td>{$row.remark}</td>
+                            <td style="text-align: center">{$row.create_time|date='Y-m-d H:i',###}</td>
+                        </tr>
+                        {/volist}
+                        <!-- 列表循环结束 -->
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div id='pagerarea'>{$pageHTML}</div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+    $(function () {
+        var is_agent = "{$Think.get.is_agent}";
+        $('#is_agent'+is_agent).attr('selected','selected')
+    })
+</script>
+{/block}
+
+
+
+

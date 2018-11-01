@@ -1,0 +1,68 @@
+{extend name="public:common_edit" /}
+
+{block name="main"}
+<link rel="stylesheet" href="__FONT__/css/font-awesome.min.css" />
+
+<style>
+    .modal.in .modal-dialog{
+        margin-top: 10%;
+        z-index: 10000;
+    }
+    .modal-backdrop{
+        z-index: 0;
+    }
+</style>
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-md-12">
+            <!--breadcrumbs start -->
+            <!--<ul class="breadcrumb panel">-->
+                <!--<li><a href="{:url('Index/index')}"><i class="fa fa-home"></i> 控制台</a></li>-->
+                <!--<li><a href="{:url('index')}">权限管理</a></li>-->
+                <!--<li class="active">权限管理</li>-->
+            <!--</ul>-->
+            <!--breadcrumbs end -->
+        </div>
+    </div>
+
+    <form class="form-inline" method="post" id="45">
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="home">
+                <table class="table table-striped table-bordered table-hover table-condensed">
+                    <tr>
+                        <th>管理组</th>
+                        <td>
+                            {foreach $data as $v} {$v['title']} <input class="xb-icheck" type="checkbox" name="group_ids[]"
+                                                                       value="{$v['id']}"> &emsp;{/foreach}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>姓名</th>
+                        <td><input class="form-control" type="text" name="user_name"></td>
+                    </tr>
+                    <tr>
+                        <th>初始密码</th>
+                        <td><input class="form-control" type="text" name="password"></td>
+                    </tr>
+                    <tr>
+                        <th>状态</th>
+                        <td><span class="inputword ">允许登录</span> <input class="xb-icheck" type="radio" name="status" value="1"
+                                                                        checked="checked"> &emsp; <span class="inputword ">禁止登录</span>
+                            <input class="xb-icheck" type="radio" name="status" value="0"></td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td><input class="btn btn-success submit" type="submit" value="添加"></td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+    </form>
+
+</div>
+<script>
+
+</script>
+<!--body wrapper end-->
+{/block}

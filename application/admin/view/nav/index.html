@@ -1,0 +1,208 @@
+{extend name="public:common_edit" /}
+
+{block name="main"}
+<link rel="stylesheet" href="__FONT__/css/font-awesome.min.css" />
+
+<style>
+    .modal.in .modal-dialog{
+        margin-top: 5%;
+        z-index: 10000;
+    }
+    .modal-backdrop{
+        z-index: 0;
+    }
+    input[type=checkbox], input[type=radio] {
+        opacity: 1;
+        position: inherit;
+        left: -9999px;
+        z-index: -1;
+        cursor: pointer;
+    }
+
+</style>
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-md-12">
+            <!--breadcrumbs start -->
+            <ul class="breadcrumb panel">
+                <li><a href="{:url('Index/index')}"><i class="fa fa-home"></i> 控制台</a></li>
+                <li><a href="{:url('index')}">菜单列表</a></li>
+            </ul>
+            <!--breadcrumbs end -->
+        </div>
+    </div>
+    <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="{:url('index')}" data-toggle="tab">菜单列表</a></li>
+        <li><a href="javascript:;" onclick="add()">添加菜单</a></li>
+    </ul>
+
+    <form id="ssss" action="{:url('Nav/order')}" method="post">
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="home">
+                <table class="table table-striped table-bordered table-hover table-condensed">
+                    <tr>
+                        <th width="5%">排序</th>
+                        <th>菜单名</th>
+                        <th>控制器</th>
+                        <th>方法</th>
+                        <th>icon</th>
+                        <th>显示(1)/隐藏(0)</th>
+                        <th>操作</th>
+                    </tr>
+                    {foreach $data as $v}
+                    <tr>
+                        <td><input class="form-control" style="width:40px;height:25px;" type="text" name="{$v['id']}"
+                                   value="{$v['sort']}"></td>
+                        <td>{$v['_name']}</td>
+                        <td>{$v['control']}</td>
+                        <td>{$v['act']}</td>
+                        <td>{$v['icon']}</td>
+                        <td>{$v['status']}</td>
+                        <td>
+                            <a class="btn btn-primary" href="javascript:;" navId="{$v['id']}" navName="{$v['name']}"  onclick="add_child(this)">添加子菜单</a>
+                             <a class="btn btn-primary" href="javascript:;" navStatus="{$v['status']}" navId="{$v['id']}" navName="{$v['name']}" controller="{$v['control']}" navMca="{$v['act']}"
+                                 navIco="{$v['icon']}" onclick="edit(this)">修改</a>
+                             <span class="btn-danger btn check_del" data-url="{:url('Nav/delete',array('id'=>$v['id']))}" >删除</span>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    <tr>
+                        <th><input class="btn btn-success submit" type="submit" value="排序"></th>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </form>
+    <div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                    <h4 class="modal-title" id="myModalLabe"> 添加菜单</h4></div>
+                <div class="modal-body">
+                    <form id="bjy-form" class="form-inline" action="{:url('Nav/add')}" method="post"><input
+                            type="hidden" name="pid" value="0">
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <tr>
+                                <th width="12%">菜单名：</th>
+                                <td><input class="form-control" type="text" name="name"></td>
+                            </tr>
+                            <tr>
+                                <th>控制器：</th>
+                                <td><input class="form-control" type="text" name="control"> 方法即可 例如 nav
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>方法：</th>
+                                <td><input class="form-control" type="text" name="act"> 方法即可 例如 index
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>状态：</th>
+                                <td><input class="form-control" type="text" name="status"> 显示(1)/隐藏(0)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>图标：</th>
+                                <td><input class="form-control" type="text" name="icon"> glyphicon图标 输入 glyphicon-后边的即可</td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td><input class="btn btn-success submit" type="submit" value="添加"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                    <h4 class="modal-title" id="myModalLabel"> 修改菜单</h4></div>
+                <div class="modal-body">
+                    <form id="bjy-" class="form-inline" action="{:url('Nav/edit')}" method="post"><input
+                            type="hidden" name="id">
+                        <table class="table table-striped table-bordered table-hover table-condensed">
+                            <tr>
+                                <th width="12%">菜单名：</th>
+                                <td><input class="form-control" type="text" name="name"></td>
+                            </tr>
+                            <tr>
+                                <th>控制器：</th>
+                                <td><input class="form-control" type="text" name="control"> 方法即可 例如 nav
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>方法：</th>
+                                <td><input class="form-control" type="text" name="act"> 输入方法即可 例如 /Nav/index
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>状态：</th>
+                                <td><input class="form-control" type="text" name="status"> 显示(1)/隐藏(0)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>图标：</th>
+                                <td><input class="form-control" type="text" name="icon"> glyphicon图标 输入 glyphicon-后边的即可</td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td><input class="btn btn-success submit" type="submit" value="修改"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+        // 添加菜单
+    function add() {
+        $("input[name='name'],input[name='act'],input[name='control'],input[name='status']").val('');
+        $("input[name='pid']").val(0);
+        $('#bjy-add').modal('show');
+    }
+
+    // 添加子菜单
+    function add_child(obj) {
+        var navId = $(obj).attr('navId');
+        $("input[name='pid']").val(navId);
+        $("input[name='name']").val('');
+        $("input[name='status']").val('');
+        $("input[name='url']").val('');
+        $("input[name='icon']").val('');
+        $("input[name='controller']").val('');
+        $('#bjy-add').modal('show');
+    }
+
+    // 修改菜单
+    function edit(obj) {
+        var navId     = $(obj).attr('navId');
+        var navName   = $(obj).attr('navName');
+        var navStatus  = $(obj).attr('navStatus');
+        var navMca = $(obj).attr('navMca');
+        var navIco = $(obj).attr('navIco');
+        var controller = $(obj).attr('controller');
+        $("input[name='id']").val(navId);
+        $("input[name='control']").val(controller);
+        $("input[name='name']").val(navName);
+        $("input[name='status']").val(navStatus);
+        $("input[name='act']").val(navMca);
+        $("input[name='icon']").val(navIco);
+        $('#bjy-edit').modal('show');
+    }
+
+</script>
+<!--body wrapper end-->
+{/block}

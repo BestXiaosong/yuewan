@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__//favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__//favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+        <!--我的红包-->
+        <div class="mg_top20 personal_div" style="display: block">
+            <div class="clearfix">
+                <div class="gift left">
+                    <h4 class="padding_10 bor_b tittle_gift clearfix">
+                        <strong class="left">我收到的</strong>
+                    </h4>
+
+                    <div class="redbag bor_b padding_tb20">
+                        <h2 class="text-center">{$receive.acount.sum_money}</h2>
+
+                        <div class="clearfix mg_top20">
+                            <div class="left redbag_list">
+                                <p>{$receive.acount.num}</p>
+
+                                <p>收到红包</p>
+                            </div>
+                            <div class="left redbag_list">
+                                <p>{$receive.acount.luck_num}</p>
+
+                                <p>运气王</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gift-box">
+                        {volist name='receive.data' id='vo'}
+
+                        <div class="clearfix padding_10 bor_b">
+                            <div class="left">
+                                <p><strong>{$vo.role_name}</strong></p>
+                                <h6 class="mg_top10">{if $vo.create_time}{:date('m-d
+                                    H:i',strtotime($vo.create_time))}{/if}</h6>
+                            </div>
+                            <h4 class="right font_16 mg_top10">{$vo.money}</h4>
+                        </div>
+                        {/volist}
+                    </div>
+                </div>
+                <div class="gift left">
+                        <h4 class="padding_10 bor_b tittle_gift clearfix">
+                            <strong class="left">我发出的</strong>
+                        </h4>
+
+                        <div class="redbag bor_b padding_tb20">
+                            <h2 class="text-center">{$send.count.sum_money}</h2>
+
+                            <div class=" mg_top20 text-center">
+                                <p>{$send.count.num}</p>
+
+                                <p>发出红包</p>
+                            </div>
+                        </div>
+                        <div class="gift-box">
+                            {volist name = 'send.data' id= 'vo'}
+                            <div class="clearfix padding_10 bor_b">
+                                <div class="left">
+                                    <p><strong></strong></p>
+                                    <h6 class="mg_top10">{if $vo.create_time}{:date('m-d
+                                        H:i',strtotime($vo.create_time))}{/if}</h6>
+                                </div>
+                                <div class="right ">
+                                    <h4 class="font_16">{$vo.money}</h4>
+                                    <h6 class="mg_top5">{$vo.status}</h6>
+                                </div>
+                            </div>
+                            {/volist}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

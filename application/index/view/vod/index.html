@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+		<meta HTTP-EQUIV="Expires" CONTENT="-1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>回放</title>
+		<script src="__JS__/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+
+		{include file="public/js" /}
+		<link rel="shortcut icon" href="__IMG__/favicon.ico" />
+		<link rel="bookmark" href="__IMG__/favicon.ico" type="image/x-icon" 　/>
+		<link rel="stylesheet" type="text/css" href="__CSS__/common.css" />
+		<link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+		<link rel="stylesheet" type="text/css" href="__CSS__/index.css" />
+	</head>
+	<body>
+	{include file='public/header' /}
+		<div class="main-all clearfix mg_top10">
+			{include file="vod/left" /}
+			<div class="main-right left bg_ff">
+				<div class="tittle bor_b clearfix ">
+				    <h4 class="padding_tb10">
+				    	<img class="vertical-align_m mg_lr10" src="__IMG__/icon-hf.png"><strong>{if !isset($cid)}全部回放{else}{volist name='$cate' id="v"}{if($v.cid eq $cid)}{$v.cate_name}{/if}{/volist}{/if}</strong>
+				    	<!--<a href="javascript:;" class="right font_14 padding_10">当前共123个房间</a>-->
+				    </h4>
+					{if isset($cid)}
+					<div class="padding_tb20 advertising">
+						{volist name="ad"  id="v"}
+						<a href="javascript:location.href='{$url}';" class="advertising-box ">
+							<img class="width_100" src="{$v.img}">
+							<i class="mark">广告</i>
+						</a>
+						{/volist}
+					</div>
+					{/if}
+				</div>
+				<div class=" ">
+					<div class="entrance-box clearfix active">
+						{if !empty($data)}
+						{volist name="$data.data" id='v'}
+							<dl>
+								<a href="{:url('Vod/detail',array('pid'=>$v.pid))}">
+									<dt>
+										<img class="width_100" src="{$v.img}">
+										<!--<i class="time">02:48</i>-->
+									</dt>
+							  	    <dd>
+							  	    	<div class="clearfix font-box padding_tb10">
+							  	    		<img class="left head" src="{$v.header_img}">
+							  	    		<div class="left font-info ">
+							  	    			<p class="color_55"><strong>{$v.title}</strong></p>
+							  	    			<p>
+							  	    				<span class="left">{$v.cate_name}</span>
+							  	    				<span class="right"><img src="__IMG__/eye.png"> {$v.num}</span>
+							  	    			</p>
+							  	    		</div>
+							  	    	</div>
+							  	    </dd>
+								</a>
+							</dl>
+						{/volist}
+						{else}
+						<img src="" alt="">
+						{/if}
+						</div>
+				    <div class="tcdPageCode mg_top20"></div>
+				</div>   
+			</div>
+		</div>
+
+	{include file='public/footer' /}
+	    <script src="__JS__/jquery.page.js" type="text/javascript" charset="utf-8"></script>
+	    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+	    <script type="text/javascript">
+	    	$(function(){
+
+	    		$(".tcdPageCode").createPage({
+			        pageCount:{$data.totalPage},
+			        current:{$data.thisPage},
+			        backFn:function(p){
+			            //console.log(p);
+			        }
+			    });
+			   var a= $('.headerpage').find($('nav_list li.active').html());
+			   console.log(a)
+	    	})
+	    </script>
+	</body>
+</html>

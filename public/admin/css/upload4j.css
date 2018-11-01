@@ -1,0 +1,46 @@
+/*�ٶ�webuploader */
+.webuploader-container {position: relative;display:inline-block;float:left;}
+.webuploader-element-invisible {
+	position: absolute !important;
+	clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px,1px,1px,1px);
+}
+.webuploader-pick {position: relative;display: inline-block;cursor: pointer;background: #00b7ee;padding: 6px 15px;color: #FFF;text-align: center;overflow: hidden;}
+.webuploader-pick-hover {background: #00a2d4;}
+.webuploader-pick-disable {opacity: 0.6;pointer-events:none;}
+
+/*uploadify CSS*/
+.uploadify {display:inline-block;position: relative;font-size: 14px;/*margin-bottom: 1em;*/}
+.uploadify-button {display:inline-block;border: 1px solid #00b7ee;background: #00b7ee;color:#FFF;text-align: center;font-size: 14px;}
+.uploadify-queue {margin-bottom: 1em;}
+.uploadify-queue-item {background-color: #F5F5F5;-webkit-border-radius: 3px;-moz-border-radius: 3px;border-radius: 3px;font: 11px Verdana, Geneva, sans-serif;margin-top: 5px;max-width: 350px;padding: 10px;}
+.uploadify-error {background-color: #FDE5DD !important;}
+.uploadify-queue-item .cancel a {background: url('../images/uploadify-cancel.png') 0 0 no-repeat;float: right;height:16px;text-indent: -9999px;width: 16px;}
+.uploadify-queue-item.completed {background-color: #E5E5E5;}
+.uploadify-progress {background-color: #E5E5E5;margin-top: 10px;width: 100%;}
+.uploadify-progress-bar {background-color: #0099FF;height: 3px;width: 1px;}
+.uploadify_text{width: 220px}
+
+/*customer 4jcms*/
+a{text-decoration:none;}
+a:hover{text-decoration:none;}
+.fl{float: left;}
+.fr{float: right;}
+.multi_uploader .head{height:33px;}
+.multi_uploader .file_ext{height:30px;padding:7px 12px;background-color:#D2D2D2;color: #FFF;border-radius:8px;font-size: 15px;}
+.multi_uploader .file_ext:hover{text-decoration:none;}
+.upload_thum{width: 100px;height: 100px;border: 1px solid #E7E7E7;position: relative;display:inline-block;margin-right: 10px;margin-bottom: 10px;}
+.upload_file{line-height: 36px;margin-bottom: 10px;border-bottom: 1px solid #E7E7E7;padding-bottom: 10px;overflow:hidden;font-size:14px;}
+.imgdel{display:block;background-color:#D41C1C;width: 21px;height: 21px;line-height: 21px;position: absolute;top:4px;right:4px;text-align: center;color:#FFF;font-size:14px;}
+.imgdel:hover{background-color:#E62121;}
+.file_func{color:blue;font-weight:bold;}
+.multi_uploader .filelist{border: 1px solid #E7E7E7;border-top:none;padding:20px 10px;}
+.input_name_tag{display:none;}
+.uploader_process{height:33px;line-height:33px;float:left;margin-left:10px;}
+.input_name_tag .ipt{width:183px;padding: 6px 4px;font-size: 100%; line-height: 18px;border: 1px solid #CCC;background-color: white;box-shadow: 2px 2px 2px #F0F0F0 inset;vertical-align: middle;margin: 0;font-family: inherit;}
+.input_name_tag .ipt:focus{border-color:#66afe9;outline:0;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)}
+.input_name_tag .small-ipt{width:100px;}
+.input_name_tag .btn{color:#FFF;background-color: #D2D2D2;border-color:#C1C0C0;border-radius:4px;display:inline-block;padding:6px 12px;margin-bottom:0;font-size:14px;font-weight:400;line-height:1.42857143;text-align:center;white-space:nowrap;vertical-align:middle;cursor:pointer;}
+.input_name_tag .btn:hover{background-color:#CAC9C9;border-color:#CAC9C9}
+.input_name_tag .btn-info{background-color:#5bc0de;border-color:#46b8da}
+.input_name_tag .btn-info:hover{background-color:#31b0d5;border-color:#269abc}

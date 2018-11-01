@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="shortcut icon" href="__IMG2__//favicon.ico"/>
+    <link rel="bookmark" href="__IMG2__//favicon.ico" type="image/x-icon" 　/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/page.css"/>
+    <link rel="stylesheet" type="text/css" href="__CSS__/index.css"/>
+
+    <!--<script src="__JS__/jquery-1.7.1.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="__JS__/jquery-2.1.0.js"></script>
+    <script src="__JS__/index.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var hebody = $('body').height()
+        $('.overlay').css('height', $('body').height())
+    </script>
+    <!--公用js-->
+    {include file="public/js" /}
+</head>
+
+<body>
+{include file="public/header" /}
+<div class="main-all clearfix" id="personal">
+
+    {include file="/personal/left" /}
+    <div class="main-right left bg_ff">
+        <!--我的资产-->
+        <div class="mg_top20 personal_div" style="display: block;">
+            <div class="msg-box bor_b">
+                <a href="javascript:;" class="active"><strong>角色</strong></a>
+                <a href="javascript:;"><strong>房间</strong></a>
+                <a href="javascript:;"><strong>礼物</strong></a>
+            </div>
+
+
+
+            <!--角色-->
+            <div class="funds active">
+                <div class="focus-list clearfix mg_top20">
+                    {volist name='role' id='vo'}
+                    <dl>
+                        <dt><img class="head-home" src="{$vo.header_img}"></dt>
+                        <dd>
+                            <p><strong>{$vo.role_name}</strong></p>
+                            <h6 class="mg_top5">关注{$vo.fans_num}</h6>
+                            <!--<p class="mg_top10"><a href="javascript:;" class="Focus-a active">关注</a></p>-->
+                        </dd>
+                    </dl>
+                    {/volist}
+                    <dl class="infor-a">
+                        <dt><img class="head-home" src="__IMG2__/add-img.png"/></dt>
+                        <dd class="mg_top10 ">
+                            添加角色
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <!--房间-->
+            <div class="funds">
+                <div class="entrance-box  clearfix  ">
+                    {volist name='room' id='vo'}
+                    <dl>
+                        <a href="javascript:;">
+                            <dt><img class="width_100" src="{$vo.img}"></dt>
+                        </a>
+                        <dd>
+                            <p class="color_55"><strong>{$vo.room_name}</strong></p>
+                            <h6 class="width_100 mg_top10 clearfix">
+                                <span class="left">粉丝数<i>{$vo.fans}</i></span>
+                                <!--<a class="right basic_a bg_blue btn_rudis room-a" >拍卖</a>-->
+                            </h6>
+                        </dd>
+                    </dl>
+                    {/volist}
+                    <dl class="text-center addhome-a">
+                        <dt><img class="head-home " style="width: 120px" src="__IMG2__/add-img.png"/></dt>
+                        <dd class="mg_top10 ">
+                            添加房间
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <!--礼物-->
+            <div class="funds">
+                <div class="clearfix">
+                    <div class="gift left">
+                        <h4 class="padding_10 bor_b tittle_gift clearfix">
+                            <span class="left">我收到的礼物</span>
+                            <!--<a href="javascript:;" class="right exchange-a">兑换</a>-->
+                        </h4>
+
+                        <div class="gift-box">
+
+                            {volist name='gift.get' id='vo'}
+                            <div class="padding_10 bor_b">
+                                <dl class="clearfix">
+                                    <dt class="left"><img class="head" src="__IMG2__/recive.png"/></dt>
+                                    <dd class="left clearfix ">
+                                        <div class="left">
+                                            <p><strong>{$vo.gift_name}</strong></p>
+                                            <h6>共计  {$vo.num}</h6>
+                                        </div>
+                                        <h4 class="right font_16 mg_top10">
+                                           <a href="{:url('personal/giftdetails',['gift_id'=>$vo.gift_id,'type'=>1])}">查看详情</a>
+                                        </h4>
+
+                                    </dd>
+                                </dl>
+                            </div>
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="gift left">
+                        <h4 class="padding_10 bor_b tittle_gift clearfix">
+                            <span class="left">我送出去的礼物</span>
+                        </h4>
+
+
+
+                        <div class="gift-box">
+                            {volist name='gift.send' id='vo'}
+
+                            <div class="padding_10 bor_b">
+                                <dl class="clearfix">
+                                    <dt class="left"><img class="head" src="__IMG2__/send.png"/></dt>
+                                    <dd class="left clearfix ">
+                                        <div class="left">
+                                            <p><strong>{$vo.gift_name}</strong></p>
+                                            <h6>共计  {$vo.num}</h6>
+                                        </div>
+                                        <h4 class="right font_16 mg_top10">
+                                            <a href="#">查看详情</a>
+                                        </h4>
+
+                                    </dd>
+                                </dl>
+                            </div>
+
+                         {/volist}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="basic_spring addhome-box">
+        <h4 class="clearfix text-center bg_e padding_tb10 color_55">添加房间
+            <a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG2__/icon-dell.png"/></a>
+        </h4>
+
+        <form id="uploadForm">
+            <div class="text-center bg_ff information-main">
+                <p class="mg_top20 code-box">
+                    <label for="">当前房间封面 ：</label>
+                    <img class="chosee-head" id="img" src=""/>
+                    <input type="file" name="file" id="fileid" onchange="filechange()" value=""/>
+                    <input type="hidden" name="img" id="input" value="">
+                </p>
+
+
+                <p class="mg_top10 code-box">
+                    <label for="">选择房间分类 ：</label>
+                    <select name="cid">
+                        <option value="">请选择房间分类</option>
+                        {volist name='cid' id='vo'}
+                        <option value="{$vo.cid}">{$vo.cate_name}</option>
+                        {/volist}
+                    </select>
+                </p>
+                <p class="mg_top10 code-box">
+                    <label for="">房间名称 ：</label>
+                    <input type="text" name="room_name"  value=""/>
+                </p>
+
+
+
+                <p class="mg_top10 code-box">
+                    <label for="">房间简介 ：</label>
+                    <input type="text" name="detail" value=""/>
+                </p>
+
+                <p class="mg_top40 text-center"><a href="javascript:;" onclick="addRoom(this)"
+                                                   class="btn-a ">确定</a>
+                </p>
+            </div>
+        </form>
+    </div>
+    <!--编辑资料__IMG2__/icon-head.png-->
+    <div class="basic_spring information">
+        <h4 class="clearfix text-center bg_e padding_tb10 color_55">添加角色
+            <a href="javascript:;" class="right padding_lr10 dell_a"><img src="__IMG2__/icon-dell.png"/></a>
+        </h4>
+
+        <form id="uploadForm1">
+
+            <div class="text-center bg_ff information-main">
+                <p class="mg_top20 code-box">
+                    <label>上传头像 ：</label>
+                    <img class="chosee-head" id="img1" src=""/>
+                    <input type="file" name="file" id="fileid1" onchange="filechange1()" value=""/>
+                    <input type="hidden" name="header_img" id="input1" value="">
+                </p>
+
+                <p class="mg_top10 code-box">
+                    <label >选择性别 ：</label>
+                    <select name="sex">
+
+
+                        <option value="">请选择性别</option>
+                        <option value="1">男</option>
+                        <option value="0">女</option>
+
+                    </select>
+                </p>
+                <p class="mg_top10 code-box">
+                    <label >当前所在地 ：</label>
+                    <input type="text" name="place"  value=""/>
+                </p>
+                <p class="mg_top10 code-box">
+                    <label >角色昵称 ：</label>
+                    <input type="text" name="role_name"  value=""/>
+                </p>
+
+                <p class="mg_top10 code-box">
+                    <label>接触区块链时间 ：</label>
+                    <input type="date" name="first_time"  />
+                </p>
+
+                <p class="mg_top10 code-box">
+                    <label >出生日期 ：</label>
+                    <input type="date" name="birthday" />
+                </p>
+
+                <p class="mg_top10 code-box">
+                    <label >个性签名 ：</label>
+                    <input type="text" name="sign" />
+                </p>
+
+                <p class="mg_top40 text-center"><a href="javascript:;" onclick="addRole(this)"
+                                                   class="btn-a ">确定</a>
+                </p>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+</body>
+<script>
+    $(".chosee-head").hide();
+    function filechange() {
+        var formData = new FormData($('#uploadForm')[0]);
+        formData.append('phone', "{$phone}");
+        formData.append('token', "{$token}");
+        $.ajax({
+            type: 'post',
+            url: "{$API}" + '/upload/index',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+        }).success(function (res) {
+            if (res.code == 1) {
+                //上传完毕回调
+
+                $("#input").val(res.data);
+                $('#img').attr('src', res.data);
+                $(".chosee-head").show();
+            } else if (res.code == -1) { //登录过期
+                if ("{:request()->isMobile}") { //手机访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                } else { //pc访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                }
+            } else {
+                zcAlert(res.msg, 0);
+                layer.closeAll("loading");
+            }
+        }).error(function () {
+            zcAlert("上传失败");
+        });
+    }
+
+    function filechange1() {
+        var formData = new FormData($('#uploadForm1')[0]);
+        formData.append('phone', "{$phone}");
+        formData.append('token', "{$token}");
+        $.ajax({
+            type: 'post',
+            url: "{$API}" + '/upload/index',
+            data: formData,
+            cache: false,
+            processData: false,
+            contentType: false,
+        }).success(function (res) {
+            if (res.code == 1) {
+                //上传完毕回调
+
+                $("#input1").val(res.data);
+                $('#img1').attr('src', res.data);
+                $('.chosee-head').show();
+            } else if (res.code == -1) { //登录过期
+                if ("{:request()->isMobile}") { //手机访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                } else { //pc访问登录过期
+                    window.location.href = "{:url('wap/login')}"
+                }
+            } else {
+                zcAlert(res.msg, 0);
+                layer.closeAll("loading");
+            }
+        }).error(function () {
+            zcAlert("上传失败");
+        });
+    }
+
+
+    function addRoom(aid) {
+
+        var formData = new FormData();
+        $.each($('#uploadForm').serializeArray(), function (i, v) {
+            formData.append(v.name, v.value);
+        });
+        data = httpPost('/user/addRoom', formData, $(aid), false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            zcAlert('添加成功', 1);
+            window.location.reload();
+        }
+
+    }
+
+    function addRole(aid) {
+
+        var formData = new FormData();
+        $.each($('#uploadForm1').serializeArray(), function (i, v) {
+            formData.append(v.name, v.value);
+        });
+        data = httpPost('/user/addRole', formData, $(aid), false);
+        if (data !== false) {
+            layer.closeAll("loading");
+            zcAlert('添加成功', 1);
+            window.location.reload();
+        }
+
+    }
+</script>
+</html>
