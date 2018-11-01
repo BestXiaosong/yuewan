@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '39.108.192.61',
+    'hostname'        => \think\Env::get('hash_key','127.0.0.1'),
     // 数据库名
-    'database'        => 'soho',
+    'database'        => \think\Env::get('database','test'),
     // 用户名
-    'username'        => 'sohos',
+    'username'        => \think\Env::get('username','root'),
     // 密码
-    'password'        => 'sohos',
+    'password'        => \think\Env::get('username','root'),
     // 端口
     'hostport'        => '',
     // 连接dsn
