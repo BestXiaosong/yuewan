@@ -15,23 +15,11 @@ class Users extends Model
 
     public function getDetail($where = [])
     {
-        $user = $this->alias('a')->join('role r','r.role_id = a.role_id','left')
+        $user = $this->alias('a')
             ->where($where)
-            ->field('a.check,a.btc,a.eth,a.money,a.user_id,a.proxy_id,r.role_name,r.sex,r.first_time,a.BCDN,r.sign,r.birthday,r.place,r.official,r.fans_num,r.role_id,a.phone,r.header_img')
+            ->field('a.header_img,a.nick_name,a.sex,a.birthday')
             ->find();
-        if (empty($user['proxy_id'])){
-            $user['proxy_id'] = '平台';
-        }else{
-            $phone = $this->where('user_id', $user['proxy_id'])->cache(60)->value('phone');
-            if (!empty($phone)){
-                $user['proxy_id'] = '平台';
-            }else{
-                $user['proxy_id'] =  substr($phone,0,3).'****'.substr($phone,-4);
-            }
-        }
-        $user['public']  = hashToken($user['user_id']);
-        $user['user_id'] = hashid($user['user_id']);
-        $user['role_id'] = hashid($user['role_id']);
+
         return $user;
     }
 

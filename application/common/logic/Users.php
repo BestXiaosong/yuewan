@@ -73,10 +73,21 @@ class Users extends Model
             $data['nick_name']  = '约玩用户'.substr($data['phone'],-4);
 //            $data['salt'] = generateStr(); //密码盐
 //            $data['password'] = md5(md5($data['password']).$data['salt']);
-            return $this->allowField(true)->insertGetId($data);
+            return $this->allowField(true)->save($data);
         }
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 第三方登录创建角色
+     */
+    public function userAdd($data)
+    {
+        $validate = validate('base');
+        if (!$validate->scene('third_user_add')->check($data)) api_return(0, $validate->getError());
+        return $this->allowField(true)->save($data);
+    }
 
 
 

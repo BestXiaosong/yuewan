@@ -1,15 +1,8 @@
 <?php
 namespace app\api\controller;
-use app\common\logic\Bankroll;
-use app\common\logic\Role;
-use app\common\logic\Room;
-use app\common\model\Exchange;
-use app\common\model\RoleName;
-use app\common\model\RoomName;
+use app\common\model\Bankroll;
 use think\Db;
 use app\common\model\Users;
-use think\Exception;
-use app\common\model\RoomFollow;
 
 
 class User extends Base
@@ -22,6 +15,11 @@ class User extends Base
     {
         parent::_initialize();
         $this->user_id = $this->checkToken();
+    }
+
+    public function test()
+    {
+        return $this->R_token($this->user_id);
     }
 
     /**
@@ -46,110 +44,48 @@ class User extends Base
             $where['a.user_id'] = $this->user_id;
             $model  = new Users();
             $result = $model->getDetail($where);
-            if ($result !== false) {
-                api_return(1, '获取成功', $result);
-            } else {
-                api_return(0, '获取失败');
-            }
+            api_return(1, '获取成功', $result);
         }
     }
-
-
-
-
 
 
     /**
      * 修改手机号码
      */
-    public function phone()
+    public function changePhone()
     {
         $data = input('post.');
         $userPhone = Db::name('users')->where('user_id',$this->user_id)->value('phone');
-        $userCode  = cache('code'.$userPhone);
-        if (empty($userCode) || $userCode != $data['userCode']) api_return(0,'原手机号码验证码错误');
-        $newCode = cache('code'.$data['newPhone']);
-        if (empty($data['newCode']) || $data['newCode'] != $newCode) api_return(0,'新手机号码验证码错误');
+        $this->checkCode($userPhone,'原手机号码验证码错误');
+        $this->checkCode('newPhone','新手机号码验证码错误');
         $has = Db::name('users')->where('phone',$data['newPhone'])->value('user_id');
         if ($has) api_return(0,'新手机号码已注册');
         $result = Db::name('users')->where('user_id',$this->user_id)->update(['phone'=>$data['newPhone']]);
         if ($result !== false) {
-            Db::name('users')->where('user_id',$this->user_id)->update(['token_expire'=>0]);
             api_return(1,'更换手机成功');
         }
         api_return(0,'更换手机失败');
     }
 
-
-
     /**
-     * 根据role_id获取角色信息及是否关注
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 绑定手机号码
      */
-    public function roleInfo()
+    public function bindPhone()
     {
-        $role_id = input('post.id');
-
-        $where['a.role_id'] = dehashid($role_id);
-//        $where['a.role_id'] = input('post.id');
-        if (!is_numeric($where['a.role_id'])) api_return(0,'参数错误');
-        $model = new \app\common\model\Role();
-        $data  = $model->getOne($where,$this->role_id);
-        if ($data !== false) {
-            if (!empty(input('post.chat'))){
-                $chat = input('post.chat');
-                $data['baned'] = $this->chatbanList($chat,$role_id);
-                $info = explode('_',$chat);
-                $room_id = $info[1];
-                $roomInfo = Db::name('room')->where('room_id',$room_id)->field('user_id')->cache(60)->find();
-                if ($roomInfo['user_id'] == $this->user_id){
-                    $data['is_admin'] = 1;
-                }else{
-                    $roomfollow = new RoomFollow();
-                    $res = $roomfollow->getStatus(dehashid($room_id), $where['a.role_id']);
-                    if ($res['status'] == 2) {
-                        $data['is_admin'] = 1;
-                    }else{
-                        $data['is_admin'] = 0;
-                    }
-                }
-            }
-            api_return(1,'获取成功',$data);
-        }
-        api_return(0,'服务器繁忙,请稍后重试');
+        $user = Db::name('users')->where('user_id',$this->user_id)->field('phone')->find();
+        if ($user['phone']) api_return(0,'您已绑定手机,请进行修改');
+        $this->checkCode();
+        $phone = input('post.phone');
+        $info  = Db::name('users')->where('phone',$phone)->value('user_id');
+        if ($info) api_return(0,'该手机号码已绑定其它账号!');
+        $result = Db::name('users')->where('user_id',$this->user_id)->update(['phone'=>$phone]);
+        if ($result)api_return(1,'绑定成功');
+        api_return(0,'绑定失败');
     }
 
 
-
-
-    /**
-     * 获取用户资产明细
-     */
-    public function getMoney()
-    {
-        $data = Db::name('users')->where('user_id',$this->user_id)->field('eth,btc,money,BCDN')->find();
-        api_return(1,'获取成功',$data);
-    }
-
-    /**
-     * 获取当前角色粉丝列表
-     */
-    public function my_fans(){
-        $id = input('post.id');
-        if (!empty($id)){
-            $role_id = dehashid($id);
-            if (!is_numeric($role_id)) api_return(0,'参数错误');
-        }else{
-            $role_id = $this->role_id;
-        }
-        $model = new Users();
-        $list_num = $this->request->post('list_num')?$this->request->post('list_num'):'';
-        $result = $model->fans($role_id,$list_num);
-        if($result){
-            api_return(1,'获取成功',$result);
-        }else{
-            api_return(0,'暂无数据');
-        }
-    }
 
 
     /**
@@ -158,7 +94,7 @@ class User extends Base
     public function bankroll()
     {
 
-        $model = new \app\common\model\Bankroll();
+        $model = new Bankroll();
         $where['user_id'] = $this->user_id;
         $rows = $model->getRows($where);
         if ($rows !== false)  api_return(1,'获取成功',$rows);

@@ -8,29 +8,24 @@ use think\Request;
 class Login extends Base
 {
 
-
-    public function index()
-    {
-        return view();
-    }
-
     /**
-     * 密码登陆
-     * url = index/login
-     * phone => 用户手机号
-     * password => 密码
-     * type = post
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * @param Request $request
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     * 登录接口
      */
     public function login(Request $request)
     {
 
         if ($request->isPost()){
-            $data = $request->only(['phone','code'],'post');
+            $data = $request->only(['phone','j_push_id'],'post');
             if (!empty($data['phone'])){
-                $code = cache('code'.$data['phone']);
-                if (empty($code)|| $code != $data['code']) {
-//                    api_return(0,'验证码错误');
-                }
+                $this->checkCode();
                 $row = Db::name('users')->where('phone',$data['phone'])->field('user_id,status')->find();
                 if (!empty($row)){
                     if($row['status'] == 1){
@@ -43,11 +38,13 @@ class Login extends Base
                 }else{
                     //快捷注册
                     $model  = new Users();
-                    $result = $model->change($data);
-                    if ($result){
-                        $this->log($row['user_id']);
-                        $token = $this->makeToken($result);
+                    $row = $model->change($data);
+                    if ($row){
+                        $this->log($model->user_id);
+                        $token = $this->makeToken($model->user_id);
                         api_return(1,'登陆成功',['token'=>$token]);
+                    }else{
+                        api_return(0,'登录失败,请稍后重试');
                     }
                 }
             }
@@ -57,55 +54,60 @@ class Login extends Base
         }
         api_return(0,'系统错误');
     }
+
+
     /**
-     * 修改密码
+     * app微信QQ第三方登录
      */
-    public function editPassWord()
+    public function third()
     {
         if (request()->isPost()){
-            $data = input('post.');
-            if (!empty($data['password'])){
-                if (empty($data['newPassword'])) api_return(0,'请输入密码');
-                //根据原密码修改密码
-                $row = Db::name('users')->where('phone',$data['phone'])->field('salt,user_id,password,status')->find();
-                if (!empty($row)){
-                    if($row['status'] == 1){
-                        $password = md5(md5($data['password']).$row['salt']);
-                        if ($password == $row['password']){
-                            $newPassword = md5(md5($data['newPassword']).$row['salt']);
-                            $result = Db::name('users')->where('user_id',$row['user_id'])->update(['password'=>$newPassword]);
-                            if ($result !== false){
-                                api_return(1,'修改成功');
-                            }
-                            api_return(0,'修改失败');
-                        }
-                        api_return(0,'密码错误');
-                    }
+            $data = \request()->only(['type','open_id','header_img','sex','nick_name'],'post');
+
+            $array = ['wx','qq','wb'];//允许的第三方登录方式
+
+            if (!in_array($data['type'],$array)){
+                api_return(0,'无此登录方式');
+            }
+
+            if (empty($data['open_id'])){
+                api_return(0,'请输入正确的open_id');
+            }
+
+            $row = Db::name('users')->where($data['type'],$data['open_id'])->field('phone,user_id,status')->find();
+            if ($row){
+                //正常登陆流程
+                if($row['status'] == 1){
+                    //登陆日志
+                    $this->log($row['user_id']);
+                    $token = $this->makeToken($row['user_id']);
+                    api_return(1,'登陆成功',['token'=>$token]);
+                }else{
+                    api_return(0,'账号被禁用');
                 }
-                api_return(0,'非法操作');
             }else{
-                //根据手机短信验证修改密码
-                $code = cache('code'.$data['phone']);
-                if ($code != null && $code = $data['code']){
-                    cache('code'.$data['phone'],null);
-                    $row = Db::name('users')->where('phone',$data['phone'])->field('salt,user_id,password,status')->find();
-                    if (!empty($row)){
-                        if($row['status'] == 1){
-                            $password = md5(md5($data['newPassword']).$row['salt']);
-                            $result = Db::name('users')->where('user_id',$row['user_id'])->update(['password'=>$password]);
-                            if ($result !== false){
-                                api_return(1,'修改成功');
-                            }
-                            api_return(0,'修改失败');
-                        }
-                    }
-                    api_return(0,'非法操作');
+                //注册流程
+                $model  = new Users();
+                $data[$data['type']] = $data['open_id'];
+                $result = $model->userAdd($data);
+                if ($result !== false){
+                    //登陆日志
+                    $this->log($model->user_id);
+                    $token = $this->makeToken($model->user_id);
+                    api_return(1,'登陆成功',['token'=>$token]);
                 }
-                api_return(0,'验证码错误');
             }
         }
     }
 
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * @param $user_id
+     * 登录日志
+     */
     public function log($user_id)
     {
         //登陆日志
@@ -133,14 +135,10 @@ class Login extends Base
             $data['phone']     = input('post.phone');
             if (!empty(input('id'))) $data['proxy_id']  = dehashid(input('id'));
             $data['password']  = input('post.password');
-
-            $code  = input('post.code');
             $open_id  = input('post.open_id');
             $type  = input('post.type');
-            $cache = cache('code'.$data['phone']);
-//            if ($code != $cache) api_return(0,'验证码错误');
+            $this->checkCode();
             if($this->is_register($data['phone'])){
-                cache('code'.$data['phone'],null);
                 $model  = new Users();
                 $result = $model->change($data);
                 //公钥
@@ -172,42 +170,7 @@ class Login extends Base
 
 
 
-    /**
-     * app微信QQ第三方登录
-     */
-    public function third()
-    {
-        if (request()->isPost()){
-            $data = input('post.');
-            $row = Db::name('users')->where($data['type'],$data['open_id'])->field('phone,user_id,status')->find();
-            if (!empty($row)){
-                if (empty($row['phone']))api_return(4005,'请先绑定手机号');
-                //正常登陆流程
-                if($row['status'] == 1){
-                    //登陆日志
-                    $this->log($row['user_id']);
-                    $token = $this->makeToken($row['user_id']);
-                    api_return(1,'登陆成功',['token'=>$token]);
-                }
-                api_return(0,'账号被禁用');
-            }else{
-                api_return(4005,'请先绑定手机号');
-                //注册流程
-                $model  = new Users();
-                if (!empty($data['id'])){
-                    unset($data['id']);
-                }
-                $result = $model->saveChange($data);
-                if ($result){
-                    api_return(4005,'请先绑定手机号');
-                    //登陆日志
-//                    $this->log($model->user_id);
-//                    $token = $this->makeToken($model->user_id);
-//                    api_return(1,'登陆成功',['token'=>$token,'phone'=>$model->phone]);
-                }
-            }
-        }
-    }
+
 
     /**
      * app微信QQ第三方登录绑定手机号

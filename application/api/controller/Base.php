@@ -17,6 +17,7 @@ use function Qiniu\Pili\RTMPPlayURL;
 use function Qiniu\Pili\RTMPPublishURL;
 use function Qiniu\Pili\SnapshotPlayURL;
 use think\Exception;
+use think\Request;
 
 class Base extends Controller
 {
@@ -92,16 +93,43 @@ class Base extends Controller
      * @throws \think\exception\PDOException
      * 创建token 并存储在数据库中
      */
+//    protected function makeToken($user_id){
+//        $token   = md5($user_id.time());
+//        if (input('j_push_id')) $data['j_push_id'] = input('j_push_id');
+//        $data['token']  = $token;
+//        $data['token_expire'] = time()+config('token_expire');
+//        $result  = Db::name('users')->where('user_id',$user_id)->update($data);
+//        if (!$result){
+//            //如果绑定token失败就重复绑定一次
+//            Db::name('users')->where('user_id',$user_id)->update($data);
+//        }
+//        return $token;
+//    }
+
+
+    /**
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
+     * 创建token 并存储在缓存中
+     */
     protected function makeToken($user_id){
-        $token   = md5($user_id.time());
-        if (input('j_push_id')) $data['j_push_id'] = input('j_push_id');
-        $data['token']  = $token;
-        $data['token_expire'] = time()+config('token_expire');
-        $result  = Db::name('users')->where('user_id',$user_id)->update($data);
-        if (!$result){
-            //如果绑定token失败就重复绑定一次
-            Db::name('users')->where('user_id',$user_id)->update($data);
+        $hash  = hashid($user_id);
+        $key   = md5($user_id.time());
+        $token = $hash.'+'.$key;
+
+        if (input('j_push_id')){
+            $data['j_push_id'] = input('j_push_id');
+            $result  = Db::name('users')->where('user_id',$user_id)->update($data);
+            if (!$result){
+                //如果更新失败就重复更新一次
+                Db::name('users')->where('user_id',$user_id)->update($data);
+            }
         }
+        $cache['key']     = $key;
+        $cache['user_id'] = $user_id;
+
+        cache('token_'.$hash,$cache,time()+config('token_expire'));
+
         return $token;
     }
 
@@ -110,77 +138,66 @@ class Base extends Controller
      * 用于验证是否登陆
      */
     protected function checkToken(){
-        if (request()->isPost()){
-            $token = input('post.token')??request()->header()['token'];
+        $request = Request::instance();
+        if ($request->isPost()){
+            $token = $request->post('token')??$request->header()['token'];
             if (empty($token)){
+                api_return(-1,'未登录');
+            }
+            $data  = explode('+',$token);
+            $cache = cache('token_'.$data[0]);
+            if ($cache['key'] == $data[1]){
+                return $cache['user_id'];
+            }else{
                 api_return(-1,'登录过期');
             }
-            $data  = Db::name('users')->where('token',$token)->field('user_id,token,token_expire,status')->find();
-            if ($data['status'] == 1){
-                if ($token == $data['token']){
-                    if(time() < $data['token_expire']){
-                        return $data['user_id'];
-                    }
-                }
-                api_return(-1,'登录过期');
-            }
-            api_return(0,'账号不存在或被禁用');
         }
         api_return(0,'访问错误');
     }
 
 
-//    protected function get_user_id()
-//    {
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 检查验证码是否正确
+     */
+    protected function checkCode($field = 'phone',$msg = '验证码错误')
+    {
+        $phone = is_numeric($field)??input("post.$field");
+        $code  = input('post.code');
+        $cache = cache('code'.$phone);
+        if (!$cache || $code != $cache){
+            api_return(0,$msg);
+        }else{
+            cache('code'.$phone,null);
+        }
+    }
+
+
+//    /**
+//     * token对比
+//     * 用于验证是否登陆
+//     */
+//    protected function checkToken(){
 //        if (request()->isPost()){
-//            $token = input('post.token');
-//            $phone = input('post.phone');
-//            if (empty($token) || empty($phone)){
-//                return 0;
+//            $token = input('post.token')??request()->header()['token'];
+//            if (empty($token)){
+//                api_return(-1,'登录过期');
 //            }
-//            $data  = Db::name('users')->where('phone',$phone)->field('user_id,token,token_expire,status')->find();
+//            $data  = Db::name('users')->where('token',$token)->field('user_id,token,token_expire,status')->find();
 //            if ($data['status'] == 1){
 //                if ($token == $data['token']){
 //                    if(time() < $data['token_expire']){
 //                        return $data['user_id'];
 //                    }
 //                }
+//                api_return(-1,'登录过期');
 //            }
+//            api_return(0,'账号不存在或被禁用');
 //        }
-//        return 0;
+//        api_return(0,'访问错误');
 //    }
 
-    protected function get_user_id(){
-        if (request()->isPost()){
-            $token = input('post.token');
-            $phone = input('post.phone');
-            if (empty($token) || empty($phone)){
-                $header = request()->header();
-                if (isset($header['token']) && !empty($header['token'])){
-                    $token = $header['token'];
-                }
-                if (isset($header['phone']) && !empty($header['phone'])){
-                    $phone = $header['phone'];
-                }
-            }
-            if (empty($token) || empty($phone)){
-                return 0;
-            }
-            $data  = Db::name('users')->where('phone',$phone)->field('role_id,room_id,user_id,token,token_expire,status')->find();
-            if ($data['status'] == 1){
-                if ($token == $data['token']){
-                    if(time() < $data['token_expire']){
-                        $this->phone   = $phone;
-                        $this->role_id = $data['role_id'];
-                        $this->room_id = $data['room_id'];
-                        $this->user_id = $data['user_id'];
-                        return $data['user_id'];
-                    }
-                }
-            }
-        }
-        return 0;
-    }
 
 
 
@@ -193,9 +210,7 @@ class Base extends Controller
     protected function is_register($phone = 0)
     {
         $data   = Db::name('users')->where('phone',$phone)->value('user_id');
-        if ($data){
-            return false;
-        }
+        if ($data) return false;
         return true;
     }
 
@@ -218,87 +233,113 @@ class Base extends Controller
 
 
     /**
-     *获取分页列表
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 查询单独一条数据
+     * @param string $db 要操作的数据库
+     * @param string|array $map 传入string为单字段筛选根据post获取到的id进行查找  传入array即代表调用方法前已处理数据 直接筛选
+     * @param string $field 要查找的数据字段
+     * @param bool $type 为false表示查找$field字段 为true表示过滤$field字段
+     * @return array|false|\PDOStatement|string|\think\Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
-    protected function _list($db = '',$order = '',$where = [],$field = '',$type = ''){
-        $where['status'] = 1;
-        $rows = Db::name($db)->where($where)->order($order)->field($field,$type)->paginate();
-        $this->assign('rows',$rows);
-        $this->assign('pageHTML',$rows->render());
-    }
-
-    /**
-     *获取列表
-     */
-    protected function _select($db = '',$order = '',$where = [],$field = '',$type = ''){
-        $where['status'] = 1;
-        return Db::name($db)->where($where)->order($order)->field($field,$type)->paginate(10);
-    }
-
-    //获取单独数据
-    protected function _find($db = '',$id = '',$field = '', $type = ''){
-        //修改返显查询
-        $get_id = input('post.id');
-        if(is_numeric($get_id)){
-            return Db::name($db)->field($field,$type)->where($id,$get_id)->find();
-        }
-        api_return(0,'参数错误');
-    }
-
-    //删除数据
-    protected function _pass($db = '',$id = ''){
-        $get_id = input('post.id');
-        if(is_numeric($get_id)){
-            return Db::name($db)->where($id,$get_id)->update(['status' => 0]);
-        }
-        api_return(0,'参数错误');
-    }
-
-    /**
-     * 获取融云token
-     */
-    protected function R_token($role_id = 0)
-    {
-
-        if ($role_id == 0){
-            $role_id = 'token_'.date('YmdHis').rand(1,99999);
-            $token = cache($role_id);
-            if ($token){
-                return $token;
+    protected function _find($db = '',$map = '',$field = '', $type = false){
+        if (is_array($map)){
+            $where = $map;
+        }else{
+            $id = input('post.id');
+            if(is_numeric($id)){
+                $where[$map] = $id;
             }else{
-                $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
-                $header_img = config('default_img') ? config('default_img'):'x.png';
-                $result = $model->user()->getToken($role_id,'游客'.$role_id,$header_img);
-                $res = json_decode($result,true);
-
-                if ($res['code'] == 200){
-                    cache($role_id,$res['token'],3600*24);
-                    return $res['token'];
-                }
+                api_return(0,'参数错误');
             }
         }
+        return Db::name($db)->field($field,$type)->where($where)->find();
+    }
 
-
-        if (is_numeric($role_id)){
-            $role_id = hashid($role_id);
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取单独字段数据
+     * @param string $db 要操作的表
+     * @param string $field 要获取的字段
+     * @param string|array $map 传入string为单字段筛选根据post获取到的id进行查找  传入array即代表调用方法前已处理数据直接查找
+     * @return mixed
+     */
+    protected function _value($db = '',$field = '',$map = ''){
+        if (is_array($map)){
+            $where = $map;
+        }else{
+            $id = input('post.id');
+            if(is_numeric($id)){
+                $where[$map] = $id;
+            }else{
+                api_return(0,'参数错误');
+            }
         }
-        $token = cache('r_token_'.$role_id);
-        if ($token) return $token;
-        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
-        $role  = Db::name('role')->where('role_id',$role_id)->field('role_name,header_img')->find();
-        if (empty($role['role_name'])) $role['role_name'] = '游客'.rand(111111,99999);
-        if (empty($role['header_img'])) $role['header_img'] = config('default_img') ? config('default_img'):'x.png';
-        $result = $model->user()->getToken($role_id,$role['role_name'],$role['header_img']);
-        $res = json_decode($result,true);
+        return Db::name($db)->where($where)->value($field);
 
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 数据删除
+     * @param string $db 要进行操作的数据库
+     * @param string $field 要操作的字段名
+     * @param bool $type false 假删 true 真删
+     * @return int|string
+     * @throws Exception
+     * @throws \think\exception\PDOException
+     */
+    protected function _pass($db = '',$field = '',$type = false){
+        $id = input('post.id');
+        if(is_numeric($id)){
+            if ($type){
+                return Db::name($db)->where($field,$id)->delete();
+            }else{
+                return Db::name($db)->where($field,$id)->update(['status' => 0]);
+            }
+        }
+        api_return(0,'参数错误');
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * @param string $user_id
+     * @return mixed|string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * 获取融云token
+     */
+    protected function R_token($user_id = '')
+    {
+        if (is_numeric($user_id)){
+            $token  = cache('r_token_'.$user_id);
+            if ($token) return $token;
+            $userId     = hashid($user_id);
+            $userInfo   = Db::name('users')->where('user_id',$user_id)->field('nick_name,header_img')->find();
+            $nick_name  = $userInfo['nick_name']??'游客'.rand(111111,99999);
+            $header_img = $userInfo['header_img']??config('default_img');
+        }else{
+            $userId     = date('YmdHis').rand(1,99999);
+            $header_img = config('default_img');
+            $nick_name  = '游客'.$user_id;
+        }
+        $model  = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+        $result = $model->user()->getToken($userId,$nick_name,$header_img);
+        $res    = json_decode($result,true);
         if ($res['code'] == 200){
-//            cache('r_token_'.$role_id,$res['token'],86400*7);
+            if (is_numeric($user_id)) cache('r_token_'.$user_id,$res['token'],86400*7);
             return $res['token'];
         }
         return "";
     }
-
-
 
 
     /**
@@ -475,7 +516,7 @@ class Base extends Controller
      */
     protected function ApiLimit($time = 1,$user = 0)
     {
-        $key = request()->action().$user;
+        $key   = request()->path().$user;
         $cache = cache($key);
         if ($cache){
             api_return(0,'请求过于频繁,请稍后重试');

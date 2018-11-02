@@ -7,11 +7,10 @@ use think\Validate;
 class Base extends Validate
 {
     protected $rule = [
-        'nick_name'  =>  'require|length:6,12|chsAlphaNum|checkName',
+        'nick_name'  =>  'require|max:25',
         'password'  =>  'require|length:6,12',
         'trade_password'  =>  'require|length:6,12',
         'trade_password|交易密码'  =>  'require|length:6,12',
-        'header_img' =>  'require|checkImg',
         'day' =>  'require|day',
         'content|评论' =>  'require|length:1,59',
         'real_name|真实姓名' =>  'require|length:2,25',
@@ -26,6 +25,9 @@ class Base extends Validate
         'grade'=>'require|in:1,2,3',
         'guess_ratio|竞猜抽成比例'=>'integer|between:1,99',
         'compare_num|人脸比对百分比'=>'integer|between:0,100',
+        'open_id|open_id'=>'require|open_id',
+        'sex|性别'=>'require|integer|in:1,2',
+        'header_img|头像'=>'require',
     ];
 
     protected $message = [
@@ -33,7 +35,6 @@ class Base extends Validate
         'nick_name.chsDash'  =>  '昵称只能是汉字、字母和数字',
         'nick_name.require'  =>  '昵称不能为空',
         'content.length'  =>  '评论为1到59个字符',
-        'header_img.require'  =>  '图片不能为空',
         'day.require' => '考试提醒时间不能为空',
         'grade.in' => '评分类型错误',
         'grade.require' => '评分内容不能为空',
@@ -45,6 +46,7 @@ class Base extends Validate
         'extend' => ['guess_ratio','compare_num'],
         'nick_name'   =>  ['nick_name'],
         'front_user_add'   =>  ['phone'],
+        'third_user_add'   =>  ['open_id','sex','header_img','nick_name'],
         'header_img'=> ['header_img'],
         'edit'=> ['header_img','nick_name','day'],
         'day'=> ['day'],
@@ -96,6 +98,25 @@ class Base extends Validate
             return '评价类型错误';
         }
     }
+
+    /**
+     * 验证第三方登录open_id是否有效
+     */
+    protected function open_id($value,$rule,$data){
+        switch ($data['type']){
+            case 'wx': //微信 open_id 验证
+                    return true;
+                break;
+            case 'qq': //QQ open_id 验证
+                return true;
+                break;
+            case 'wb': //微博 open_id 验证
+                return true;
+                break;
+        }
+    }
+
+
 
 
 

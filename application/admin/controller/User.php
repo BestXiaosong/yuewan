@@ -77,9 +77,11 @@ class User extends Base
         $data = input();
         $result = Db::name('users')->update(['status'=>$data['type'],'user_id'=>$data['id']]);
         if($result !== false){
+            //改变用户状态后清空前端token
+            cache('token_'.hashid($data['id']),null);
             $this->success('操作成功');
         }
-        $this->error(Db::name('users')->getError());
+        $this->error('操作失败');
     }
 
     public function user_pass()
