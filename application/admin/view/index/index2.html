@@ -360,25 +360,52 @@
                         var time = new Date(message.sentTime).toLocaleDateString();
 
                         extra.time = time;
+                        // var length = $(".chatBox-content-"+id).length;
+                        // if (length > 0){ //有聊天消息框  对应聊天框显示
+                        //     $(".chatBox-content-"+id).css('display','block');
+                        // }else{ //没有聊天消息框  拉取历史消息
+                        //     //拉取历史消息
+                        //     pullHistoryMsg('chatBox-content-'+id,toUserId);return false;
+                        //
+                        // }
 
-                        if (idLength > 0){ //聊天列表中存在该用户  不追加列表内容
+                        if (idLength > 0){ //聊天列表中存在该用户  不追加列表内容判断有没有聊天消息框
 
-                            var display = $('.chatBox-content-'+id).css('display');
+                            console.log('聊天列表中存在该用户');
+
+                            var length = $(".chatBox-content-"+id).length;
+
+                            if (length > 0){ //存在聊天消息框
+                                console.log('存在聊天消息框');
+                                var display = $('.chatBox-content-'+id).css('display');
+
+                                if (display == 'block'){ //判断是否在和当前用户聊天  如果在  清楚未读消息并追加消息
+                                    console.log('判断是否在和当前用户聊天');
+                                    clearUserCount(id);
+
+                                } else{    //增加消息内容并且加上未读消息
 
 
-                            if (display == 'block'){ //判断是否在和当前用户聊天  如果在  清楚未读消息并追加消息
-                                clearUserCount(id);
+                                }
 
+                                console.log('进入1');
+                                appendMsg(message.content.content,extra,type,'left','chatBox-content-'+id);
 
-                            } else{ //如果不在 增加消息内容并且加上未读消息
+                            } else{ //不存在聊天消息框   创建聊天消息框并拉取历史消息
+                                console.log('不存在聊天消息框');
+                                //添加上聊天消息框
+                                var height = $(".chatBox-content").height();
+                                $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
                                 pullHistoryMsg('chatBox-content-'+id,id);
-
+                                console.log('id:'+id);
+                                $('#chatBox-content-'+id).scrollTop($('#chatBox-content-'+id)[0].scrollHeight);
                             }
-                            console.log('进入1');
-                            appendMsg(message.content.content,extra,type,'left','chatBox-content-'+id);
+
+
+
 
                         }else{ //聊天列表不存在该用户  追加列表内容 并拉取历史消息
-
+                            console.log('聊天列表不存在该用户');
                             var str = '<div class="chat-list-people" id="'+message.senderUserId+'" onclick="intoChat(this)">' +
                                 '<div><img src="'+extra.header_img+'" alt="头像"></div>\n' +
                                 '<div class="chat-name">\n' +
@@ -387,6 +414,13 @@
                                 '<div class="message-num">1</div>\n' +
                                 '</div>';
                             $('.chatBox-list').append(str);
+
+                            //添加上内容框
+                            var height = $(".chatBox-content").height();
+                            $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+
+                            //拉取历史消息
+                            // pullHistoryMsg('chatBox-content-'+id,id);
                         }
 
                     }
@@ -563,11 +597,14 @@
 
         var length = $(".chatBox-content-"+id).length;
         if (length > 0){ //有聊天消息框  对应聊天框显示
-
+            console.log('进入聊天界面有聊天消息框');
             $(".chatBox-content-"+id).css('display','block');
+            $(".chatBox-content-"+id).scrollTop($(".chatBox-content-"+id)[0].scrollHeight);
 
         }else{ //没有聊天消息框  拉取历史消息
-
+            console.log('进入聊天界面没有聊天消息框');
+            var height = $(".chatBox-content").height();
+            $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
             //拉取历史消息
             pullHistoryMsg('chatBox-content-'+id,toUserId);return false;
             
@@ -579,10 +616,10 @@
                 onSuccess: function(list, hasMsg) {
                     // list => Message 数组。
                     // hasMsg => 是否还有历史消息可以获取。
-                    //先添加上内容框
-                    var length = $(".chatBox-content-"+id).length;
-                    var height = $(".chatBox-content").height();
-                    $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+                    // //先添加上内容框
+                    // var length = $(".chatBox-content-"+id).length;
+                    // var height = $(".chatBox-content").height();
+                    // $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
 
                     //聊天对象的配置信息
                     var leftExtra  = new Object();
@@ -634,8 +671,8 @@
                 // list => Message 数组。
                 // hasMsg => 是否还有历史消息可以获取。
                 //先添加上内容框
-                var height = $(".chatBox-content").height();
-                $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
+                // var height = $(".chatBox-content").height();
+                // $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
 
                 //聊天对象的配置信息
                 var leftExtra  = new Object();
@@ -680,12 +717,12 @@
 
 
         //先判断有没有聊天内容框  没有就获取历史消息并添加上聊天内容框
-        var length = $('.'+id).length;
-        console.log(length);
-        if(length <= 0){
-            var height = $(".chatBox-content").height();
-            $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
-        }
+        // var length = $('.'+id).length;
+        // console.log(length);
+        // if(length <= 0){
+        //     var height = $(".chatBox-content").height();
+        //     $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
+        // }
 
 
 
@@ -706,9 +743,10 @@
                 '<img src="'+extra.header_img+'" alt="头像"></div><div class="chat-message">\n' +
                 '<img src="'+msg+'" alt=""></div></div></div>'
         }
-
+        console.log('id:'+id);
+        // console.log(id);
         $('.'+id).append(str);
-        console.log('.'+id);
+        // console.log('.'+id);
         // 聊天框默认最底部
         $('.'+id).scrollTop($('.'+id)[0].scrollHeight);
 
