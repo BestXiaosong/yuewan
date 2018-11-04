@@ -1,0 +1,795 @@
+{extend name="public:index"/}
+
+{block name="main"}
+
+<section class="content-wrapper right-side" id="riframe" style="margin:0;padding:0;margin-left:30px;">
+    <iframe id='rightContent' name='rightContent' src="{:url('Demo/index')}" width='100%' frameborder="0"
+            scrolling="atuo"></iframe>
+</section>
+<link rel="stylesheet" type="text/css" href="/public/im/font_Icon/iconfont.css">
+<link rel="stylesheet" type="text/css" href="/public/im/css/chat.css">
+<script src="__PUBLIC__/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="//cdn.ronghub.com/RongIMLib-2.3.3.min.js"></script>
+<div class="chatContainer">
+    <div class="chatBtn">
+        <i class="iconfont icon-xiaoxi1"></i>
+    </div>
+    <!--未读消息数-->
+    <div class="chat-message-num" style="padding: 0;"></div>
+    <div class="chatBox" ref="chatBox" style="display: none">
+        <div class="chatBox-head">
+            <div class="chatBox-head-one">
+                Conversations
+                <div class="chat-close" style="margin: 10px 10px 0 0;font-size: 14px">关闭</div>
+            </div>
+            <div class="chatBox-head-two">
+                <div class="chat-return">返回</div>
+                <div class="chat-people">
+                    <div class="ChatInfoHead">
+                        <img src="" alt="头像"/>
+                    </div>
+                    <div class="ChatInfoName">这是用户的名字，看看名字到底能有多长</div>
+                </div>
+                <div class="chat-close">关闭</div>
+            </div>
+        </div>
+        <div class="chatBox-info">
+            <div class="chatBox-list" ref="chatBoxlist">
+
+            </div>
+            <div class="chatBox-kuang" ref="chatBoxkuang">
+                <div class="chatBox-content">
+                    <!--<div class="chatBox-content-demo" id="chatBox-content-demo" style="display: none">-->
+
+                        <!--<div class="clearfloat">-->
+                            <!--<div class="author-name">-->
+                                <!--<small class="chat-date">2017-12-02 14:26:58</small>-->
+                            <!--</div>-->
+                            <!--<div class="left">-->
+                                <!--<div class="chat-avatars"><img src="/public/im/img/icon01.png" alt="头像"/></div>-->
+                                <!--<div class="chat-message">-->
+                                    <!--给你看张图-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<div class="clearfloat">-->
+                            <!--<div class="author-name">-->
+                                <!--<small class="chat-date">2017-12-02 14:26:58</small>-->
+                            <!--</div>-->
+                            <!--<div class="left">-->
+                                <!--<div class="chat-avatars"><img src="/public/im/img/icon01.png" alt="头像"/></div>-->
+                                <!--<div class="chat-message">-->
+                                    <!--<img src="/public/im/img/1.png" alt="">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<div class="clearfloat">-->
+                            <!--<div class="author-name">-->
+                                <!--<small class="chat-date">2017-12-02 14:26:58</small>-->
+                            <!--</div>-->
+                            <!--<div class="right">-->
+                                <!--<div class="chat-message">嗯，适合做壁纸</div>-->
+                                <!--<div class="chat-avatars"><img src="/public/im/img/icon02.png" alt="头像"/></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+                </div>
+                <div class="chatBox-send">
+                    <div class="div-textarea" contenteditable="true"></div>
+                    <div>
+                        <button id="chat-biaoqing" class="btn-default-styles">
+                            <i class="iconfont icon-biaoqing"></i>
+                        </button>
+                        <label id="chat-tuxiang" title="发送图片" for="inputImage" class="btn-default-styles">
+                            <input type="file" onchange="selectImg(this)" accept="image/jpg,image/jpeg,image/png"
+                                   name="file" id="inputImage" class="hidden">
+                            <i class="iconfont icon-tuxiang"></i>
+                        </label>
+                        <button id="chat-fasong" class="btn-default-styles"><i class="iconfont icon-fasong"></i>
+                        </button>
+                    </div>
+                    <div class="biaoqing-photo">
+                        <ul>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -120px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -120px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -120px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -120px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -120px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -120px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -154px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -154px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -154px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -154px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -154px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -154px;"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    var params = {
+        appKey :"{:config('rongyun.appKey')}",
+        token : "{$r_token}",
+    };
+
+    //发送消息目标用户id
+    var toUserId = '';
+
+    var callbacks = {
+
+    };
+
+    //自己的配置信息
+    var selfExtra = {
+        'header_img':'/public/im/img/icon03.png',
+        'user_id':'xiaosong',
+        'nick_name':'xiaosong'
+    };
+
+    //总未读数
+    var totalNum = 0;
+
+
+    //融云初始化
+    init(params,callbacks);
+
+    //融云初始化
+    function init(params, callbacks, modules){
+
+        var appKey = params.appKey;
+        var token = params.token;
+        var navi = params.navi || "";
+
+        modules = modules || {};
+        var RongIMLib = modules.RongIMLib || window.RongIMLib;
+        var RongIMClient = RongIMLib.RongIMClient;
+
+        var protobuf = modules.protobuf || null;
+
+        var config = {};
+
+        //私有云切换navi导航，私有云格式 '120.92.10.214:8888'
+        if(navi !== ""){
+            config.navi = navi;
+        }
+
+        //私有云切换api,私有云格式 '172.20.210.38:81:8888'
+        var api = params.api || "";
+        if(api !== ""){
+            config.api = api;
+        }
+        //support protobuf url + function
+        if(protobuf != null){
+            config.protobuf = protobuf;
+        };
+
+        RongIMLib.RongIMClient.init(appKey,null,config);
+
+
+        //注册自定义消息
+        var messageName = "PersonMessage"; // 消息名称。
+        var objectName = "RC:Welcome"; // 消息内置名称，请按照此格式命名。
+        var mesasgeTag = new RongIMLib.MessageTag(true,true);// 消息是否保存是否计数，true true 保存且计数，false false 不保存不计数。
+        var prototypes = ["content","extra"]; // 消息类中的属性名。
+        RongIMClient.registerMessageType(messageName,objectName,mesasgeTag,prototypes);
+        //
+        // /*
+        //  文档：http://www.rongcloud.cn/docs/web.html#3、设置消息监听器
+        //
+        //  注意事项：
+        //  1：为了看到接收效果，需要另外一个用户向本用户发消息
+        //  2：判断会话唯一性 ：conversationType + targetId
+        //  3：显示消息在页面前，需要判断是否属于当前会话，避免消息错乱。
+        //  4：消息体属性说明可参考：http://rongcloud.cn/docs/api/js/index.html
+        //  */
+
+        var instance = RongIMClient.getInstance();
+
+        // 连接状态监听器
+        RongIMClient.setConnectionStatusListener({
+            onChanged: function (status) {
+                //console.log(status);
+                switch (status) {
+                    case RongIMLib.ConnectionStatus["CONNECTED"]:
+                    case 0:
+                        // //console.log("连接成功")
+                        callbacks.getInstance && callbacks.getInstance(instance);
+                        break;
+
+                    case RongIMLib.ConnectionStatus["CONNECTING"]:
+                    case 1:
+                        // //console.log("连接中")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["DISCONNECTED"]:
+                    case 2:
+                        // //console.log("当前用户主动断开链接")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["NETWORK_UNAVAILABLE"]:
+                    case 3:
+                        // //console.log("网络不可用")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["CONNECTION_CLOSED"]:
+                    case 4:
+                        // //console.log("未知原因，连接关闭")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["KICKED_OFFLINE_BY_OTHER_CLIENT"]:
+                    case 6:
+                        // //console.log("用户账户在其他设备登录，本机会被踢掉线")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["DOMAIN_INCORRECT"]:
+                    case 12:
+                        // //console.log("当前运行域名错误，请检查安全域名配置")
+                        break;
+                }
+            }
+        });
+
+
+
+        //融云开始连接
+        RongIMClient.connect(token, {
+            onSuccess: function(userId) {
+                callbacks.getCurrentUser && callbacks.getCurrentUser({userId:userId});
+                // console.log("链接成功，用户id：" + userId);
+                RongIMClient.getInstance().getConversationList({
+                    onSuccess: function(list) {
+                        // console.log('会话列表:');
+                        // console.log(list);
+
+                        $.each(list,function (k,v) {
+                            var targetId = v.targetId;
+                            var conversationType =  RongIMLib.ConversationType.PRIVATE;
+                            // console.log('循环：')
+                            // console.log(v);
+
+                            RongIMLib.RongIMClient.getInstance().getUnreadCount(conversationType,targetId,{
+                                onSuccess:function(count){
+                                    // count => 指定会话的总未读数。
+                                    var extra = eval('(' + v.latestMessage.content.extra + ')');
+                                    console.log(extra);
+                                    var str = '<div class="chat-list-people" id="'+v.targetId+'" onclick="intoChat(this)">' +
+                                        '<div><img src="'+extra.header_img+'" alt="头像"></div><div class="chat-name">'+
+                                        '<p>'+extra.nick_name+'</p></div>';
+                                    if (count == 0) {
+                                        str +=  '<div class="message-num" style="padding: 0"></div></div>';
+                                    }else{
+                                        str +=  '<div class="message-num">'+count+'</div></div>';
+                                    }
+                                    totalNum += parseInt(count);
+                                    if (totalNum > 0){
+                                        if (totalNum > 99){
+                                            $('.chat-message-num').html("99+");
+                                        }else{
+                                            $('.chat-message-num').html(totalNum);
+                                        }
+                                        $('.chat-message-num').css('padding','3px 5px');
+
+                                    }
+                                    $('.chatBox-list').append(str);
+
+                                },
+                                onError:function(){
+                                    // error => 获取指定会话未读数错误码。
+                                }
+                            });
+
+                        });return false;
+                        // list => 会话列表集合。
+
+                    },
+                    onError: function(error) {
+                        // do something...
+                    }
+                },null);
+
+            },
+            onTokenIncorrect: function() {
+                //console.log('token无效');
+            },
+            onError:function(errorCode){
+                //console.log(errorCode);
+            }
+        });}
+
+
+
+    RongIMClient.setOnReceiveMessageListener({
+        // 接收到的消息
+        onReceived: function(message) {
+
+            // 判断消息类型
+            console.log('messageContent:');
+            console.log(message);
+
+            switch (message.messageType) {
+                case RongIMClient.MessageType.TextMessage:
+
+                    if (message.conversationType){ //单聊消息才做处理
+
+                        var id = message.senderUserId;
+                        var idLength = $("#"+id).length;
+
+                        var extra = eval('(' + message.content.extra + ')');
+
+
+                        var type = 'text';
+                        if (message.objectName == 'RC:TxtMsg'){ //文本消息
+                            //文本消息不需重新复制type
+                        }else if(message.objectName == 'RC:Img'){ //图片消息
+                            type = 'img'
+                        }else{
+                            //不处理的消息类型直接返回不执行
+                            return false;
+                        }
+                        var time = new Date(message.sentTime).toLocaleDateString();
+
+                        extra.time = time;
+
+                        if (idLength > 0){ //聊天列表中存在该用户  不追加列表内容
+
+                            var display = $('.chatBox-content-'+id).css('display');
+
+
+                            if (display == 'block'){ //判断是否在和当前用户聊天  如果在  清楚未读消息并追加消息
+                                clearUserCount(id);
+
+
+                            } else{ //如果不在 增加消息内容并且加上未读消息
+                                pullHistoryMsg('chatBox-content-'+id,id);
+
+                            }
+                            console.log('进入1');
+                            appendMsg(message.content.content,extra,type,'left','chatBox-content-'+id);
+
+                        }else{ //聊天列表不存在该用户  追加列表内容 并拉取历史消息
+
+                            var str = '<div class="chat-list-people" id="'+message.senderUserId+'" onclick="intoChat(this)">' +
+                                '<div><img src="'+extra.header_img+'" alt="头像"></div>\n' +
+                                '<div class="chat-name">\n' +
+                                '<p>'+extra.nick_name+'</p>\n' +
+                                '</div>\n' +
+                                '<div class="message-num">1</div>\n' +
+                                '</div>';
+                            $('.chatBox-list').append(str);
+                        }
+
+                    }
+
+                    break;
+                case RongIMClient.MessageType.ImageMessage:
+                    var extra = message.content.user;
+                    // var extra = message.content.extra;
+                    if(status == 1){
+                        var str = '<img src="'+message.content.imageUri+'">';
+                        $('.live-chate').append(str);
+                        $(".live-chate").scrollTop($(".live-chate")[0].scrollHeight);
+                    }else{
+                        var str = '<div class="padding_10 mg_top10"><div class="clearfix"><dl class="clearfix left"><dt class="left"><img class="head" src="'+extra.portrait+'"></dt><dd class="left padding_lr10"><p><strong>'+extra.name+'</strong></p><p class="mg_top5"><img style="max-width: 200px" src="'+message.content.imageUri+'"></p></dd></dl></div></div>';
+                        $('.msg-chat').append(str);
+                        $(".msg-chat").scrollTop($(".msg-chat")[0].scrollHeight);
+                    }
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.DiscussionNotificationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.LocationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.RichContentMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.DiscussionNotificationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.InformationNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.ContactNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.ProfileNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.CommandNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.CommandMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.UnknownMessage:
+
+                    //console.log('xxxxx');
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.VoiceMessage:
+                    // //console.log(message);
+                    // getVoice((message.content.duration), (message.content.content));
+
+                    break;
+                case RongIMClient.MessageType.PersonMessage:
+
+                    break;
+                default:
+                //console.log(message);
+
+                // 自定义消息
+                // do something...
+            }
+        }
+    });
+
+
+    //聊天界面初始化
+    screenFuc();
+    function screenFuc() {
+        var topHeight = $(".chatBox-head").innerHeight();//聊天头部高度
+        //屏幕小于768px时候,布局change
+        var winWidth = $(window).innerWidth();
+        if (winWidth <= 768) {
+            var totalHeight = $(window).height(); //页面整体高度
+            $(".chatBox-info").css("height", totalHeight - topHeight);
+            var infoHeight = $(".chatBox-info").innerHeight();//聊天头部以下高度
+            //中间内容高度
+            $(".chatBox-content").css("height", infoHeight - 46);
+            $(".chatBox-content-demo").css("height", infoHeight - 46);
+
+            $(".chatBox-list").css("height", totalHeight - topHeight);
+            $(".chatBox-kuang").css("height", totalHeight - topHeight);
+            $(".div-textarea").css("width", winWidth - 106);
+        } else {
+            $(".chatBox-info").css("height", 495);
+            $(".chatBox-content").css("height", 448);
+            $(".chatBox-content-demo").css("height", 448);
+            $(".chatBox-list").css("height", 495);
+            $(".chatBox-kuang").css("height", 495);
+            $(".div-textarea").css("width", 260);
+        }
+    }
+
+    (window.onresize = function () {
+        screenFuc();
+    })();
+
+    //打开/关闭聊天框
+    $(".chatBtn").click(function () {
+        $(".chatBox").toggle(10);
+    })
+    $(".chat-close").click(function () {
+        $(".chatBox").toggle(10);
+    });
+
+    //清除未读消息
+    function clearUserCount(targetId) {
+        console.log('清除未读消息');
+        var num = $("#"+targetId).children(".message-num").html();
+
+        var conversationType = RongIMLib.ConversationType.PRIVATE;
+
+        if (num > 0){ //如果有未读消息  执行清除
+            RongIMClient.getInstance().clearUnreadCount(conversationType,targetId,{
+                onSuccess:function(){
+                    $("#"+targetId).children(".message-num").html("");
+                    $("#"+targetId).children(".message-num").css('padding','0');
+
+                    totalNum -= parseInt(num);
+
+                    if (totalNum <= 0){
+                        $('.chat-message-num').html("");
+                       $('.chat-message-num').css('padding','0');
+                    }else{
+
+                        $('.chat-message-num').html(totalNum);
+
+                    }
+
+
+
+                },
+                onError:function(error){
+                    // error => 清除未读消息数错误码。
+                }
+            });
+
+
+
+        }
+
+
+    }
+
+
+
+    //进入聊天界面
+    function intoChat(that){
+        //隐藏会话列表头部
+        $(".chatBox-head-one").toggle();
+        $(".chatBox-head-two").toggle();
+        $(".chatBox-list").fadeToggle();
+        $(".chatBox-kuang").fadeToggle();
+
+        //传名字
+        $(".ChatInfoName").text($(that).children(".chat-name").children("p").eq(0).html());
+
+        //传头像
+        $(".ChatInfoHead>img").attr("src", $(that).children().eq(0).children("img").attr("src"));
+
+
+        var id = $(that).attr('id');
+        //更改发送消息目标用户id
+        toUserId = id;
+        //清楚未读消息
+        clearUserCount(toUserId);
+
+        var length = $(".chatBox-content-"+id).length;
+        if (length > 0){ //有聊天消息框  对应聊天框显示
+
+            $(".chatBox-content-"+id).css('display','block');
+
+        }else{ //没有聊天消息框  拉取历史消息
+
+            //拉取历史消息
+            pullHistoryMsg('chatBox-content-'+id,toUserId);return false;
+            
+            var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
+            var targetId = toUserId; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+            var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
+            var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
+            RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
+                onSuccess: function(list, hasMsg) {
+                    // list => Message 数组。
+                    // hasMsg => 是否还有历史消息可以获取。
+                    //先添加上内容框
+                    var length = $(".chatBox-content-"+id).length;
+                    var height = $(".chatBox-content").height();
+                    $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+
+                    //聊天对象的配置信息
+                    var leftExtra  = new Object();
+                    leftExtra.header_img = $('.ChatInfoHead img').attr('src');
+                    //遍历历史消息  添加消息内容
+                    $.each(list,function (k,v) {
+                        var type = 'text';
+                        if (v.objectName == 'RC:TxtMsg'){ //文本消息
+                            //文本消息不需重新复制type
+                        }else if(v.objectName == 'RC:Img'){ //图片消息
+                            type = 'img'
+                        }else{
+                            //不处理的消息类型直接返回不执行
+                            return false;
+                        }
+                        var time = new Date(v.sentTime).toLocaleDateString();
+                        if (v.senderUserId == targetId) { //如果消息发送id和发送消息目标用户id一致即消息为对方发送  放到左边
+                            leftExtra.time = time;
+                            appendMsg(v.content.content,leftExtra,type,'left',"chatBox-content-" + id);
+                        }else{
+                            selfExtra.time = time;
+                            appendMsg(v.content.content,selfExtra,type,'right',"chatBox-content-" + id);
+                        }
+
+                    });
+                },
+                onError: function(error) {
+                    console.log("GetHistoryMessages,errorcode:" + error);
+                }
+            });
+            
+            
+            
+            
+            
+        }
+
+    }
+    
+
+    //拉取历史消息
+    function pullHistoryMsg(id,targetId) { // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+        var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
+
+        var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
+        var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
+        RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
+            onSuccess: function(list, hasMsg) {
+                // list => Message 数组。
+                // hasMsg => 是否还有历史消息可以获取。
+                //先添加上内容框
+                var height = $(".chatBox-content").height();
+                $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
+
+                //聊天对象的配置信息
+                var leftExtra  = new Object();
+                leftExtra.header_img =$("#"+targetId).children().eq(0).children("img").attr("src");
+                //遍历历史消息  添加消息内容
+                $.each(list,function (k,v) {
+                    var type = 'text';
+                    if (v.objectName == 'RC:TxtMsg'){ //文本消息
+                        //文本消息不需重新复制type
+                    }else if(v.objectName == 'RC:Img'){ //图片消息
+                        type = 'img'
+                    }else{
+                        //不处理的消息类型直接返回不执行
+                        return false;
+                    }
+                    var time = new Date(v.sentTime).toLocaleDateString();
+                    if (v.senderUserId == targetId) { //如果消息发送id和发送消息目标用户id一致即消息为对方发送  放到左边
+                        leftExtra.time = time;
+                        appendMsg(v.content.content,leftExtra,type,'left',id);
+                    }else{
+                        selfExtra.time = time;
+                        appendMsg(v.content.content,selfExtra,type,'right',id);
+                    }
+
+                });
+            },
+            onError: function(error) {
+                console.log("GetHistoryMessages,errorcode:" + error);
+            }
+        });
+    }
+    
+    
+
+    //追加消息
+    function appendMsg(msg,extra,msgType = 'text',type = 'left',id){
+        //msg   消息主体内容
+        //extra 附加内容 头像 发送消息时间 昵称等
+        //type 消息靠左或靠右   值为left或right
+        //msgType 消息类型  图片或是文本等
+        //id 要添加到的地方
+
+
+        //先判断有没有聊天内容框  没有就获取历史消息并添加上聊天内容框
+        var length = $('.'+id).length;
+        console.log(length);
+        if(length <= 0){
+            var height = $(".chatBox-content").height();
+            $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
+        }
+
+
+
+
+        var str = '';
+        if (msgType == 'text'){ //文本消息
+
+             str += '<div class="clearfloat">\n' +
+                '<div class="author-name"><small class="chat-date">'+extra.time+'</small></div>\n' +
+                '<div class="'+type+'">\n' +
+                '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div>\n' +
+                '<div class="chat-message">'+msg+'</div></div></div>';
+
+        }else if(msgType == 'img'){ //图片消息
+
+             str += '<div class="clearfloat"><div class="author-name"><small class="chat-date">'+extra.time+'</small></div>\n' +
+                '<div class="'+type+'"><div class="chat-avatars">' +
+                '<img src="'+extra.header_img+'" alt="头像"></div><div class="chat-message">\n' +
+                '<img src="'+msg+'" alt=""></div></div></div>'
+        }
+
+        $('.'+id).append(str);
+        console.log('.'+id);
+        // 聊天框默认最底部
+        $('.'+id).scrollTop($('.'+id)[0].scrollHeight);
+
+
+    }
+
+
+    //返回列表
+    $(".chat-return").click(function () {
+        $(".chatBox-content-demo").css('display','none');
+        $(".chatBox-head-one").toggle(1);
+        $(".chatBox-head-two").toggle(1);
+        $(".chatBox-list").fadeToggle(1);
+        $(".chatBox-kuang").fadeToggle(1);
+
+    });
+
+    //      发送信息
+    $("#chat-fasong").click(function () {
+        var textContent = $(".div-textarea").html().replace(/[\n\r]/g, '<br>')
+        if (textContent != "") {
+            $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+                "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+                "<div class=\"right\"> <div class=\"chat-message\"> " + textContent + " </div> " +
+                "<div class=\"chat-avatars\"><img src=\"/public/im/img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
+            //发送后清空输入框
+            $(".div-textarea").html("");
+            //聊天框默认最底部
+            $(document).ready(function () {
+                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+            });
+        }
+    });
+
+    //      发送表情
+    $("#chat-biaoqing").click(function () {
+        $(".biaoqing-photo").toggle();
+    });
+    $(document).click(function () {
+        $(".biaoqing-photo").css("display", "none");
+    });
+    $("#chat-biaoqing").click(function (event) {
+        event.stopPropagation();//阻止事件
+    });
+
+    $(".emoji-picker-image").each(function () {
+        $(this).click(function () {
+            var bq = $(this).parent().html();
+            console.log(bq)
+            $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+                "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+                "<div class=\"right\"> <div class=\"chat-message\"> " + bq + " </div> " +
+                "<div class=\"chat-avatars\"><img src=\"/public/im/img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
+            //发送后关闭表情框
+            $(".biaoqing-photo").toggle();
+            //聊天框默认最底部
+            $(document).ready(function () {
+                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+            });
+        })
+    });
+
+    //      发送图片
+    function selectImg(pic) {
+        if (!pic.files || !pic.files[0]) {
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            var images = evt.target.result;
+            $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+                "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+                "<div class=\"right\"> <div class=\"chat-message\"><img src=" + images + "></div> " +
+                "<div class=\"chat-avatars\"><img src=\"/public/im/img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
+            //聊天框默认最底部
+            $(document).ready(function () {
+                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+            });
+        };
+        reader.readAsDataURL(pic.files[0]);
+
+    }
+</script>
+{/block}

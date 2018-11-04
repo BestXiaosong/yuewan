@@ -13,7 +13,42 @@ class Index extends Base
         parent::_initialize();
         $this->assign('stamp',123);
     }
+    public function index2()
+    {
+//        $menuList = session('menuList');
+//        if(empty($menuList)){
+//            $menuList = $this->getMenuList();
+//            session('menuList',$menuList);
+//        }
+        $menuList = $this->getMenuList();
 
+        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+        $header_img = str_replace('\\','/','test');
+        $result = $model->user()->getToken('xiaosong','xiaosong','1.png');
+        $res = json_decode($result,true);
+        $r_token = '';
+        if ($res['code'] == 200){
+            $r_token = $res['token'];
+        }
+
+        $this->assign('r_token',$r_token);
+        $this->assign('menuList',$menuList);
+        return view();
+    }
+
+    public function index1()
+    {
+        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+        $header_img = str_replace('\\','/','test');
+        $result = $model->user()->getToken('xiaoli','小莉','1.png');
+        $res = json_decode($result,true);
+        $r_token = '';
+        if ($res['code'] == 200){
+            $r_token = $res['token'];
+        }
+        $this->assign('r_token',$r_token);
+        return view();
+    }
 
 
     /**
