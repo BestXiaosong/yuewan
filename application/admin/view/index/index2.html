@@ -143,28 +143,35 @@
         token : "{$r_token}",
     };
 
-    //发送消息目标用户id
+    {/*接收到的消息是否可以进行处理  默认为否  待会话列表加载完成后放开*/}
+    var can = false;
+
+    {/*can为false状态下接收到的消息统一存入pendingMsg 待会话列表加载完成后 can为true时统一处理*/}
+    var pendingMsg = [];
+
+
+    {/*发送消息目标用户id*/}
     var toUserId = '';
 
     var callbacks = {
 
     };
 
-    //自己的配置信息
+    {/*自己的配置信息*/}
     var selfExtra = {
         'header_img':'/public/im/img/icon03.png',
         'user_id':'xiaosong',
         'nick_name':'xiaosong'
     };
 
-    //总未读数
+    {/*总未读数*/}
     var totalNum = 0;
 
 
-    //融云初始化
+    {/*融云初始化*/}
     init(params,callbacks);
 
-    //融云初始化
+    {/*融云初始化*/}
     function init(params, callbacks, modules){
 
         var appKey = params.appKey;
@@ -179,17 +186,17 @@
 
         var config = {};
 
-        //私有云切换navi导航，私有云格式 '120.92.10.214:8888'
+        {/*私有云切换navi导航，私有云格式 '120.92.10.214:8888'*/}
         if(navi !== ""){
             config.navi = navi;
         }
 
-        //私有云切换api,私有云格式 '172.20.210.38:81:8888'
+        {/*私有云切换api,私有云格式 '172.20.210.38:81:8888'*/}
         var api = params.api || "";
         if(api !== ""){
             config.api = api;
         }
-        //support protobuf url + function
+        {/*support protobuf url + function*/}
         if(protobuf != null){
             config.protobuf = protobuf;
         };
@@ -197,14 +204,13 @@
         RongIMLib.RongIMClient.init(appKey,null,config);
 
 
-        //注册自定义消息
-        var messageName = "PersonMessage"; // 消息名称。
-        var objectName = "RC:Welcome"; // 消息内置名称，请按照此格式命名。
-        var mesasgeTag = new RongIMLib.MessageTag(true,true);// 消息是否保存是否计数，true true 保存且计数，false false 不保存不计数。
-        var prototypes = ["content","extra"]; // 消息类中的属性名。
+        {/*注册自定义消息*/}
+        var messageName = "PersonMessage"; {/*消息名称。*/}
+        var objectName = "RC:Welcome"; {/*消息内置名称，请按照此格式命名。*/}
+        var mesasgeTag = new RongIMLib.MessageTag(true,true);{/*消息是否保存是否计数，true true 保存且计数，false false 不保存不计数。*/}
+        var prototypes = ["content","extra"]; {/*消息类中的属性名。*/}
         RongIMClient.registerMessageType(messageName,objectName,mesasgeTag,prototypes);
-        //
-        // /*
+        {/*
         //  文档：http://www.rongcloud.cn/docs/web.html#3、设置消息监听器
         //
         //  注意事项：
@@ -212,11 +218,11 @@
         //  2：判断会话唯一性 ：conversationType + targetId
         //  3：显示消息在页面前，需要判断是否属于当前会话，避免消息错乱。
         //  4：消息体属性说明可参考：http://rongcloud.cn/docs/api/js/index.html
-        //  */
+        //  */}
 
         var instance = RongIMClient.getInstance();
 
-        // 连接状态监听器
+        {/*连接状态监听器*/}
         RongIMClient.setConnectionStatusListener({
             onChanged: function (status) {
                 //console.log(status);
@@ -262,35 +268,55 @@
 
 
 
-        //融云开始连接
+        {/*融云开始连接*/}
         RongIMClient.connect(token, {
             onSuccess: function(userId) {
                 callbacks.getCurrentUser && callbacks.getCurrentUser({userId:userId});
                 // console.log("链接成功，用户id：" + userId);
                 RongIMClient.getInstance().getConversationList({
                     onSuccess: function(list) {
-                        // console.log('会话列表:');
-                        // console.log(list);
+                        {/*list => 会话列表集合。*/}
+                        // console.log('会话列表:'+list);
 
                         $.each(list,function (k,v) {
+                            console.log(v);
                             var targetId = v.targetId;
                             var conversationType =  RongIMLib.ConversationType.PRIVATE;
-                            // console.log('循环：')
-                            // console.log(v);
-
+                            {/*获取会话未读消息数*/}
                             RongIMLib.RongIMClient.getInstance().getUnreadCount(conversationType,targetId,{
                                 onSuccess:function(count){
-                                    // count => 指定会话的总未读数。
-                                    var extra = eval('(' + v.latestMessage.content.extra + ')');
-                                    console.log(extra);
-                                    var str = '<div class="chat-list-people" id="'+v.targetId+'" onclick="intoChat(this)">' +
-                                        '<div><img src="'+extra.header_img+'" alt="头像"></div><div class="chat-name">'+
+                                    {/*count => 指定会话的总未读数。*/}
+
+                                    if (v.latestMessage.senderUserId == v.targetId){ //最后一条消息为对方发送的消息
+                                        var extra = eval('(' + v.latestMessage.content.extra + ')');
+                                    }else{
+
+                                        var extra = getUserInfo(v.targetId);
+
+
+                                    }
+
+
+
+                                    // console.log(extra);
+                                    var str = '<div class="chat-list-people" id="'+v.targetId+'" >' +
+                                        '<div onclick="intoChat(this)"><img src="'+extra.header_img+'" alt="头像"></div>' +
+                                        '<div class="chat-name" onclick="intoChat(this)">'+
                                         '<p>'+extra.nick_name+'</p></div>';
                                     if (count == 0) {
-                                        str +=  '<div class="message-num" style="padding: 0"></div></div>';
+
+                                        str +=  '<div class="message-num"  data-num="0" onclick="clearConversation(\''+v.targetId+'\')">X</div></div>';
+
                                     }else{
-                                        str +=  '<div class="message-num">'+count+'</div></div>';
+
+                                        if (count > 99){
+                                            str +=  '<div class="message-num" data-num="'+count+'">99+</div></div>';
+                                        }else{
+                                            str +=  '<div class="message-num" data-num="'+count+'">'+count+'</div></div>';
+                                        }
+
                                     }
+
                                     totalNum += parseInt(count);
                                     if (totalNum > 0){
                                         if (totalNum > 99){
@@ -305,12 +331,24 @@
 
                                 },
                                 onError:function(){
-                                    // error => 获取指定会话未读数错误码。
+                                    {/*error => 获取指定会话未读数错误码。*/}
                                 }
                             });
 
-                        });return false;
-                        // list => 会话列表集合。
+                        });
+
+                        // console.log(pendingMsg);
+                        $.each(pendingMsg,function (k,v) {
+                            //处理消息
+                            disposeMsg(v)
+                            // console.log(v);
+                        });
+
+                        {/*列表加载完成后允许消息添加*/}
+                        can = true;
+
+                        return false;
+
 
                     },
                     onError: function(error) {
@@ -328,117 +366,78 @@
         });}
 
 
+        //获取用户信息
+        function getUserInfo(id) {
+        var obj = '';
+            $.ajax({
 
+                type: "post",
+
+                url: "{:url('index/getUserInfo')}?id="+id,
+
+                cache:false,
+
+                async:false,
+
+                success: function(data){
+                    obj = data.data;
+                }
+
+            });
+
+            return obj;
+
+        }
+
+
+
+    {/*onReceived 接收到消息*/}
     RongIMClient.setOnReceiveMessageListener({
-        // 接收到的消息
+
         onReceived: function(message) {
 
             // 判断消息类型
-            console.log('messageContent:');
-            console.log(message);
+            // console.log('messageContent:');
+            // console.log(message);
 
             switch (message.messageType) {
                 case RongIMClient.MessageType.TextMessage:
 
                     if (message.conversationType){ //单聊消息才做处理
 
-                        var id = message.senderUserId;
-                        var idLength = $("#"+id).length;
+                        if (can){ //如果聊天列表已加载完成直接处理接收到的消息
+                            // console.log('直接处理');
+                            //消息处理
+                            disposeMsg(message);
 
-                        var extra = eval('(' + message.content.extra + ')');
-
-
-                        var type = 'text';
-                        if (message.objectName == 'RC:TxtMsg'){ //文本消息
-                            //文本消息不需重新复制type
-                        }else if(message.objectName == 'RC:Img'){ //图片消息
-                            type = 'img'
-                        }else{
-                            //不处理的消息类型直接返回不执行
-                            return false;
-                        }
-                        var time = new Date(message.sentTime).toLocaleDateString();
-
-                        extra.time = time;
-                        // var length = $(".chatBox-content-"+id).length;
-                        // if (length > 0){ //有聊天消息框  对应聊天框显示
-                        //     $(".chatBox-content-"+id).css('display','block');
-                        // }else{ //没有聊天消息框  拉取历史消息
-                        //     //拉取历史消息
-                        //     pullHistoryMsg('chatBox-content-'+id,toUserId);return false;
-                        //
-                        // }
-
-                        if (idLength > 0){ //聊天列表中存在该用户  不追加列表内容判断有没有聊天消息框
-
-                            console.log('聊天列表中存在该用户');
-
-                            var length = $(".chatBox-content-"+id).length;
-
-                            if (length > 0){ //存在聊天消息框
-                                console.log('存在聊天消息框');
-                                var display = $('.chatBox-content-'+id).css('display');
-
-                                if (display == 'block'){ //判断是否在和当前用户聊天  如果在  清楚未读消息并追加消息
-                                    console.log('判断是否在和当前用户聊天');
-                                    clearUserCount(id);
-
-                                } else{    //增加消息内容并且加上未读消息
-
-
-                                }
-
-                                console.log('进入1');
-                                appendMsg(message.content.content,extra,type,'left','chatBox-content-'+id);
-
-                            } else{ //不存在聊天消息框   创建聊天消息框并拉取历史消息
-                                console.log('不存在聊天消息框');
-                                //添加上聊天消息框
-                                var height = $(".chatBox-content").height();
-                                $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
-                                pullHistoryMsg('chatBox-content-'+id,id);
-                                console.log('id:'+id);
-                                $('#chatBox-content-'+id).scrollTop($('#chatBox-content-'+id)[0].scrollHeight);
-                            }
-
-
-
-
-                        }else{ //聊天列表不存在该用户  追加列表内容 并拉取历史消息
-                            console.log('聊天列表不存在该用户');
-                            var str = '<div class="chat-list-people" id="'+message.senderUserId+'" onclick="intoChat(this)">' +
-                                '<div><img src="'+extra.header_img+'" alt="头像"></div>\n' +
-                                '<div class="chat-name">\n' +
-                                '<p>'+extra.nick_name+'</p>\n' +
-                                '</div>\n' +
-                                '<div class="message-num">1</div>\n' +
-                                '</div>';
-                            $('.chatBox-list').append(str);
-
-                            //添加上内容框
-                            var height = $(".chatBox-content").height();
-                            $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
-
-                            //拉取历史消息
-                            // pullHistoryMsg('chatBox-content-'+id,id);
+                        }else { //如果聊天列表未加载完成  将消息存入obj 待消息列表加载完成后处理
+                            // console.log('放入待处理消息数组');
+                            //放入待处理消息数组
+                            pendingMsg.push(message);
                         }
 
                     }
 
                     break;
                 case RongIMClient.MessageType.ImageMessage:
-                    var extra = message.content.user;
-                    // var extra = message.content.extra;
-                    if(status == 1){
-                        var str = '<img src="'+message.content.imageUri+'">';
-                        $('.live-chate').append(str);
-                        $(".live-chate").scrollTop($(".live-chate")[0].scrollHeight);
-                    }else{
-                        var str = '<div class="padding_10 mg_top10"><div class="clearfix"><dl class="clearfix left"><dt class="left"><img class="head" src="'+extra.portrait+'"></dt><dd class="left padding_lr10"><p><strong>'+extra.name+'</strong></p><p class="mg_top5"><img style="max-width: 200px" src="'+message.content.imageUri+'"></p></dd></dl></div></div>';
-                        $('.msg-chat').append(str);
-                        $(".msg-chat").scrollTop($(".msg-chat")[0].scrollHeight);
+
+
+                    // console.log(message);return false;
+
+                    if (message.conversationType){ //单聊消息才做处理
+
+                        if (can){ //如果聊天列表已加载完成直接处理接收到的消息
+                            // console.log('直接处理');
+                            //消息处理
+                            disposeMsg(message);
+
+                        }else { //如果聊天列表未加载完成  将消息存入obj 待消息列表加载完成后处理
+                            // console.log('放入待处理消息数组');
+                            //放入待处理消息数组
+                            pendingMsg.push(message);
+                        }
+
                     }
-                    // do something...
                     break;
                 case RongIMClient.MessageType.DiscussionNotificationMessage:
 
@@ -521,6 +520,145 @@
         }
     }
 
+
+
+    //消息处理
+    function disposeMsg(message) {
+        var id = message.senderUserId;
+        var idLength = $("#"+id).length;
+
+        var extra = eval('(' + message.content.extra + ')');
+
+
+        var type = 'text';
+        if (message.objectName == 'RC:TxtMsg'){ //文本消息
+            //文本消息不需重新复制type
+            var msg = message.content.content;
+        }else if(message.objectName == 'RC:ImgMsg'){ //图片消息
+            type = 'img';
+            // var msg = message.content.imageUri;
+            var msg = message.content.content;
+            console.log(message);
+            // return false;
+        }else{
+            //不处理的消息类型直接返回不执行
+            return false;
+        }
+
+
+        extra.time = UnixToDate(message.sentTime,true);
+
+
+
+        if (idLength > 0){ //聊天列表中存在该用户  不追加列表内容判断有没有聊天消息框
+
+            // console.log('聊天列表中存在该用户');
+            //移动当前发消息的用户至最顶端
+            // $(".chatBox-list").eq(0).insertBefore($('#'+id));
+            var length = $(".chatBox-content-"+id).length;
+
+            if (length > 0){ //存在聊天消息框
+                // console.log('存在聊天消息框');
+                var display = $('.chatBox-content-'+id).css('display');
+
+                if (display == 'block'){ //判断是否在和当前用户聊天  如果在  清楚未读消息并追加消息
+                    // console.log('判断是否在和当前用户聊天');
+                    // console.log(display);
+                    clearUserCount(id);
+
+                } else{    //增加消息内容并且加上未读消息
+
+                    addUserCount(id);
+
+                }
+
+                // console.log('进入1');
+                appendMsg(msg,extra,type,'left','chatBox-content-'+id);
+
+            } else{ //不存在聊天消息框
+                // console.log('不存在聊天消息框');
+                //添加上聊天消息框
+                var height = $(".chatBox-content").height();
+                $(".chatBox-content").append('<div style="display:none;height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+                pullHistoryMsg('chatBox-content-'+id,id);
+                // console.log('id:'+id);
+                $('#chatBox-content-'+id).scrollTop($('#chatBox-content-'+id)[0].scrollHeight);
+
+                addUserCount(id);
+
+            }
+
+
+        }else{ //聊天列表不存在该用户  追加列表内容
+
+            // console.log('聊天列表不存在该用户');
+
+            var str = '<div class="chat-list-people" id="'+message.senderUserId+'" >' +
+                '<div><img onclick="intoChat(this)" src="'+extra.header_img+'" alt="头像"></div>\n' +
+                '<div onclick="intoChat(this)" class="chat-name">\n' +
+                '<p>'+extra.nick_name+'</p>\n' +
+                '</div>\n' +
+                '<div class="message-num" data-num="1">1</div>\n' +
+                '</div>';
+
+            addUserCount(id);
+
+            $('.chatBox-list').prepend(str);
+
+
+        }
+    }
+
+    //发送私聊消息
+    function sendMessage(msg) {
+        // console.log(toUserId); return false;
+        RongIMClient.getInstance().sendMessage(RongIMLib.ConversationType.PRIVATE, toUserId, msg, {
+            // 发送消息成功
+            onSuccess: function (message) {
+
+                console.log('sendMsgSuccess:'+message);
+                console.log(message);
+                if (message.objectName == "RC:TxtMsg"){
+                    var type = 'text';
+                }else if(message.objectName == "RC:ImgMsg"){
+                    var type = 'img';
+                }
+                appendMsg(message.content.content,selfExtra,type,'right','chatBox-content-'+message.targetId)
+
+            },
+            onError: function (errorCode, message) {
+                var info = '';
+                switch (errorCode) {
+                    case RongIMLib.ErrorCode.TIMEOUT:
+                        info = '超时';
+                        break;
+                    case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                        info = '未知错误';
+                        break;
+                    case RongIMLib.ErrorCode.REJECTED_BY_BLACKLIST:
+                        info = '在黑名单中，无法向对方发送消息';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_DISCUSSION:
+                        info = '不在讨论组中';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_GROUP:
+                        info = '不在群组中';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_CHATROOM:
+                        info = '不在聊天室中';
+                        break;
+                    default:
+                        info = "x";
+                        break;
+                }
+                //console.log('发送失败:' + info);
+            }
+        });
+    }
+
+
+
+
     (window.onresize = function () {
         screenFuc();
     })();
@@ -535,16 +673,17 @@
 
     //清除未读消息
     function clearUserCount(targetId) {
-        console.log('清除未读消息');
-        var num = $("#"+targetId).children(".message-num").html();
+        // console.log('清除未读消息');
+        var num = $("#"+targetId).children(".message-num").data('num');
 
         var conversationType = RongIMLib.ConversationType.PRIVATE;
 
-        if (num > 0){ //如果有未读消息  执行清除
+        if (num > 0 ){ //如果有未读消息  执行清除
             RongIMClient.getInstance().clearUnreadCount(conversationType,targetId,{
                 onSuccess:function(){
-                    $("#"+targetId).children(".message-num").html("");
-                    $("#"+targetId).children(".message-num").css('padding','0');
+                    $("#"+targetId).children(".message-num").data('num',0);
+                    $("#"+targetId).children(".message-num").attr('onclick',"clearConversation(\'"+targetId+"\')");
+                    $("#"+targetId).children(".message-num").html("X");
 
                     totalNum -= parseInt(num);
 
@@ -553,11 +692,15 @@
                        $('.chat-message-num').css('padding','0');
                     }else{
 
-                        $('.chat-message-num').html(totalNum);
+
+                        if (totalNum > 99){
+                            $('.chat-message-num').html('99+');
+                        }else {
+                            $('.chat-message-num').html(totalNum);
+
+                        }
 
                     }
-
-
 
                 },
                 onError:function(error){
@@ -565,12 +708,75 @@
                 }
             });
 
+        }
+    }
+
+    //清除会话
+    function clearConversation(id){
+
+        //清除指定会话：
+        // console.log('in:');
+        // console.log(id+'type:'+typeof id);
+        var conversationType = RongIMLib.ConversationType.PRIVATE;
+        RongIMClient.getInstance().removeConversation(conversationType,id,{
+            onSuccess:function(){
+                // console.log('清除会话成功:'+data);
+
+                $("#"+id).remove();
+
+                // 清除会话成功
+            },
+            onError:function(error){
+                // console.log('清除会话错误码:'+error);
+                // error => 清除会话错误码。
+            }
+        });
+
+        return false;
+    }
 
 
+
+
+
+    //增加未读消息
+    //id 要操作的列表框id
+    //up 增加值  默认1
+    function addUserCount(id,up = 1) {
+        //获取当前列表框的未读数据
+        var num = $("#"+id).children(".message-num").data('num');
+        if (!num){
+            $("#"+id).children(".message-num").attr('onclick','javascript:;');
+
+
+            num = 0;
+        }
+        // console.log('已有未读消息:'+num);
+
+        //当前对话框未读消息修改
+        var total = parseInt(num) + parseInt(up);
+
+        // console.log(total);
+
+        $("#"+id).children(".message-num").data('num',total);
+        if (total > 99){
+            $("#"+id).children(".message-num").html('99+')
+        }else{
+            $("#"+id).children(".message-num").html(total)
         }
 
+        $("#"+id).children(".message-num").css('padding','3px 5px');
 
+        totalNum += parseInt(up);
+
+        if (totalNum > 99){
+            $('.chat-message-num').html("99+");
+        }else{
+            $('.chat-message-num').html(totalNum);
+        }
+        $('.chat-message-num').css('padding','3px 5px');
     }
+
 
 
 
@@ -583,13 +789,13 @@
         $(".chatBox-kuang").fadeToggle();
 
         //传名字
-        $(".ChatInfoName").text($(that).children(".chat-name").children("p").eq(0).html());
+        $(".ChatInfoName").text($(that).parent('div').children(".chat-name").children("p").eq(0).html());
 
         //传头像
-        $(".ChatInfoHead>img").attr("src", $(that).children().eq(0).children("img").attr("src"));
+        $(".ChatInfoHead>img").attr("src", $(that).parent('div').children().eq(0).children("img").attr("src"));
 
 
-        var id = $(that).attr('id');
+        var id = $(that).parent('div').attr('id');
         //更改发送消息目标用户id
         toUserId = id;
         //清楚未读消息
@@ -597,71 +803,35 @@
 
         var length = $(".chatBox-content-"+id).length;
         if (length > 0){ //有聊天消息框  对应聊天框显示
-            console.log('进入聊天界面有聊天消息框');
+            // console.log('进入聊天界面有聊天消息框');
             $(".chatBox-content-"+id).css('display','block');
             $(".chatBox-content-"+id).scrollTop($(".chatBox-content-"+id)[0].scrollHeight);
+        }else{
 
-        }else{ //没有聊天消息框  拉取历史消息
-            console.log('进入聊天界面没有聊天消息框');
-            var height = $(".chatBox-content").height();
-            $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+            // console.log('进入聊天界面没有聊天消息框');
+            //进入聊天界面没有聊天消息框 创建聊天消息框并拉取历史消息
+            addChatBox(id);
+            // console.log('id:'+id+'===type:'+typeof id);
+            // console.log('toUserId:'+toUserId+'===type:'+typeof toUserId);
             //拉取历史消息
             pullHistoryMsg('chatBox-content-'+id,toUserId);return false;
-            
-            var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
-            var targetId = toUserId; // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
-            var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
-            var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
-            RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
-                onSuccess: function(list, hasMsg) {
-                    // list => Message 数组。
-                    // hasMsg => 是否还有历史消息可以获取。
-                    // //先添加上内容框
-                    // var length = $(".chatBox-content-"+id).length;
-                    // var height = $(".chatBox-content").height();
-                    // $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
 
-                    //聊天对象的配置信息
-                    var leftExtra  = new Object();
-                    leftExtra.header_img = $('.ChatInfoHead img').attr('src');
-                    //遍历历史消息  添加消息内容
-                    $.each(list,function (k,v) {
-                        var type = 'text';
-                        if (v.objectName == 'RC:TxtMsg'){ //文本消息
-                            //文本消息不需重新复制type
-                        }else if(v.objectName == 'RC:Img'){ //图片消息
-                            type = 'img'
-                        }else{
-                            //不处理的消息类型直接返回不执行
-                            return false;
-                        }
-                        var time = new Date(v.sentTime).toLocaleDateString();
-                        if (v.senderUserId == targetId) { //如果消息发送id和发送消息目标用户id一致即消息为对方发送  放到左边
-                            leftExtra.time = time;
-                            appendMsg(v.content.content,leftExtra,type,'left',"chatBox-content-" + id);
-                        }else{
-                            selfExtra.time = time;
-                            appendMsg(v.content.content,selfExtra,type,'right',"chatBox-content-" + id);
-                        }
-
-                    });
-                },
-                onError: function(error) {
-                    console.log("GetHistoryMessages,errorcode:" + error);
-                }
-            });
-            
-            
-            
-            
-            
         }
 
     }
-    
+
+    //创建聊天消息框
+    function addChatBox(id){
+
+        var height = $(".chatBox-content").height();
+        $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+
+    }
+
 
     //拉取历史消息
     function pullHistoryMsg(id,targetId) { // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+
         var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
 
         var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
@@ -670,37 +840,38 @@
             onSuccess: function(list, hasMsg) {
                 // list => Message 数组。
                 // hasMsg => 是否还有历史消息可以获取。
-                //先添加上内容框
-                // var height = $(".chatBox-content").height();
-                // $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
 
                 //聊天对象的配置信息
                 var leftExtra  = new Object();
                 leftExtra.header_img =$("#"+targetId).children().eq(0).children("img").attr("src");
                 //遍历历史消息  添加消息内容
                 $.each(list,function (k,v) {
+                    console.log(v);
                     var type = 'text';
                     if (v.objectName == 'RC:TxtMsg'){ //文本消息
+                        var msg = v.content.content;
                         //文本消息不需重新复制type
-                    }else if(v.objectName == 'RC:Img'){ //图片消息
-                        type = 'img'
+                    }else if(v.objectName == 'RC:ImgMsg'){ //图片消息
+                        type = 'img';
+                        // var msg = v.content.imageUri;
+
+                        var msg = v.content.content;
                     }else{
                         //不处理的消息类型直接返回不执行
-                        return false;
+                        // return false;
                     }
-                    var time = new Date(v.sentTime).toLocaleDateString();
                     if (v.senderUserId == targetId) { //如果消息发送id和发送消息目标用户id一致即消息为对方发送  放到左边
-                        leftExtra.time = time;
-                        appendMsg(v.content.content,leftExtra,type,'left',id);
+                        leftExtra.time = UnixToDate(v.sentTime,true);
+                        appendMsg(msg,leftExtra,type,'left',id);
                     }else{
-                        selfExtra.time = time;
-                        appendMsg(v.content.content,selfExtra,type,'right',id);
+                        selfExtra.time = UnixToDate(v.sentTime,true);
+                        appendMsg(msg,selfExtra,type,'right',id);
                     }
 
                 });
             },
             onError: function(error) {
-                console.log("GetHistoryMessages,errorcode:" + error);
+                // console.log("GetHistoryMessages,errorcode:" + error);
             }
         });
     }
@@ -725,28 +896,39 @@
         // }
 
 
-
-
         var str = '';
         if (msgType == 'text'){ //文本消息
 
              str += '<div class="clearfloat">\n' +
                 '<div class="author-name"><small class="chat-date">'+extra.time+'</small></div>\n' +
-                '<div class="'+type+'">\n' +
-                '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div>\n' +
-                '<div class="chat-message">'+msg+'</div></div></div>';
+                '<div class="'+type+'">';
 
+                if (type == 'left'){
+                    str += '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div>'+
+                        '<div class="chat-message">'+msg+'</div></div></div>'
+                }else{
+                    str += '<div class="chat-message">'+msg+'</div><div class="chat-avatars">' +
+                        '<img src="'+extra.header_img+'" alt="头像"></div></div></div>'
+                }
         }else if(msgType == 'img'){ //图片消息
 
              str += '<div class="clearfloat"><div class="author-name"><small class="chat-date">'+extra.time+'</small></div>\n' +
-                '<div class="'+type+'"><div class="chat-avatars">' +
-                '<img src="'+extra.header_img+'" alt="头像"></div><div class="chat-message">\n' +
-                '<img src="'+msg+'" alt=""></div></div></div>'
+                '<div class="'+type+'">';
+            if (type == 'left'){
+                str += '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div>' +
+                    '<div class="chat-message"><img src="'+msg+'" alt=""></div></div></div>';
+
+            }else{
+                str += '<div class="chat-message"><img src="'+msg+'" alt=""></div>' +
+                    '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div></div></div>';
+            }
+
+
+
+
         }
         console.log('id:'+id);
-        // console.log(id);
         $('.'+id).append(str);
-        // console.log('.'+id);
         // 聊天框默认最底部
         $('.'+id).scrollTop($('.'+id)[0].scrollHeight);
 
@@ -764,22 +946,68 @@
 
     });
 
+    //发送消息框
+    $('.div-textarea').keydown(function(event) {
+        if (event.keyCode == 13) {
+            $("#chat-fasong").click(); return false;
+            // alert('你输入的值是' + $('.div-textarea').html());
+        }
+    });
+
+
+
     //      发送信息
     $("#chat-fasong").click(function () {
         var textContent = $(".div-textarea").html().replace(/[\n\r]/g, '<br>')
         if (textContent != "") {
-            $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
-                "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
-                "<div class=\"right\"> <div class=\"chat-message\"> " + textContent + " </div> " +
-                "<div class=\"chat-avatars\"><img src=\"/public/im/img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
-            //发送后清空输入框
-            $(".div-textarea").html("");
-            //聊天框默认最底部
-            $(document).ready(function () {
-                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+
+
+            var msg = new RongIMLib.TextMessage({
+                content:textContent,
+                extra:JSON.stringify(selfExtra),
             });
+            sendMessage(msg);
+            $(".div-textarea").html("");
+
+            // $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+            //     "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+            //     "<div class=\"right\"> <div class=\"chat-message\"> " + textContent + " </div> " +
+            //     "<div class=\"chat-avatars\"><img src="+selfExtra.header_img+" alt=\"头像\" /></div> </div> </div>");
+            // //发送后清空输入框
+            //
+            // //聊天框默认最底部
+            // $(document).ready(function () {
+            //     $(".chatBox-content-"+toUserId).scrollTop($(".chatBox-content-"+toUserId)[0].scrollHeight);
+            // });
         }
     });
+
+
+
+    /**
+     * 时间戳转换日期
+     * @param <int> unixTime    待时间戳(秒)
+     * @param <bool> isFull    是否为13位时间戳
+     * @param <int>  timeZone   时区
+     */
+
+    function UnixToDate(timestamp, isFull) {
+        if (isFull){
+            var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        }else{
+            var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        }
+
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        D = date.getDate() + ' ';
+        h = date.getHours() + ':';
+        m = date.getMinutes() + ':';
+        s = date.getSeconds();
+        return Y+M+D+h+m+s;
+    }
+
+
 
     //      发送表情
     $("#chat-biaoqing").click(function () {
@@ -795,7 +1023,7 @@
     $(".emoji-picker-image").each(function () {
         $(this).click(function () {
             var bq = $(this).parent().html();
-            console.log(bq)
+            console.log(bq);
             $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
                 "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
                 "<div class=\"right\"> <div class=\"chat-message\"> " + bq + " </div> " +
@@ -814,20 +1042,25 @@
         if (!pic.files || !pic.files[0]) {
             return;
         }
-        var reader = new FileReader();
-        reader.onload = function (evt) {
-            var images = evt.target.result;
-            $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
-                "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
-                "<div class=\"right\"> <div class=\"chat-message\"><img src=" + images + "></div> " +
-                "<div class=\"chat-avatars\"><img src=\"/public/im/img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
-            //聊天框默认最底部
-            $(document).ready(function () {
-                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
-            });
-        };
-        reader.readAsDataURL(pic.files[0]);
 
+
+
+
+        console.log(pic.files[0]);
+        var reader = new FileReader();
+        reader.readAsDataURL(pic.files[0]);
+        reader.onload = function (evt) {
+            console.log(evt);
+            var images = evt.target.result;
+
+            //TODO 发送融云消息后添加
+            appendMsg(images,selfExtra,'img','right',"chatBox-content-"+toUserId);
+
+
+        };
+        //清除图片
+
+        $(pic).val("");
     }
 </script>
 {/block}

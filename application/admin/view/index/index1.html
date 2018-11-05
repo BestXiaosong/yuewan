@@ -272,7 +272,7 @@
     var callbacks = {
 
     };
-    var conversationtype = RongIMLib.ConversationType.PRIVATE;
+
     var targetId = "xiaosong"; // 目标 Id
     var msg = new RongIMLib.TextMessage({content:"hello RongCloud!",extra:"附加信息"});
     function sendMessage(msg) {
@@ -465,11 +465,39 @@
                 console.log("链接成功，用户id：" + userId);
                 RongIMClient.getInstance().getConversationList({
                     onSuccess: function(list) {
-                        var str = "小兰发送给小松的消息测试追加789";
+                        var i = 0;
+                        // setInterval(
+                        //     function () {
+                        //         i++;
+                        //
+                        //         if (i >= 100){
+                        //             return false;
+                        //         }
+                        //
+                        //         var str = "小兰="+i;
+                        //         var extra = new Object();
+                        //         extra.role_id = "xiaosong";
+                        //         extra.nick_name = "小青";
+                        //         extra.header_img = "http://daike.xingzhuosong.com/public/upload/images/20181029/d9c6ec4ddffaf1b2cc5da5b398f587ba.jpg";
+                        //         var msg = new RongIMLib.TextMessage({
+                        //             content: escapeJquery(str),
+                        //             extra:JSON.stringify(extra),
+                        //         });
+                        //         sendMessage(msg);
+                        //     },300
+                        // );
+
+
+
+
+
+
+
+                        var str = "小兰发送给小松的消息测试追加789789789";
                         var extra = new Object();
-                        extra.role_id = "xiaosong";
-                        extra.nick_name = "小莉";
-                        extra.header_img = "http://daike.xingzhuosong.com/public/upload/images/20181029/d9c6ec4ddffaf1b2cc5da5b398f587ba.jpg";
+
+                        extra.nick_name = "{$userInfo.nick_name}";
+                        extra.header_img = "{$userInfo.header_img}";
                         var msg = new RongIMLib.TextMessage({
                             content: escapeJquery(str),
                             extra:JSON.stringify(extra),

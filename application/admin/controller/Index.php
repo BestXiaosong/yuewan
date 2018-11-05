@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use rongyun\api\RongCloud;
 use think\Db;
 
 
@@ -40,16 +41,49 @@ class Index extends Base
     {
         $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
         $header_img = str_replace('\\','/','test');
-        $result = $model->user()->getToken('xiaoli','小莉','1.png');
+        $result = $model->user()->getToken(hashid(2),'小莉','1.png');
         $res = json_decode($result,true);
         $r_token = '';
         if ($res['code'] == 200){
             $r_token = $res['token'];
         }
+        $userInfo = Db::name('users')->where('user_id',2)->find();
         $this->assign('r_token',$r_token);
+        $this->assign('userInfo',$userInfo);
         return view();
     }
 
+    public function index3()
+    {
+        $model = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+        $header_img = str_replace('\\','/','test');
+        $result = $model->user()->getToken(hashid(1),'小莉','1.png');
+        $res = json_decode($result,true);
+        $r_token = '';
+        if ($res['code'] == 200){
+            $r_token = $res['token'];
+        }
+        $userInfo = Db::name('users')->where('user_id',1)->find();
+        $this->assign('r_token',$r_token);
+        $this->assign('userInfo',$userInfo);
+        return view();
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 客服获取用户信息
+     */
+    public function getUserInfo()
+    {
+        $id = dehashid(input('id'));
+        if (!is_numeric($id)){
+            $id = 1;
+        }
+        $data = Db::name('users')->where('user_id',$id)->find();
+        api_return(1,'获取成功',$data);
+    }
 
     /**
      *修改密码

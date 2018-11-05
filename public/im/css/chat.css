@@ -473,7 +473,7 @@
     border: solid 1px #f5f5f5;
 }
 .chat-message img{
-    width: 220px;
+    max-width: 220px;
     height:auto;
 }
 
