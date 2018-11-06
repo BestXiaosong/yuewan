@@ -34,6 +34,8 @@ class Index extends Base
 
         $this->assign('r_token',$r_token);
         $this->assign('menuList',$menuList);
+        //图片异步上传  上传本地不需要域名前缀  上传第三方给出域名前缀
+        $this->assign('domain',config('qiniu.domain'));
         return view();
     }
 

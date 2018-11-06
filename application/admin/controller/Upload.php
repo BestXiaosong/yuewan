@@ -22,15 +22,21 @@ class Upload extends Controller
             $accessKey    = $qiniu_config['ACCESSKEY'];
             $secretKey    = $qiniu_config['SECRETKEY'];
             $file = request()->file('file');
+
             $info = $file->validate(['size'=>1024*1024*3,'ext'=>'jpeg,jpg,png,gif']);
             if (!$info) api_return(0,$file->getError());
             $filePath = $file->getRealPath();
-            $ext   = pathinfo($file->getInfo('name'), PATHINFO_EXTENSION);  //后缀
-            $key   = substr(md5($file->getRealPath()) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
+
+            $fileName = input('fileName');
+            if (!$fileName){
+                $ext   = pathinfo($file->getInfo('name'), PATHINFO_EXTENSION);  //后缀
+                $fileName   = substr(md5($file->getRealPath()) , 0, 5). date('YmdHis') . rand(0, 9999) . '.' . $ext;
+            }
+
             $auth  = new Auth($accessKey, $secretKey);
             $token = $auth->uploadToken($qiniu_config['bucket']);
             $uploadMgr = new UploadManager();
-            list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+            list($ret, $err) = $uploadMgr->putFile($token, $fileName, $filePath);
             if ($err !== null) {
                 return json(['status' => 0, 'msg' => '上传失败']);
             } else {
