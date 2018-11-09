@@ -38,12 +38,31 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>姓名</th>
+                        <th>头像</th>
+                        <td>{:uploadHtml('header_img',$user_data['header_img'],'single_img')}</td>
+                    </tr>
+                    <tr>
+                        <th>昵称</th>
+                        <td><input class="form-control" type="text" name="nick_name" value="{$user_data['nick_name']}"></td>
+                    </tr>
+                    <tr>
+                        <th>账号</th>
                         <td><input class="form-control" type="text" name="user_name"></td>
                     </tr>
+
                     <tr>
                         <th>初始密码</th>
                         <td><input class="form-control" type="text" name="password"></td>
+                    </tr>
+                    <tr>
+                        <th>给予客服权限</th>
+                        <td><span class="inputword">是</span> <input class="xb-icheck" type="radio" name="is_service" value="1"
+                                                                    {if $user_data['is_service'] eq 1} checked="checked"{/if}
+                            > &emsp; <span class="inputword">否</span> <input class="xb-icheck" type="radio" name="is_service"
+                                                                             value="0"
+                                                                             {if $user_data['is_service'] eq 0} checked="checked"{/if}
+                            >
+                        </td>
                     </tr>
                     <tr>
                         <th>状态</th>

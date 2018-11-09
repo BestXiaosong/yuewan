@@ -58,7 +58,7 @@ class Base extends Controller
             $auth = new Auth($accessKey, $secretKey);
             $config = new Config();
             $bucketManager = new BucketManager($auth, $config);
-            list($fileInfo, $err) = $bucketManager->stat($bucket, $key);
+            list($fileInfo, $err) = $bucketManager->stat($bucket,$key);
             if ($err) {
                 $array['msg'] = '文件信息查询失败';
                 $array['data'] = $err;
@@ -161,10 +161,10 @@ class Base extends Controller
      * E-mail:306027376@qq.com
      * 检查验证码是否正确
      */
-    protected function checkCode($field = 'phone',$msg = '验证码错误')
+    protected function checkCode($field = 'phone',$msg = '验证码错误',$code = 'code')
     {
         $phone = is_numeric($field)??input("post.$field");
-        $code  = input('post.code');
+        $code  = input("post.$code");
         $cache = cache('code'.$phone);
         if (!$cache || $code != $cache){
             api_return(0,$msg);
@@ -319,18 +319,14 @@ class Base extends Controller
      */
     protected function R_token($user_id = '')
     {
-        if (is_numeric($user_id)){
-            $token  = cache('r_token_'.$user_id);
-            if ($token) return $token;
-            $userId     = hashid($user_id);
-            $userInfo   = Db::name('users')->where('user_id',$user_id)->field('nick_name,header_img')->find();
-            $nick_name  = $userInfo['nick_name']??'游客'.rand(111111,99999);
-            $header_img = $userInfo['header_img']??config('default_img');
-        }else{
-            $userId     = date('YmdHis').rand(1,99999);
-            $header_img = config('default_img');
-            $nick_name  = '游客'.$user_id;
-        }
+
+        $token  = cache('r_token_'.$user_id);
+        if ($token) return $token;
+        $userId     = hashid($user_id);
+        $userInfo   = Db::name('users')->where('user_id',$user_id)->field('nick_name,header_img')->find();
+        $nick_name  = $userInfo['nick_name']??'游客'.rand(111111,99999);
+        $header_img = $userInfo['header_img']??config('default_img');
+
         $model  = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
         $result = $model->user()->getToken($userId,$nick_name,$header_img);
         $res    = json_decode($result,true);

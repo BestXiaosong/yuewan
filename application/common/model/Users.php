@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 
+use think\Db;
 use think\Model;
 
 
@@ -15,13 +16,32 @@ class Users extends Model
 
     public function getDetail($where = [])
     {
-        $user = $this->alias('a')
+        return $this->alias('a')
             ->where($where)
-            ->field('a.header_img,a.nick_name,a.sex,a.birthday')
+            ->field('a.header_img,a.nick_name,a.sex,a.uuid,a.grade')
             ->find();
-
-        return $user;
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 编辑个人资料页面返显
+     */
+    public function getInfo($user_id = 0)
+    {
+        $map['user_id'] = $user_id;
+        $data = $this->where($map)
+            ->field('header_img,nick_name,sex,tag,sign,birthday,job')
+            ->find();
+        $map['type']   = 1;
+        $map['status'] = 1;
+        $data['imgs'] = Db::name('user_img')->where($map)->field('img_id,img')->select();
+        $data['img_max'] = Db::name('extend')->where('id',1)->cache(60)->value('img_max');
+        return $data;
+    }
+
+
+
 
     /**
      * 后台获取用户列表

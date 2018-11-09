@@ -19,7 +19,7 @@ return [
     // 用户名
     'username'        => \think\Env::get('db_username','root'),
     // 密码
-    'password'        => \think\Env::get('db_username','root'),
+    'password'        => \think\Env::get('db_password','root'),
     // 端口
     'hostport'        => '',
     // 连接dsn

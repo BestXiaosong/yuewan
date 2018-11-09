@@ -8,21 +8,39 @@
 
 namespace app\api\controller;
 use app\common\model\GiftRecord;
-use think\Controller;
 use think\Db;
-use think\Cache;
-use app\common\model\Gift as Gifts;
+use app\common\model\Gift as model;
 use think\Exception;
 
 class Gift extends  User
 {
-        //直播间赠送礼物显示接口
-        public function  giftList()
-        {
-              $model=new Gifts();
-              $showList=$model->giftList(['status'=>1]);
-              $showList?api_return(1,'获取成功',$showList):api_return(0,'获取失败');
-        }
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 礼物列表
+     */
+    public function  giftList()
+    {
+        $model=new model();
+
+        $map['status'] = 1;
+
+        $rows = $model->giftList($map);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
             //我收到的礼物接口
         public function  recordGift()
         {

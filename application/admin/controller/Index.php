@@ -14,6 +14,33 @@ class Index extends Base
         parent::_initialize();
         $this->assign('stamp',123);
     }
+
+    public function index()
+    {
+        $menuList = session('menuList');
+        if(empty($menuList)){
+            $menuList = $this->getMenuList();
+            session('menuList',$menuList);
+        }
+
+        $userInfo = Db::name('admins')->where('user_id',session('user_id'))
+            ->field('nick_name,header_img,user_name,is_service')->find();
+
+
+        if ($userInfo['is_service']){
+            $r_token = $this->R_token(session('user_id'));
+            $this->assign('r_token',$r_token);
+            //图片异步上传  上传本地不需要域名前缀  上传第三方给出域名前缀
+            $this->assign('domain',config('qiniu.domain'));
+        }
+        $this->assign('userInfo',$userInfo);
+        $this->assign('menuList',$menuList);
+        return view();
+    }
+
+
+
+
     public function index2()
     {
 //        $menuList = session('menuList');
@@ -32,7 +59,7 @@ class Index extends Base
             $r_token = $res['token'];
         }
 
-        $this->assign('r_token',$r_token);
+
         $this->assign('menuList',$menuList);
         //图片异步上传  上传本地不需要域名前缀  上传第三方给出域名前缀
         $this->assign('domain',config('qiniu.domain'));
@@ -105,17 +132,6 @@ class Index extends Base
         }
     }
 
-    public function index()
-    {
-        $menuList = session('menuList');
-        if(empty($menuList)){
-            $menuList = $this->getMenuList();
-            session('menuList',$menuList);
-        }
-//        $menuList = $this->getMenuList();
-        $this->assign('menuList',$menuList);
-        return view();
-    }
 
     public function aaa(){
         echo substr(microtime(),2,8);

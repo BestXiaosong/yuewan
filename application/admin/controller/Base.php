@@ -6,6 +6,7 @@
  * Time: 9:08
  */
 namespace app\admin\controller;
+use rongyun\api\RongCloud;
 use think\Controller;
 use think\Db;
 
@@ -213,7 +214,34 @@ class Base extends  Controller
         }
         return $data;
     }
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * @param string $user_id
+     * @return mixed|string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * 获取融云token
+     */
+    protected function R_token($user_id = 0)
+    {
 
+        $token  = cache('r_token_admin'.hashid($user_id));
+        if ($token) return $token;
+        $userInfo   = Db::name('admins')->where('user_id',$user_id)->field('nick_name,header_img,user_name')->find();
+        $nick_name  = $userInfo['nick_name']??$userInfo['user_name'];
+        $header_img = $userInfo['header_img']??config('default_img');
+
+        $model  = new RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+        $result = $model->user()->getToken('admin'.hashid($user_id),$nick_name,$header_img);
+        $res    = json_decode($result,true);
+        if ($res['code'] == 200){
+            cache('r_token_admin'.hashid($user_id),$res['token'],86400*7);
+            return $res['token'];
+        }
+        return "";
+    }
 
 
 }

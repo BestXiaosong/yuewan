@@ -9,8 +9,6 @@ class Base extends Validate
     protected $rule = [
         'nick_name'  =>  'require|max:25',
         'password'  =>  'require|length:6,12',
-        'trade_password'  =>  'require|length:6,12',
-        'trade_password|交易密码'  =>  'require|length:6,12',
         'day' =>  'require|day',
         'content|评论' =>  'require|length:1,59',
         'real_name|真实姓名' =>  'require|length:2,25',
@@ -21,12 +19,12 @@ class Base extends Validate
         'bank_num|银行卡号' =>  "require|bankCard",
         'msg|备注信息' =>  'length:4,30',
         'cid'=>'debar',
-        'gid'=>'require|goods',
         'grade'=>'require|in:1,2,3',
         'guess_ratio|竞猜抽成比例'=>'integer|between:1,99',
         'compare_num|人脸比对百分比'=>'integer|between:0,100',
         'open_id|open_id'=>'require|open_id',
         'sex|性别'=>'require|integer|in:1,2',
+        'img_max|形象照最大数量	'=>'require|integer',
         'header_img|头像'=>'require',
     ];
 
@@ -43,7 +41,7 @@ class Base extends Validate
     ];
 
     protected $scene = [
-        'extend' => ['guess_ratio','compare_num'],
+        'extend' => ['img_max'],
         'nick_name'   =>  ['nick_name'],
         'front_user_add'   =>  ['phone'],
         'third_user_add'   =>  ['open_id','sex','header_img','nick_name'],

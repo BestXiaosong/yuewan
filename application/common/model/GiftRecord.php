@@ -14,6 +14,14 @@ use think\Model;
 
 class GiftRecord extends Model
 {
+
+    public function users()
+    {
+        return $this->hasOne('users','user_id','to_user');
+    }
+
+
+
     public function myList($where = [])
     {
         return $this->alias('a')
@@ -26,6 +34,24 @@ class GiftRecord extends Model
             ->cache(60)
             ->select();
     }
+
+    //后台获取赠送礼物日志
+    public function  recordList($where=[])
+    {
+        return $this->alias('gr')->where($where)
+            ->join('gift g','gr.gift_id = g.gift_id','left')
+            ->join('users u','gr.user_id = u.user_id','left')
+            ->field('g.gift_name,g.thumbnail,g.price,gr.num,gr.create_time,gr.update_time,u.nick_name,gr.to_user')
+            ->order('gr.record_id desc')
+            ->paginate('',false,['query'=>request()->param()]);
+    }
+
+
+
+
+
+
+
 
     public function myDetail($where = [],$type)
     {

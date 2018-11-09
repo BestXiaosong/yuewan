@@ -874,9 +874,78 @@ function get_rand_num($left,$right,$that)
     return $num;
 }
 
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * 融云检查用户是否在线
+ */
+function checkOnline($user_id){
+    $model  = new \rongyun\api\RongCloud(config('rongyun')['appKey'],config('rongyun')['appSecret']);
+    $result = $model->user()->checkOnline($user_id);
+    return $result['status']??0;
+
+}
+
+/**
+ * Created by xiaosong
+ * E-mail:306027376@qq.com
+ * 获取现在距离今天结束的时间差
+ */
+function todayEndTime(){
+    return strtotime(date('Y-m-d 23:59:59'))-time();
+}
+
+/**
+ * 根据生日计算星座
+ */
+function get_constellation($birthday)
+{
+
+    $month = intval(substr($birthday, 5, 2));
+    $day = intval(substr($birthday, 8, 2));
+    if ($month < 1 || $month > 12 || $day < 1 || $day > 31)
+    {
+        return NULL;
+    }
+    $signs = array(
+        array('20' => '水瓶座'),
+        array('19' => '双鱼座'),
+        array('21' => '白羊座'),
+        array('20' => '金牛座'),
+        array('21' => '双子座'),
+        array('22' => '巨蟹座'),
+        array('23' => '狮子座'),
+        array('23' => '处女座'),
+        array('23' => '天秤座'),
+        array('24' => '天蝎座'),
+        array('22' => '射手座'),
+        array('22' => '摩羯座')
+    );
+    list($start, $name) = fun_adm_each($signs[$month - 1]);
+    if ($day < $start)
+    {
+        list($start, $name) = fun_adm_each($signs[($month - 2 < 0) ? 11 : $month - 2]);
+    }
+
+    return $name;
+}
 
 
-
+//PHP7.2中代替each()方法
+if (!function_exists('fun_adm_each')){
+    function fun_adm_each(&$array){
+        $res = array();
+        $key = key($array);
+        if($key !== null){
+            next($array);
+            $res[1] = $res['value'] = $array[$key];
+            $res[0] = $res['key'] = $key;
+        }else{
+            $res = false;
+        }
+        return $res;
+    }
+}
 
 
 

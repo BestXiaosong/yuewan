@@ -23,7 +23,7 @@ class Login extends Base
     {
 
         if ($request->isPost()){
-            $data = $request->only(['phone','j_push_id'],'post');
+            $data = $request->only(['phone','j_push_id','code','log','lat','place'],'post');
             if (!empty($data['phone'])){
                 $this->checkCode();
                 $row = Db::name('users')->where('phone',$data['phone'])->field('user_id,status')->find();
@@ -32,7 +32,8 @@ class Login extends Base
                         //登陆日志
                         $this->log($row['user_id']);
                         $token = $this->makeToken($row['user_id']);
-                        api_return(1,'登陆成功',['token'=>$token]);
+                        $r_token = $this->R_token($row['user_id']);
+                        api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
                     }
                     api_return(0,'账号被禁用');
                 }else{
@@ -42,7 +43,8 @@ class Login extends Base
                     if ($row){
                         $this->log($model->user_id);
                         $token = $this->makeToken($model->user_id);
-                        api_return(1,'登陆成功',['token'=>$token]);
+                        $r_token = $this->R_token($model->user_id);
+                        api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
                     }else{
                         api_return(0,'登录失败,请稍后重试');
                     }
@@ -62,7 +64,7 @@ class Login extends Base
     public function third()
     {
         if (request()->isPost()){
-            $data = \request()->only(['type','open_id','header_img','sex','nick_name'],'post');
+            $data = \request()->only(['type','open_id','header_img','sex','nick_name','log','lat','place','j_push_id'],'post');
 
             $array = ['wx','qq','wb'];//允许的第三方登录方式
 
@@ -81,7 +83,8 @@ class Login extends Base
                     //登陆日志
                     $this->log($row['user_id']);
                     $token = $this->makeToken($row['user_id']);
-                    api_return(1,'登陆成功',['token'=>$token]);
+                    $r_token = $this->R_token($row['user_id']);
+                    api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
                 }else{
                     api_return(0,'账号被禁用');
                 }
@@ -94,7 +97,8 @@ class Login extends Base
                     //登陆日志
                     $this->log($model->user_id);
                     $token = $this->makeToken($model->user_id);
-                    api_return(1,'登陆成功',['token'=>$token]);
+                    $r_token = $this->R_token($model->user_id);
+                    api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
                 }
             }
         }

@@ -47,39 +47,23 @@
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
-                                    <td>礼物缩略图:</td>
-                                    <td>{:uploadHtml('thumbnail',$data.thumbnail,'single_img')}</td>
-                                </tr>
-                                <tr>
-                                    <td>礼物原图:</td>
-                                    <td>{:uploadHtml('img',$data.img,'single_img')}</td>
-                                </tr>
-                                <tr>
-                                    <td>礼物名称:</td>
-                                    <td><input placeholder="礼物名称" class="form-control" name="gift_name" type="text" value="{$data.gift_name}"></td>
-                                </tr>
-                                <tr>
-                                    <td>礼物价格:</td>
-                                    <td><input placeholder="礼物价格" class="form-control" name="price" type="text" value="{$data.price}"></td>
-                                </tr>
-
-                                <tr>
-                                    <td>状态:</td>
+                                    <td>形象照最大数量</td>
                                     <td>
-                                        <select class="form-control" name="status">
-                                            <option id="status1" value="1">启用</option>
-                                            <option id="status0" value="0">禁用</option>
-                                        </select>
+                                        <input name="img_max" class="form-control" type="number" value="{$data.img_max}">
                                     </td>
                                 </tr>
-
+                                <tr>
+                                    <td>视频动态最大数量</td>
+                                    <td>
+                                        <input name="vod_max" class="form-control" type="number" value="{$data.vod_max}">
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="pull-right">
                         <label class="control-label col-sm-2"></label>
-                        <input type="hidden" name="id" value="{$data.gift_id}">
                         <input class="btn btn-primary submit" type="submit" value="保存">
                     </div>
                 </form>
@@ -101,7 +85,6 @@
             $('#status'+status).attr('selected',true)
         }
     })
-
 </script>
 
 

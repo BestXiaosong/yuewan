@@ -1,7 +1,15 @@
 {extend name="public:index"/}
 
 {block name="main"}
-    <section class="content-wrapper right-side" id="riframe" style="margin:0;padding:0;margin-left:30px;">
+<section class="content-wrapper right-side" id="riframe" style="margin:0;padding:0;margin-left:30px;">
     <iframe id='rightContent' name='rightContent' src="{:url('Demo/index')}" width='100%' frameborder="0"  scrolling="atuo"></iframe>
-    </section>
+</section>
+    <!--判断是否有客服权限  有就加载客服组件-->
+    {if $userInfo.is_service == 1}
+    <!--加载客服组件-->
+    {include file="index/service" /}
+
+    {/if}
+
+
 {/block}

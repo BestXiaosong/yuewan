@@ -1,0 +1,1269 @@
+
+<link rel="stylesheet" type="text/css" href="/public/im/font_Icon/iconfont.css">
+<link rel="stylesheet" type="text/css" href="/public/im/css/chat.css">
+<script src="__PUBLIC__/plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="//cdn.ronghub.com/RongIMLib-2.3.3.min.js"></script>
+<div class="chatContainer">
+    <div class="chatBtn">
+        <i class="iconfont icon-xiaoxi1"></i>
+    </div>
+    <!--未读消息数-->
+    <div class="chat-message-num" style="padding: 0;"></div>
+    <div class="chatBox" ref="chatBox" style="display: none">
+        <div class="chatBox-head">
+            <div class="chatBox-head-one">
+                {$userInfo.nick_name}
+                <div class="chat-close" style="margin: 10px 10px 0 0;font-size: 14px">关闭</div>
+            </div>
+            <div class="chatBox-head-two">
+                <div class="chat-return">返回</div>
+                <div class="chat-people">
+                    <div class="ChatInfoHead">
+                        <img src="" alt="头像"/>
+                    </div>
+                    <div class="ChatInfoName">这是用户的名字，看看名字到底能有多长</div>
+                </div>
+                <div class="chat-close">关闭</div>
+            </div>
+        </div>
+        <div class="chatBox-info">
+            <div class="chatBox-list" ref="chatBoxlist">
+
+            </div>
+            <div class="chatBox-kuang" ref="chatBoxkuang">
+                <div class="chatBox-content">
+
+                </div>
+                <div class="chatBox-send">
+                    <div class="div-textarea" contenteditable="true"></div>
+                    <div>
+                        <!--<button id="chat-biaoqing" class="btn-default-styles">-->
+                            <!--<i class="iconfont icon-biaoqing"></i>-->
+                        <!--</button>-->
+                        <label id="chat-tuxiang" title="发送图片" for="inputImage" class="btn-default-styles">
+                            <input type="file" onchange="selectImg(this)" accept="image/jpg,image/jpeg,image/png,image/gif"
+                                   name="file" id="inputImage" class="hidden">
+                            <i class="iconfont icon-tuxiang"></i>
+                        </label>
+                        <button id="chat-fasong" class="btn-default-styles"><i class="iconfont icon-fasong"></i>
+                        </button>
+                    </div>
+                    <div class="biaoqing-photo">
+                        <ul>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -18px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -52px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -86px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -120px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -120px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -120px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -120px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -120px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -120px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -9px -154px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -40px -154px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -71px -154px;"></span></li>
+                            <li><span class="emoji-picker-image" style="background-position: -102px -154px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -133px -154px;"></span>
+                            </li>
+                            <li><span class="emoji-picker-image" style="background-position: -164px -154px;"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="outerdiv" style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.7);z-index:2;width:100%;height:100%;display:none;">
+    <div id="innerdiv" style="position:absolute;">
+        <img id="bigimg" style="border:5px solid #fff;" src="" />
+    </div>
+</div>
+
+<script>
+
+    var params = {
+        appKey :"{:config('rongyun.appKey')}",
+        token : "{$r_token}",
+    };
+
+    {/*接收到的消息是否可以进行处理  默认为否  待会话列表加载完成后放开*/}
+    var can = false;
+
+    {/*can为false状态下接收到的消息统一存入pendingMsg 待会话列表加载完成后 can为true时统一处理*/}
+    var pendingMsg = [];
+
+
+    {/*发送消息目标用户id*/}
+    var toUserId = '';
+
+    var callbacks = {
+
+    };
+
+    {/*自己的配置信息*/}
+    var selfExtra = {
+        'header_img':'{$userInfo.header_img}',
+        'nick_name':'{$userInfo.nick_name}'
+    };
+
+    {/*总未读数*/}
+    var totalNum = 0;
+
+
+    {/*融云初始化*/}
+    init(params,callbacks);
+
+    {/*融云初始化*/}
+    function init(params, callbacks, modules){
+
+        var appKey = params.appKey;
+        var token = params.token;
+        var navi = params.navi || "";
+
+        modules = modules || {};
+        var RongIMLib = modules.RongIMLib || window.RongIMLib;
+        var RongIMClient = RongIMLib.RongIMClient;
+
+        var protobuf = modules.protobuf || null;
+
+        var config = {};
+
+        {/*私有云切换navi导航，私有云格式 '120.92.10.214:8888'*/}
+        if(navi !== ""){
+            config.navi = navi;
+        }
+
+        {/*私有云切换api,私有云格式 '172.20.210.38:81:8888'*/}
+        var api = params.api || "";
+        if(api !== ""){
+            config.api = api;
+        }
+        {/*support protobuf url + function*/}
+        if(protobuf != null){
+            config.protobuf = protobuf;
+        };
+
+        RongIMLib.RongIMClient.init(appKey,null,config);
+
+
+        {/*注册自定义消息*/}
+        var messageName = "PersonMessage"; {/*消息名称。*/}
+        var objectName = "RC:Welcome"; {/*消息内置名称，请按照此格式命名。*/}
+        var mesasgeTag = new RongIMLib.MessageTag(true,true);{/*消息是否保存是否计数，true true 保存且计数，false false 不保存不计数。*/}
+        var prototypes = ["content","extra"]; {/*消息类中的属性名。*/}
+        RongIMClient.registerMessageType(messageName,objectName,mesasgeTag,prototypes);
+        {/*
+        //  文档：http://www.rongcloud.cn/docs/web.html#3、设置消息监听器
+        //
+        //  注意事项：
+        //  1：为了看到接收效果，需要另外一个用户向本用户发消息
+        //  2：判断会话唯一性 ：conversationType + targetId
+        //  3：显示消息在页面前，需要判断是否属于当前会话，避免消息错乱。
+        //  4：消息体属性说明可参考：http://rongcloud.cn/docs/api/js/index.html
+        //  */}
+
+        var instance = RongIMClient.getInstance();
+
+        {/*连接状态监听器*/}
+        RongIMClient.setConnectionStatusListener({
+            onChanged: function (status) {
+                //console.log(status);
+                switch (status) {
+                    case RongIMLib.ConnectionStatus["CONNECTED"]:
+                    case 0:
+                        // //console.log("连接成功")
+                        callbacks.getInstance && callbacks.getInstance(instance);
+                        break;
+
+                    case RongIMLib.ConnectionStatus["CONNECTING"]:
+                    case 1:
+                        // //console.log("连接中")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["DISCONNECTED"]:
+                    case 2:
+                        // //console.log("当前用户主动断开链接")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["NETWORK_UNAVAILABLE"]:
+                    case 3:
+                        // //console.log("网络不可用")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["CONNECTION_CLOSED"]:
+                    case 4:
+                        // //console.log("未知原因，连接关闭")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["KICKED_OFFLINE_BY_OTHER_CLIENT"]:
+                    case 6:
+                        // //console.log("用户账户在其他设备登录，本机会被踢掉线")
+                        break;
+
+                    case RongIMLib.ConnectionStatus["DOMAIN_INCORRECT"]:
+                    case 12:
+                        // //console.log("当前运行域名错误，请检查安全域名配置")
+                        break;
+                }
+            }
+        });
+
+
+
+        {/*融云开始连接*/}
+        RongIMClient.connect(token, {
+            onSuccess: function(userId) {
+                callbacks.getCurrentUser && callbacks.getCurrentUser({userId:userId});
+                // console.log("链接成功，用户id：" + userId);
+                RongIMClient.getInstance().getConversationList({
+                    onSuccess: function(list) {
+                        {/*list => 会话列表集合。*/}
+                        // console.log('会话列表:'+list);
+
+                        $.each(list,function (k,v) {
+                            // console.log(v);
+                            var targetId = v.targetId;
+                            var conversationType =  RongIMLib.ConversationType.PRIVATE;
+                            {/*获取会话未读消息数*/}
+                            RongIMLib.RongIMClient.getInstance().getUnreadCount(conversationType,targetId,{
+                                onSuccess:function(count){
+                                    {/*count => 指定会话的总未读数。*/}
+
+                                    if (v.latestMessage.senderUserId == v.targetId){ //最后一条消息为对方发送的消息
+                                        var extra = eval('(' + v.latestMessage.content.extra + ')');
+                                    }else{
+
+                                        var extra = getUserInfo(v.targetId);
+
+
+                                    }
+
+
+
+                                    // console.log(extra);
+                                    var str = '<div class="chat-list-people" id="'+v.targetId+'" >' +
+                                        '<div onclick="intoChat(this)"><img src="'+extra.header_img+'" alt="头像"></div>' +
+                                        '<div class="chat-name" onclick="intoChat(this)">'+
+                                        '<p>'+extra.nick_name+'</p></div>';
+                                    if (count == 0) {
+
+                                        str +=  '<div class="message-num"  data-num="0" onclick="clearConversation(\''+v.targetId+'\')">X</div></div>';
+
+                                    }else{
+
+                                        if (count > 99){
+                                            str +=  '<div class="message-num" data-num="'+count+'">99+</div></div>';
+                                        }else{
+                                            str +=  '<div class="message-num" data-num="'+count+'">'+count+'</div></div>';
+                                        }
+
+                                    }
+
+                                    totalNum += parseInt(count);
+                                    if (totalNum > 0){
+                                        if (totalNum > 99){
+                                            $('.chat-message-num').html("99+");
+                                        }else{
+                                            $('.chat-message-num').html(totalNum);
+                                        }
+                                        $('.chat-message-num').css('padding','3px 5px');
+
+                                    }
+                                    $('.chatBox-list').append(str);
+
+                                },
+                                onError:function(){
+                                    {/*error => 获取指定会话未读数错误码。*/}
+                                }
+                            });
+
+                        });
+
+                        // console.log(pendingMsg);
+                        $.each(pendingMsg,function (k,v) {
+                            //处理消息
+                            disposeMsg(v)
+                            // console.log(v);
+                        });
+
+                        {/*列表加载完成后允许消息添加*/}
+                        can = true;
+
+
+                    },
+                    onError: function(error) {
+                        // do something...
+                    }
+                },null);
+
+            },
+            onTokenIncorrect: function() {
+                //console.log('token无效');
+            },
+            onError:function(errorCode){
+                //console.log(errorCode);
+            }
+        });}
+
+
+        //获取用户信息
+        function getUserInfo(id) {
+        var obj = '';
+            $.ajax({
+
+                type: "post",
+
+                url: "{:url('index/getUserInfo')}?id="+id,
+
+                cache:false,
+
+                async:false,
+
+                success: function(data){
+                    obj = data.data;
+                }
+
+            });
+
+            return obj;
+
+        }
+
+
+
+    {/*onReceived 接收到消息*/}
+    RongIMClient.setOnReceiveMessageListener({
+
+        onReceived: function(message) {
+
+            // 判断消息类型
+            // console.log('messageContent:');
+            // console.log(message);
+
+            switch (message.messageType) {
+                case RongIMClient.MessageType.TextMessage:
+
+                    if (message.conversationType){ //单聊消息才做处理
+
+                        if (can){ //如果聊天列表已加载完成直接处理接收到的消息
+                            // console.log('直接处理');
+                            //消息处理
+                            disposeMsg(message);
+
+                        }else { //如果聊天列表未加载完成  将消息存入obj 待消息列表加载完成后处理
+                            // console.log('放入待处理消息数组');
+                            //放入待处理消息数组
+                            pendingMsg.push(message);
+                        }
+
+                    }
+
+                    break;
+                case RongIMClient.MessageType.ImageMessage:
+
+
+                    // console.log(message);return false;
+
+                    if (message.conversationType){ //单聊消息才做处理
+
+                        if (can){ //如果聊天列表已加载完成直接处理接收到的消息
+                            // console.log('直接处理');
+                            //消息处理
+                            disposeMsg(message);
+
+                        }else { //如果聊天列表未加载完成  将消息存入obj 待消息列表加载完成后处理
+                            // console.log('放入待处理消息数组');
+                            //放入待处理消息数组
+                            pendingMsg.push(message);
+                        }
+
+                    }
+                    break;
+                case RongIMClient.MessageType.DiscussionNotificationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.LocationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.RichContentMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.DiscussionNotificationMessage:
+
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.InformationNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.ContactNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.ProfileNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.CommandNotificationMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.CommandMessage:
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.UnknownMessage:
+
+                    //console.log('xxxxx');
+                    // do something...
+                    break;
+                case RongIMClient.MessageType.VoiceMessage:
+                    // //console.log(message);
+                    // getVoice((message.content.duration), (message.content.content));
+
+                    break;
+                case RongIMClient.MessageType.PersonMessage:
+
+                    break;
+                default:
+                //console.log(message);
+
+                // 自定义消息
+                // do something...
+            }
+        }
+    });
+
+
+    //聊天界面初始化
+    screenFuc();
+    function screenFuc() {
+        var topHeight = $(".chatBox-head").innerHeight();//聊天头部高度
+        //屏幕小于768px时候,布局change
+        var winWidth = $(window).innerWidth();
+        if (winWidth <= 768) {
+            var totalHeight = $(window).height(); //页面整体高度
+            $(".chatBox-info").css("height", totalHeight - topHeight);
+            var infoHeight = $(".chatBox-info").innerHeight();//聊天头部以下高度
+            //中间内容高度
+            $(".chatBox-content").css("height", infoHeight - 46);
+            $(".chatBox-content-demo").css("height", infoHeight - 46);
+
+            $(".chatBox-list").css("height", totalHeight - topHeight);
+            $(".chatBox-kuang").css("height", totalHeight - topHeight);
+            $(".div-textarea").css("width", winWidth - 106);
+        } else {
+            $(".chatBox-info").css("height", 495);
+            $(".chatBox-content").css("height", 448);
+            $(".chatBox-content-demo").css("height", 448);
+            $(".chatBox-list").css("height", 495);
+            $(".chatBox-kuang").css("height", 495);
+            $(".div-textarea").css("width", 260);
+        }
+    }
+
+
+
+    //消息处理
+    function disposeMsg(message) {
+        var id = message.senderUserId;
+        var idLength = $("#"+id).length;
+
+        var extra = eval('(' + message.content.extra + ')');
+
+
+
+        var type = 'text';
+        if (message.objectName == 'RC:TxtMsg'){ //文本消息
+            //文本消息不需重新复制type
+            var msg = message.content.content;
+        }else if(message.objectName == 'RC:ImgMsg'){ //图片消息
+            type = 'img';
+            // var msg = message.content.imageUri;
+            var msg = message.content.content;
+            console.log(message);
+            // return false;
+        }else{
+            //不处理的消息类型直接返回不执行
+            return false;
+        }
+
+
+        extra.time = UnixToDate(message.sentTime,true);
+
+
+
+        if (idLength > 0){ //聊天列表中存在该用户  不追加列表内容判断有没有聊天消息框
+
+            // console.log('聊天列表中存在该用户');
+            //移动当前发消息的用户至最顶端
+            // $(".chatBox-list").eq(0).insertBefore($('#'+id));
+            var length = $(".chatBox-content-"+id).length;
+
+            if (length > 0){ //存在聊天消息框
+                // console.log('存在聊天消息框');
+                var display = $('.chatBox-content-'+id).css('display');
+
+                if (display == 'block'){ //判断是否在和当前用户聊天  如果在  清楚未读消息并追加消息
+                    // console.log('判断是否在和当前用户聊天');
+                    // console.log(display);
+                    clearUserCount(id);
+
+                } else{    //增加消息内容并且加上未读消息
+
+                    addUserCount(id);
+
+                }
+
+                // console.log('进入1');
+                appendMsg(msg,extra,type,'left','chatBox-content-'+id);
+
+            } else{ //不存在聊天消息框
+                // console.log('不存在聊天消息框');
+                //添加上聊天消息框
+                var height = $(".chatBox-content").height();
+                $(".chatBox-content").append('<div style="display:none;height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+                pullHistoryMsg('chatBox-content-'+id,id);
+                // console.log('id:'+id);
+                $('#chatBox-content-'+id).scrollTop($('#chatBox-content-'+id)[0].scrollHeight);
+
+                addUserCount(id);
+
+            }
+
+
+        }else{ //聊天列表不存在该用户  追加列表内容
+
+            // console.log('聊天列表不存在该用户');
+
+            var str = '<div class="chat-list-people" id="'+message.senderUserId+'" >' +
+                '<div><img onclick="intoChat(this)" src="'+extra.header_img+'" alt="头像"></div>\n' +
+                '<div onclick="intoChat(this)" class="chat-name">\n' +
+                '<p>'+extra.nick_name+'</p>\n' +
+                '</div>\n' +
+                '<div class="message-num" data-num="1">1</div>\n' +
+                '</div>';
+
+            addUserCount(id);
+
+            $('.chatBox-list').prepend(str);
+
+
+        }
+    }
+
+    //发送私聊消息
+    function sendMessage(msg) {
+        // console.log(toUserId); return false;
+        RongIMClient.getInstance().sendMessage(RongIMLib.ConversationType.PRIVATE, toUserId, msg, {
+            // 发送消息成功
+            onSuccess: function (message) {
+                console.log(message);
+                // console.log('sendMsgSuccess:');
+                // console.log(message);
+                if (message.objectName == "RC:TxtMsg"){
+                    var type = 'text';
+                    msg = message.content.content;
+                }else if(message.objectName == "RC:ImgMsg"){
+                    var type = 'img';
+                    if (!message.content.imageUri){
+                        var uri = message.content.content;
+                    }else{
+                        var uri = message.content.imageUri;
+                    }
+                    msg = {base64:message.content.content,uri:uri}
+                }
+                selfExtra.time = UnixToDate(message.sentTime,true);
+                appendMsg(msg,selfExtra,type,'right','chatBox-content-'+message.targetId)
+
+            },
+            onError: function (errorCode, message) {
+                console.log('发送消息失败==errorCode:'+errorCode+'===message:'+message);
+                var info = '';
+                switch (errorCode) {
+                    case RongIMLib.ErrorCode.TIMEOUT:
+                        info = '超时';
+                        break;
+                    case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+                        info = '未知错误';
+                        break;
+                    case RongIMLib.ErrorCode.REJECTED_BY_BLACKLIST:
+                        info = '在黑名单中，无法向对方发送消息';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_DISCUSSION:
+                        info = '不在讨论组中';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_GROUP:
+                        info = '不在群组中';
+                        break;
+                    case RongIMLib.ErrorCode.NOT_IN_CHATROOM:
+                        info = '不在聊天室中';
+                        break;
+                    default:
+                        info = "x";
+                        break;
+                }
+                //console.log('发送失败:' + info);
+            }
+        });
+    }
+
+
+
+
+    (window.onresize = function () {
+        screenFuc();
+    })();
+
+    //打开/关闭聊天框
+    $(".chatBtn").click(function () {
+        $(".chatBox").toggle(10);
+    })
+    $(".chat-close").click(function () {
+        $(".chatBox").toggle(10);
+    });
+
+    //清除未读消息
+    function clearUserCount(targetId) {
+        // console.log('清除未读消息');
+        var num = $("#"+targetId).children(".message-num").data('num');
+
+        var conversationType = RongIMLib.ConversationType.PRIVATE;
+
+        if (num > 0 ){ //如果有未读消息  执行清除
+            RongIMClient.getInstance().clearUnreadCount(conversationType,targetId,{
+                onSuccess:function(){
+                    $("#"+targetId).children(".message-num").data('num',0);
+                    $("#"+targetId).children(".message-num").attr('onclick',"clearConversation(\'"+targetId+"\')");
+                    $("#"+targetId).children(".message-num").html("X");
+
+                    totalNum -= parseInt(num);
+
+                    if (totalNum <= 0){
+                        $('.chat-message-num').html("");
+                       $('.chat-message-num').css('padding','0');
+                    }else{
+
+
+                        if (totalNum > 99){
+                            $('.chat-message-num').html('99+');
+                        }else {
+                            $('.chat-message-num').html(totalNum);
+
+                        }
+
+                    }
+
+                },
+                onError:function(error){
+                    // error => 清除未读消息数错误码。
+                }
+            });
+
+        }
+    }
+
+    //清除会话
+    function clearConversation(id){
+
+        //清除指定会话：
+        // console.log('in:');
+        // console.log(id+'type:'+typeof id);
+        var conversationType = RongIMLib.ConversationType.PRIVATE;
+        RongIMClient.getInstance().removeConversation(conversationType,id,{
+            onSuccess:function(){
+                // console.log('清除会话成功:'+data);
+
+                $("#"+id).remove();
+
+                // 清除会话成功
+            },
+            onError:function(error){
+                // console.log('清除会话错误码:'+error);
+                // error => 清除会话错误码。
+            }
+        });
+
+        return false;
+    }
+
+
+
+
+
+    //增加未读消息
+    //id 要操作的列表框id
+    //up 增加值  默认1
+    function addUserCount(id,up = 1) {
+        //获取当前列表框的未读数据
+        var num = $("#"+id).children(".message-num").data('num');
+        if (!num){
+            $("#"+id).children(".message-num").attr('onclick','javascript:;');
+
+
+            num = 0;
+        }
+        // console.log('已有未读消息:'+num);
+
+        //当前对话框未读消息修改
+        var total = parseInt(num) + parseInt(up);
+
+        // console.log(total);
+
+        $("#"+id).children(".message-num").data('num',total);
+        if (total > 99){
+            $("#"+id).children(".message-num").html('99+')
+        }else{
+            $("#"+id).children(".message-num").html(total)
+        }
+
+        $("#"+id).children(".message-num").css('padding','3px 5px');
+
+        totalNum += parseInt(up);
+
+        if (totalNum > 99){
+            $('.chat-message-num').html("99+");
+        }else{
+            $('.chat-message-num').html(totalNum);
+        }
+        $('.chat-message-num').css('padding','3px 5px');
+    }
+
+
+
+
+    //进入聊天界面
+    function intoChat(that){
+        //隐藏会话列表头部
+        $(".chatBox-head-one").toggle();
+        $(".chatBox-head-two").toggle();
+        $(".chatBox-list").fadeToggle();
+        $(".chatBox-kuang").fadeToggle();
+
+        //传名字
+        $(".ChatInfoName").text($(that).parent('div').children(".chat-name").children("p").eq(0).html());
+
+        //传头像
+        $(".ChatInfoHead>img").attr("src", $(that).parent('div').children().eq(0).children("img").attr("src"));
+
+
+        var id = $(that).parent('div').attr('id');
+        //更改发送消息目标用户id
+        toUserId = id;
+        //清楚未读消息
+        clearUserCount(toUserId);
+
+        var length = $(".chatBox-content-"+id).length;
+        if (length > 0){ //有聊天消息框  对应聊天框显示
+            // console.log('进入聊天界面有聊天消息框');
+            $(".chatBox-content-"+id).css('display','block');
+            $(".chatBox-content-"+id).scrollTop($(".chatBox-content-"+id)[0].scrollHeight);
+        }else{
+
+            // console.log('进入聊天界面没有聊天消息框');
+            //进入聊天界面没有聊天消息框 创建聊天消息框并拉取历史消息
+            addChatBox(id);
+            // console.log('id:'+id+'===type:'+typeof id);
+            // console.log('toUserId:'+toUserId+'===type:'+typeof toUserId);
+            //拉取历史消息
+            pullHistoryMsg('chatBox-content-'+id,toUserId);return false;
+
+        }
+
+    }
+
+    //创建聊天消息框
+    function addChatBox(id){
+
+        var height = $(".chatBox-content").height();
+        $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo chatBox-content-'+id+'"  id="chatBox-content-'+id+'" ></div>');
+
+    }
+
+
+    //拉取历史消息
+    function pullHistoryMsg(id,targetId) { // 想获取自己和谁的历史消息，targetId 赋值为对方的 Id。
+
+        var conversationType = RongIMLib.ConversationType.PRIVATE; //单聊,其他会话选择相应的消息类型即可。
+
+        var timestrap = null; // 默认传 null，若从头开始获取历史消息，请赋值为 0 ,timestrap = 0;
+        var count = 20; // 每次获取的历史消息条数，范围 0-20 条，可以多次获取。
+        RongIMLib.RongIMClient.getInstance().getHistoryMessages(conversationType, targetId, timestrap, count, {
+            onSuccess: function(list, hasMsg) {
+                // list => Message 数组。
+                // hasMsg => 是否还有历史消息可以获取。
+
+                //聊天对象的配置信息
+                var leftExtra  = new Object();
+                leftExtra.header_img =$("#"+targetId).children().eq(0).children("img").attr("src");
+                //遍历历史消息  添加消息内容
+                $.each(list,function (k,v) {
+                    // console.log(v);
+                    var type = 'text';
+                    if (v.objectName == 'RC:TxtMsg'){ //文本消息
+                        var msg = v.content.content;
+                        //文本消息不需重新复制type
+                    }else if(v.objectName == 'RC:ImgMsg'){ //图片消息
+                        type = 'img';
+                        // var msg = v.content.imageUri;
+                        if (v.content.imageUri){
+                            var uri = v.content.imageUri;
+                        }else{
+                            var uri = v.content.content;
+                        }
+                        var msg = {
+                            base64: v.content.content,
+                            uri:uri,
+                        }
+                       ;
+                    }else{
+                        //不处理的消息类型直接返回不执行
+                        // return false;
+                    }
+                    if (v.senderUserId == targetId) { //如果消息发送id和发送消息目标用户id一致即消息为对方发送  放到左边
+                        leftExtra.time = UnixToDate(v.sentTime,true);
+                        appendMsg(msg,leftExtra,type,'left',id);
+                    }else{
+                        selfExtra.time = UnixToDate(v.sentTime,true);
+                        appendMsg(msg,selfExtra,type,'right',id);
+                    }
+
+                });
+            },
+            onError: function(error) {
+                // console.log("GetHistoryMessages,errorcode:" + error);
+            }
+        });
+    }
+    
+    
+
+    //追加消息
+    function appendMsg(msg,extra,msgType = 'text',type = 'left',id){
+        //msg   消息主体内容
+        //extra 附加内容 头像 发送消息时间 昵称等
+        //type 消息靠左或靠右   值为left或right
+        //msgType 消息类型  图片或是文本等
+        //id 要添加到的地方
+
+
+        //先判断有没有聊天内容框  没有就获取历史消息并添加上聊天内容框
+        // var length = $('.'+id).length;
+        // console.log(length);
+        // if(length <= 0){
+        //     var height = $(".chatBox-content").height();
+        //     $(".chatBox-content").append('<div style="height: '+height+'px"  class="chatBox-content-demo '+id+'"  id="'+id+'" ></div>');
+        // }
+
+
+        var str = '';
+        if (msgType == 'text'){ //文本消息
+
+             str += '<div class="clearfloat">\n' +
+                '<div class="author-name"><small class="chat-date">'+extra.time+'</small></div>\n' +
+                '<div class="'+type+'">';
+
+                if (type == 'left'){
+                    str += '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div>'+
+                        '<div class="chat-message">'+msg+'</div></div></div>'
+                }else{
+                    str += '<div class="chat-message">'+msg+'</div><div class="chat-avatars">' +
+                        '<img src="'+extra.header_img+'" alt="头像"></div></div></div>'
+                }
+        }else if(msgType == 'img'){ //图片消息
+
+             str += '<div class="clearfloat"><div class="author-name"><small class="chat-date">'+extra.time+'</small></div>\n' +
+                '<div class="'+type+'">';
+            if (type == 'left'){
+                str += '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div>' +
+                    '<div class="chat-message"><img src="'+msg.base64+'" onclick="imgShow(this)" data-uri="'+msg.uri+'" alt=""></div></div></div>';
+
+            }else{
+                str += '<div class="chat-message"><img src="'+msg.base64+'" onclick="imgShow(this)" data-uri="'+msg.uri+'" alt=""></div>' +
+                    '<div class="chat-avatars"><img src="'+extra.header_img+'" alt="头像"></div></div></div>';
+            }
+
+
+
+
+        }
+        // console.log('id:'+id);
+        $('.'+id).append(str);
+        // 聊天框默认最底部
+        $('.'+id).scrollTop($('.'+id)[0].scrollHeight);
+
+
+    }
+
+
+    //返回列表
+    $(".chat-return").click(function () {
+        $(".chatBox-content-demo").css('display','none');
+        $(".chatBox-head-one").toggle(1);
+        $(".chatBox-head-two").toggle(1);
+        $(".chatBox-list").fadeToggle(1);
+        $(".chatBox-kuang").fadeToggle(1);
+
+    });
+
+    //发送消息框
+    $('.div-textarea').keydown(function(event) {
+        if (event.keyCode == 13) {
+            $("#chat-fasong").click(); return false;
+            // alert('你输入的值是' + $('.div-textarea').html());
+        }
+    });
+
+
+
+    //      发送信息
+    $("#chat-fasong").click(function () {
+        var textContent = $(".div-textarea").html().replace(/[\n\r]/g, '<br>')
+        if (textContent != "") {
+
+
+            var msg = new RongIMLib.TextMessage({
+                content:textContent,
+                extra:JSON.stringify(selfExtra),
+            });
+            sendMessage(msg);
+            $(".div-textarea").html("");
+
+            // $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+            //     "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+            //     "<div class=\"right\"> <div class=\"chat-message\"> " + textContent + " </div> " +
+            //     "<div class=\"chat-avatars\"><img src="+selfExtra.header_img+" alt=\"头像\" /></div> </div> </div>");
+            // //发送后清空输入框
+            //
+            // //聊天框默认最底部
+            // $(document).ready(function () {
+            //     $(".chatBox-content-"+toUserId).scrollTop($(".chatBox-content-"+toUserId)[0].scrollHeight);
+            // });
+        }
+    });
+
+
+
+    /**
+     * 时间戳转换日期
+     * @param <int> unixTime    待时间戳(秒)
+     * @param <bool> isFull    是否为13位时间戳
+     * @param <int>  timeZone   时区
+     */
+
+    function UnixToDate(timestamp, isFull) {
+        if (isFull){
+            var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        }else{
+            var date = new Date(timestamp*1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        }
+
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        D = date.getDate() + ' ';
+        h = date.getHours() + ':';
+        m = date.getMinutes() + ':';
+        s = date.getSeconds();
+        return Y+M+D+h+m+s;
+    }
+
+
+
+    //      发送表情
+    $("#chat-biaoqing").click(function () {
+        $(".biaoqing-photo").toggle();
+    });
+    $(document).click(function () {
+        $(".biaoqing-photo").css("display", "none");
+    });
+    $("#chat-biaoqing").click(function (event) {
+        event.stopPropagation();//阻止事件
+    });
+
+    $(".emoji-picker-image").each(function () {
+        $(this).click(function () {
+            var bq = $(this).parent().html();
+            console.log(bq);
+            $(".chatBox-content-demo").append("<div class=\"clearfloat\">" +
+                "<div class=\"author-name\"><small class=\"chat-date\">2017-12-02 14:26:58</small> </div> " +
+                "<div class=\"right\"> <div class=\"chat-message\"> " + bq + " </div> " +
+                "<div class=\"chat-avatars\"><img src=\"/public/im/img/icon01.png\" alt=\"头像\" /></div> </div> </div>");
+            //发送后关闭表情框
+            $(".biaoqing-photo").toggle();
+            //聊天框默认最底部
+            $(document).ready(function () {
+                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+            });
+        })
+    });
+
+    //      发送图片
+    function selectImg(pic) {
+
+
+
+
+        if (!pic.files || !pic.files[0]) {
+            return;
+        }
+        if(!new RegExp("(jpg|jpeg|gif|png)+","gi").test(pic.files[0].type)){
+            layer.alert("发送图片：文件类型必须是JPG、JPEG、PNG或GIF!", {icon: 0});
+            // alert("发送图片：文件类型必须是JPG、JPEG、PNG或GIF!");
+            return;
+        }
+
+        if (pic.files[0].size > 1024*1024*10){
+            layer.alert("图片最大可上传为10M", {icon: 0});
+            // alert("发送图片：文件类型必须是JPG、JPEG、PNG或GIF!");
+            return;
+        }
+
+        //最大缩略图大小
+        var maxSize = 100*1024;
+
+        var reader = new FileReader();
+
+        reader.onload = function (evt) {
+
+            var image = evt.target.result;
+
+
+            var msg = '';
+            // 如果图片大小小于100kb，直接转码为base64并发送
+            if (image.length <= maxSize){
+                sendImg(image,image);
+                //清除图片
+                $(pic).val("");
+            }else{
+                var name = pic.files[0].name;
+                // console.log('文件名:'+name);
+                var ext = name.substr(name.indexOf("."));
+                // console.log('文件后缀:'+ext);
+                var fileName = takeFileName()+ext;
+                // console.log('异步上传文件名：'+fileName);
+                //压缩图片后获取base64格式并异步上传原图
+                var img = new Image();
+                img.src = image;
+                img.onload = function () {
+
+                    msg = compress(img,maxSize,500,50,25);
+                    // console.log('压缩后最终大小：'+msg.length);
+                    //图片异步上传  上传本地不需要域名前缀  上传第三方给出域名前缀
+                    sendImg(msg,"{$domain}"+fileName)
+                };
+                //异步上传原图
+
+                var formData = new FormData();
+                formData.append('file',pic.files[0]);
+                formData.append('fileName',fileName);
+                $.ajax({
+                    url:"{:url('upload/index')}",
+                    data:formData,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success:function (data) {
+                        // console.log(data);
+                    },
+                    error:function () {
+                        alert('图片上传出错')
+                    }
+                });
+
+                //清除图片
+                $(pic).val("");
+            }
+        };
+        reader.readAsDataURL(pic.files[0]);
+
+
+
+
+    }
+
+    //文件取名
+    function takeFileName() {
+
+        var myDate = new Date();
+        var myTime = 'public/upload/images/'+myDate.getFullYear().toString()+myDate.getMonth().toString()+myDate.getDate().toString();
+
+        return myTime+'/'+myDate.getHours().toString()+myDate.getMinutes().toString()+myDate.getSeconds().toString()+Math.ceil(Math.random()*99999).toString();
+    }
+
+    //图片处理后发送融云消息及自身加载消息 base64 图片base64 缩略图 uri原图地址
+    function sendImg(base64,uri = '') {
+        var extra = new Object();
+        extra.nick_name = selfExtra.nick_name;
+        extra.header_img = selfExtra.header_img;
+        var msg = new RongIMLib.ImageMessage({
+            content:base64,
+            imageUri:uri,
+            extra:JSON.stringify(extra),
+        });
+        sendMessage(msg);
+    }
+
+
+    //使用canvas对大图片进行压缩
+    function compress(img,maxSize = 0,size = 480,miniSize = 50,next = 50) {
+        //img 要压缩的图片
+        //maxSize 压缩后图片最大允许大小
+        //size 压缩尺寸
+        //miniSize 压缩后最低尺寸
+        //递归压缩每次递减尺寸
+
+        //用于压缩图片的canvas
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext('2d');
+        // 瓦片canvas
+        var tCanvas = document.createElement("canvas");
+        var tctx = tCanvas.getContext("2d");
+
+        var initSize = img.src.length;
+
+        // console.log('原图大小:'+initSize);
+        var width = img.width;
+        var height = img.height;
+        var bili = 1;
+        // console.log('压缩尺寸：'+size);
+
+
+        if(width>size){
+            bili = size/width;
+        }else{
+            if(height>size){
+                bili = size/height;
+            }else{
+                bili=1;
+            }
+        }
+        //如果图片大于四百万像素，计算压缩比并将大小压至400万以下
+        var ratio;
+        if ((ratio = width * height / 4000000) > 1) {
+            ratio = Math.sqrt(ratio);
+            width /= ratio;
+            height /= ratio;
+        } else {
+            ratio = 1;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        // 铺底色
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        //如果图片像素大于100万则使用瓦片绘制
+        var count;
+        if ((count = width * height / 1000000) > 1) {
+            count = ~~(Math.sqrt(count) + 1); //计算要分成多少块瓦片
+            //计算每块瓦片的宽和高
+            var nw = ~~(width / count);
+            var nh = ~~(height / count);
+            tCanvas.width = nw;
+            tCanvas.height = nh;
+            for (var i = 0; i < count; i++) {
+                for (var j = 0; j < count; j++) {
+                    tctx.drawImage(img, i * nw * ratio, j * nh * ratio, nw * ratio, nh * ratio, 0, 0, nw, nh);
+                    ctx.drawImage(tCanvas, i * nw, j * nh, nw, nh);
+                }
+            }
+        } else {
+            ctx.drawImage(img, 0, 0, width, height);
+        }
+        //进行最小压缩
+        var ndata = canvas.toDataURL('image/jpeg', bili);
+        tCanvas.width = tCanvas.height = canvas.width = canvas.height = 0;
+        // console.log('压缩后大小:'+ndata.length);
+        if (maxSize > 0 && ndata.length > maxSize && size-next > miniSize){
+
+            //如果有图片压缩后的最大大小  且当前图片过大并不超过最低压缩尺寸继续进行压缩
+            //图片小于最低压缩尺寸不进行压缩
+            return compress(img,maxSize,size-next,miniSize,next);
+
+        }else{
+            return ndata;
+        }
+
+    }
+
+
+
+    //图片放大
+    function imgShow(_this){
+
+        var outerdiv = '#outerdiv';
+        var innerdiv = '#innerdiv';
+        var bigimg   = '#bigimg';
+        var src = $(_this).data("uri");
+
+        //ajax判断地址是否有效  无效更换地址
+        $.ajax({
+            url : src,
+            async : false,
+            type : 'get',
+            timeout: 1000,
+            success : function() {
+
+            },
+            error : function() {
+                src = $(_this).attr("src");
+
+            }
+
+        });
+
+        $(bigimg).attr("src",src );//设置#bigimg元素的src属性
+
+        /*获取当前点击图片的真实大小，并显示弹出层及大图*/
+        $("<img/>").attr("src", src).load(function(){
+            var windowW = $(window).width();//获取当前窗口宽度
+            var windowH = $(window).height();//获取当前窗口高度
+            var realWidth = this.width;//获取图片真实宽度
+            var realHeight = this.height;//获取图片真实高度
+            var imgWidth, imgHeight;
+            var scale = 0.8;//缩放尺寸，当图片真实宽度和高度大于窗口宽度和高度时进行缩放
+
+            if(realHeight>windowH*scale){
+                imgHeight = windowH*scale;
+                imgWidth = imgHeight/realHeight*realWidth;
+                if(imgWidth>windowW*scale) {
+                    imgWidth = windowW*scale;
+                }
+            }else if(realWidth>windowW*scale){
+                imgWidth = windowW*scale;
+                imgHeight = imgWidth/realWidth*realHeight;
+            }else{
+                imgWidth = realWidth;
+                imgHeight = realHeight;
+            }
+            $(bigimg).css("width",imgWidth);
+
+            var w = (windowW-imgWidth)/2;
+            var h = (windowH-imgHeight)/2;
+            $(innerdiv).css({"top":h, "left":w});
+            $(outerdiv).fadeIn("fast");
+        });
+        $(outerdiv).click(function(){
+            $(this).fadeOut("fast");
+        });
+    }
+
+</script>

@@ -18,13 +18,13 @@
                     <div class="form-group">
                     <label class="control-label" for="input-order-id">赠送时间</label>
                     <div class="input-group">
-                    <input type="text" name="startDate" value="{$Think.get.startDate}" placeholder="选择开始时间"
+                    <input type="text"   name="startDate"  autocomplete="off" value="{$Think.get.startDate}" placeholder="选择开始时间"
                     class="form-control timepicker">
                     </div>
                     </div>
                     <div class="form-group">
                     <div class="input-group">
-                    <input type="text" name="endDate" value="{$Think.get.endDate}" placeholder="选择结束时间"
+                    <input type="text"   name="endDate"  autocomplete="off" value="{$Think.get.endDate}" placeholder="选择结束时间"
                     class="form-control timepicker">
                     </div>
                     </div>
@@ -42,13 +42,13 @@
                             <thead>
                             <tr>
                                 <td>赠送记录ID</td>
+                                <td>缩略图</td>
                                 <td>礼物名称</td>
-                                <td>礼物封面</td>
                                 <td>礼物价格</td>
                                 <td>赠送数量</td>
-                                <td>赠送者角色</td>
-                                <td>接受者房间</td>
-                                <td>创建时间</td>
+                                <td>赠送人</td>
+                                <td>受赠人</td>
+                                <td>赠送时间</td>
 
                             </tr>
                             </thead>
@@ -57,13 +57,13 @@
                             {volist name="rows" id="row" key="key"}
                             <tr>
                                 <td>{$key}</td>
+                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.thumbnail}" alt=""></td>
                                 <td>{$row.gift_name}</td>
-                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.img}" alt=""></td>
                                 <td>{$row.price}</td>
                                 <td>{$row.num}</td>
-                                <td>{$row.role_name}</td>
-                                <td>{$row.room_name}</td>
-                                <td>{$row.create_time|date='Y-m-d H:i:s',###}</td>
+                                <td>{$row.nick_name}</td>
+                                <td>{$row.users.nick_name}</td>
+                                <td>{$row.create_time}</td>
 
                             </tr>
                             {/volist}

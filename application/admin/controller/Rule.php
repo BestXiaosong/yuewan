@@ -396,9 +396,12 @@ class Rule extends \app\admin\controller\Base {
                     );
                 $AuthGroupAccess->addData($group);
             }
-            $data1['user_name'] =$data['user_name'];
-            $data1['status']   =$data['status'];
-            $data1['phone']    =$data['phone'];
+            $data1['user_name']  = $data['user_name'];
+            $data1['status']     = $data['status'];
+            $data1['phone']      = $data['phone'];
+            $data1['nick_name']  = $data['nick_name'];
+            $data1['header_img'] = $data['header_img'];
+            $data1['is_service'] = $data['is_service'];
             // 如果修改密码则md5
             if (!empty($data['password'])) {
                 $data1['password']=md5($data['password'].'tz');
@@ -459,9 +462,9 @@ class Rule extends \app\admin\controller\Base {
     }
 
     /**
-     * 佣金设置
+     * 系统设置
      */
-    public function money()
+    public function extend()
     {
         if (request()->isPost()){
             $row = input('post.');

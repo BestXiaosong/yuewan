@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 
+use think\Db;
 use think\Model;
 
 
@@ -34,18 +35,14 @@ class Users extends Model
 //            $data['create_time'] = time();
             $result =  $this->allowField(true)->save($data);
             if ($result) {
-//                $user_id = $this->getLastInsID();
-//                //私钥
-//                $key = md5($user_id.$data['salt'].rand(1, 99));
-//                $map['private_key'] = $key;
-//                $res = $this->where('user_id', $user_id)->update($map);
-//                $extend = Db::name('user_extend')->insert(['user_id'=>$user_id]);
-//                if (!$extend){
-//                    Db::name('user_extend')->insert(['user_id'=>$user_id]);
-//                }
-//                if (!$res) {
-//                    $this->where('user_id', $user_id)->update($map);
-//                }
+
+                //注册user_extend
+                $data['user_id'] = $this->getLastInsID();
+                Db::name('user_extend')->strict(false)->insert($data);
+                //修改用户uuid
+                $uuid = 101088888+$data['user_id']*1000+rand(1,999);
+                $this->where('user_id',$data['user_id'])->update(['uuid'=>$uuid]);
+
             }
             return $result;
         }
@@ -73,7 +70,17 @@ class Users extends Model
             $data['nick_name']  = '约玩用户'.substr($data['phone'],-4);
 //            $data['salt'] = generateStr(); //密码盐
 //            $data['password'] = md5(md5($data['password']).$data['salt']);
-            return $this->allowField(true)->save($data);
+            $result = $this->allowField(true)->save($data);
+            if ($result){
+                //注册user_extend
+                $data['user_id'] = $this->getLastInsID();
+                Db::name('user_extend')->strict(false)->insert($data);
+                //修改用户uuid
+                $uuid = 101088888+$data['user_id']*1000+rand(1,999);
+                $this->where('user_id',$data['user_id'])->update(['uuid'=>$uuid]);
+
+            }
+            return $result;
         }
     }
 
@@ -86,7 +93,17 @@ class Users extends Model
     {
         $validate = validate('base');
         if (!$validate->scene('third_user_add')->check($data)) api_return(0, $validate->getError());
-        return $this->allowField(true)->save($data);
+        $result =  $this->allowField(true)->save($data);
+        if ($result){
+            //注册user_extend
+            $data['user_id'] = $this->getLastInsID();
+            Db::name('user_extend')->strict(false)->insert($data);
+            //修改用户uuid
+            $uuid = 101088888+$data['user_id']*1000+rand(1,999);
+            $this->where('user_id',$data['user_id'])->update(['uuid'=>$uuid]);
+
+        }
+        return $result;
     }
 
 

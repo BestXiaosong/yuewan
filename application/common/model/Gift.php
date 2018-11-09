@@ -19,13 +19,11 @@ class Gift extends Model
 
     public function giftList($where = [])
     {
-        $result= $this
-            ->where($where)
-            ->order('create_time desc')
-            ->select();
-        if(empty($result)) return false;
-        return $result;
+        return $this->where($where)->field('gift_id,gift_name,thumbnail,img,price')->order('price')->cache(30)->select();
     }
+
+
+
     //后台获取礼物列表
     public function giftListAdmin($where = [])
     {
@@ -35,17 +33,7 @@ class Gift extends Model
             ->paginate('',false,['query'=>request()->param()]);
 
     }
-    //后台获取赠送礼物日志
-    public function  recordList($where=[])
-    {
-          return db('gift_record gr')->where($where)
-               ->join('gift g','gr.gift_id=g.gift_id','left')
-               ->join('room r','gr.room_id=r.room_id','left')
-               ->join('role rl','gr.role_id=rl.role_id','left')
-               ->field('g.gift_name,g.img,g.price,r.room_name,gr.num,rl.role_name,gr.create_time,gr.update_time')
-               ->order('gr.create_time desc')
-               ->paginate('',false,['query'=>request()->param()]);
-    }
+
 
     public function saveChange($data){
         if(is_numeric($data['id'])){
