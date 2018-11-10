@@ -15,35 +15,23 @@ use app\common\model\Vod as model;
 use Qiniu\Auth;
 use Qiniu\Config;
 use Qiniu\Storage\BucketManager;
-use Qiniu\Pili\Client;
-use function Qiniu\Pili\HDLPlayURL;
-use function Qiniu\Pili\HLSPlayURL;
-use Qiniu\Pili\Hub;
-use Qiniu\Pili\Mac;
-use function Qiniu\Pili\RTMPPlayURL;
-use function Qiniu\Pili\RTMPPublishURL;
-use function Qiniu\Pili\SnapshotPlayURL;
 use think\Db;
 
 class Vod extends Base
 {
     /**
-     * 点播列表
+     * 视频列表
      */
     public function index()
     {
         $where = [];
-        if (!empty($_GET['title'])) $where['title'] = ['like','%'.trim(input('get.title')).'%'];
+        if (!empty($_GET['nick_name'])) $where['u.nick_name'] = ['like','%'.trim(input('get.nick_name')).'%'];
         if (!isEmpty($_GET['status'])) $where['status'] = input('get.status');
-        if (!isEmpty($_GET['cid'])) $where['cid'] = input('get.cid');
         $model  = new model();
-        $rows = $model->getList($where);
-        $data = Db::name('play_category')->order('create_time DESC')->select();
-        $cate = array_key($data,'cid');
+        $rows   = $model->getList($where);
         $this->assign([
             'rows' => $rows,
-            'title' => '点播列表',
-            'cate' => $cate,
+            'title' => '视频列表',
             'pageHTML' => $rows->render(),
         ]);
         return view();

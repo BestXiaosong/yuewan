@@ -209,4 +209,11 @@ class Index extends Base
             api_return(0,'暂无数据');
         }
     }
+
+    public function img()
+    {
+        getVideoCover('http://file.51soha.com/vod0v21072460.mp4');
+    }
+
+
 }

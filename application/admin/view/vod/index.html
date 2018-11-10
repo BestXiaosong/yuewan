@@ -10,9 +10,9 @@
         <div class="panel-body">
             <div class="navbar navbar-default">
                 <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
-                    <label class="control-label" for="input-order-id">点播标题</label>
+                    <label class="control-label" for="input-order-id">用户昵称</label>
                     <div class="input-group">
-                        <input type="text" name="title" value="{$Think.get.title}" placeholder="直播标题"
+                        <input type="text" name="nick_name" value="{$Think.get.nick_name}" placeholder="用户昵称"
                                id="input-order-id" class="form-control">
                     </div>
                     <label class="control-label" for="input-order-id">点播分类</label>
@@ -44,12 +44,11 @@
                             <thead>
                             <tr>
                                 <td>id</td>
-                                <td>封面图</td>
-                                <td>点播标题</td>
-                                <td>点播分类</td>
-                                <td>是否推荐</td>
-                                <td>播放地址</td>
-                                <td>状态</td>
+                                <td>用户昵称</td>
+                                <td>用户头像</td>
+                                <td>视频地址</td>
+                                <td>视频类型</td>
+                                <td>视频状态</td>
                                 <td>操作</td>
                             </tr>
                             </thead>
@@ -58,12 +57,11 @@
                             {volist name="rows" id="row"}
                             <tr>
                                 <td>{$row.pid}</td>
-                                <td><img src="{$row.img}" style="max-width: 100px" alt=""></td>
-                                <td>{$row.title}</td>
-                                <td>{$cate[$row.cid]['cate_name']}</td>
-                                <td><input type="checkbox" class="checkbox is_top" {:ischeck($row.top)} data-size="small" data-id="{$row.pid}"></td>
-                                <td width="15%">{$row.play_url}</td>
-                                <td>{if condition="$row.status == 1"} 启用 {else /} 禁用 {/if}</td>
+                                <td>{$row.nick_name}</td>
+                                <td><img src="{$row.header_img}" style="max-width: 100px" alt=""></td>
+                                <td><a href="{$row.play_url}" target="_blank">{$row.play_url}</a></td>
+                                <td>{if condition="$row.type == 1"} 视频动态 {else /} 认证视频 {/if}</td>
+                                <td>{if condition="$row.status == 1"} 正常 {elseif condition="$row.status == 2"/} 认证中 {else /} 认证失败|已删除 {/if}</td>
                                 <td>
                                     <a href="{:url('edit',['id'=>$row.pid])}" class="btn btn-primary ">修改</a>
                                     {if condition="$row.status == 1"} <span class="btn btn-primary change" data-url="{:url('change',['id'=>$row.pid,'type'=>0])}">禁用 </span>

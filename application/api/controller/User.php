@@ -1,5 +1,6 @@
 <?php
 namespace app\api\controller;
+use app\common\logic\Async;
 use app\common\model\Bankroll;
 use app\common\model\Job;
 use think\Db;
@@ -183,6 +184,7 @@ class User extends Base
             ->where($gift)
             ->field("sum(a.num)as num,g.img,g.gift_name")
             ->group('a.gift_id')
+            ->order('g.price')
             ->select();
 
 //TODO 所在圈子  房间 家族  及自身通过的技能列表待处理

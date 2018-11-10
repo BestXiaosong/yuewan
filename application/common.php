@@ -796,14 +796,23 @@ function num($num){
     return $nums;
 }
 
-//删除视频文件
-function delVod($file)
+//删除七牛云视频文件
+function delVod($file,$bucket = null,$domain = null)
 {
     $qiniu_config = config('qiniu');
     $accessKey = $qiniu_config['ACCESSKEY'];
     $secretKey = $qiniu_config['SECRETKEY'];
-    $bucket = $qiniu_config['bucket'];
-    $file = substr($file,(strripos($file,'/')+1));
+
+    if (!$domain){
+        $domain = config('qiniu.domain');
+    }
+
+    $file = explode($domain,$file)[1];
+
+
+    if (!$bucket){
+        $bucket = $qiniu_config['bucket'];
+    }
     $auth = new Auth($accessKey, $secretKey);
     $config = new Config();
     $bucketManager = new BucketManager($auth,$config);
@@ -948,5 +957,16 @@ if (!function_exists('fun_adm_each')){
 }
 
 
-
+//获得视频文件的缩略图
+function getVideoCover($file,$time = null,$name = '1.jpg') {
+    if(empty($time))$time = '1';//默认截取第一秒第一帧
+    $strlen = strlen($file);
+    // $videoCover = substr($file,0,$strlen-4);
+    // $videoCoverName = $videoCover.'.jpg';//缩略图命名
+    //exec("ffmpeg -i ".$file." -y -f mjpeg -ss ".$time." -t 0.001 -s 320x240 ".$name."",$out,$status);
+    $str = "ffmpeg -i ".$file." -y -f mjpeg -ss 3 -t ".$time." -s 320x240 ".$name;
+    //echo $str."</br>";
+    $result = system($str);
+    dump($result);
+}
 
