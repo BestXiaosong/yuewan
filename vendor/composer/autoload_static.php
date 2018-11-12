@@ -10,6 +10,7 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         '841780ea2e1d6545ea3a253239d59c05' => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu/functions.php',
         '1cfd2761b63b0a29ed23657ea394cb2d' => __DIR__ . '/..' . '/topthink/think-captcha/src/helper.php',
@@ -35,11 +36,17 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         ),
         'Y' => 
         array (
+            'Yansongda\\Supports\\' => 19,
             'Yansongda\\Pay\\' => 14,
         ),
         'W' => 
         array (
             'Workerman\\' => 10,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\HttpFoundation\\' => 33,
         ),
         'Q' => 
         array (
@@ -47,8 +54,13 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Phinx\\' => 6,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
         'J' => 
         array (
@@ -101,6 +113,10 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         array (
             0 => __DIR__ . '/../..' . '/application',
         ),
+        'Yansongda\\Supports\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yansongda/supports/src',
+        ),
         'Yansongda\\Pay\\' => 
         array (
             0 => __DIR__ . '/..' . '/yansongda/pay/src',
@@ -109,9 +125,21 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         array (
             0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\HttpFoundation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/http-foundation',
+        ),
         'Qiniu\\' => 
         array (
             0 => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu',
+        ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -120,6 +148,10 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         'Phinx\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-migration/phinx/src/Phinx',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'JPush\\' => 
         array (

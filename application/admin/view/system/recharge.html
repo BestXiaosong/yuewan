@@ -1,0 +1,87 @@
+{extend name="public:common_index"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body">
+                <div class="navbar navbar-default">
+                    <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+
+                        <a href="{:Url('edit_recharge')}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                    </form>
+                </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>序号</td>
+                                <td>价格(元)</td>
+                                <td>到账金额(钻)</td>
+                                <td>排序</td>
+                                <td>状态</td>
+                                <td>上次修改时间</td>
+
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$key}</td>
+                                <td>{$row.price}</td>
+                                <td>{$row.money}</td>
+                                <td>{$row.sort}</td>
+
+                                <td>{switch name='$row.status'}
+                                    {case value="0"}禁用{/case}
+                                    {case value="1"}正常{/case}
+                                    {default /}错误
+                                    {/switch}
+                                </td>
+                                <td>{$row.update_time}</td>
+                                <td>
+                                    <a class="btn btn-primary " href="/system/edit_recharge/id/{$row.r_id}">编辑</a>
+                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-url="{:url('change_recharge',['id'=>$row.r_id,'type'=>0])}">禁用 </span>
+                                    {else /} <span class="btn btn-primary change"  data-url="{:url('change_recharge',['id'=>$row.r_id,'type'=>1])}">启用</span> {/if}
+                                    <span class="btn btn-danger check_del" data-message="" data-url="/system/delete/id/{$row.r_id}">删除</span>
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+    $(function () {
+        var type   = "{$Think.get.type}";
+        if(type != ''){
+            $('#type'+type).attr('selected',true)
+        }
+
+        var status   = "{$Think.get.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+    })
+
+</script>
+
+
+
+{/block}
+
+
+

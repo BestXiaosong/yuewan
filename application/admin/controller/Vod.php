@@ -16,6 +16,7 @@ use Qiniu\Auth;
 use Qiniu\Config;
 use Qiniu\Storage\BucketManager;
 use think\Db;
+use think\Exception;
 
 class Vod extends Base
 {
@@ -26,7 +27,7 @@ class Vod extends Base
     {
         $where = [];
         if (!empty($_GET['nick_name'])) $where['u.nick_name'] = ['like','%'.trim(input('get.nick_name')).'%'];
-        if (!isEmpty($_GET['status'])) $where['status'] = input('get.status');
+        if (!isEmpty($_GET['status'])) $where['a.status'] = input('get.status');
         $model  = new model();
         $rows   = $model->getList($where);
         $this->assign([
@@ -116,29 +117,30 @@ class Vod extends Base
 
     public function delete()
     {
-        $id     = input('id');
+        $id = input('id');
         $file = Db::name('vod')->where(['pid'=>$id])->find();
-        $model=new \app\common\model\SelfRoom();
-        $data=$this->fileInfo($file['play_url']);
-        $space=round($data['size']/1024,2);
+
+        if (!$file){
+            $this->error('视频不存在');
+        }
+
         Db::startTrans();
         try{
-            $a=delVod($file['play_url']);
-            $a=null;
-            if($a == null || $a == '') {
-                $a=db('vod')->where('pid', $id)->delete();
-                db('vod_reply')->where('pid', $id)->delete();
-                db('vod_up')->where('pid', $id)->delete();
-                $model->saveSpace($file['user_id'], $space);
-                Db::commit();
-            }else {
-                $this->error('删除失败');
+
+            $result = Db::name('vod')->where('pid', $id)->delete();
+
+            if ($result){
+
+                delVod($file['play_url']);
+
             }
-            $this->success('删除成功');
+
+            Db::commit();
         }catch (Exception $e){
             Db::rollback();
             $this->error('操作失败');
         }
+        $this->success('删除成功');
     }
 
 

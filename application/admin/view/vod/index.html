@@ -15,26 +15,16 @@
                         <input type="text" name="nick_name" value="{$Think.get.nick_name}" placeholder="用户昵称"
                                id="input-order-id" class="form-control">
                     </div>
-                    <label class="control-label" for="input-order-id">点播分类</label>
-                    <div class="input-group">
-                        {:arr2select('cid',$cate,'全部',input('get.cid'),'cid','cate_name')}
-                    </div>
-                    <label class="control-label" for="input-order-id">是否推荐</label>
-                    <select class="form-control" name="top">
-                        <option id="top2" value="">全部</option>
-                        <option id="top1" value="1">是</option>
-                        <option id="top0" value="0">否</option>
-                    </select>
                     <label class="control-label" for="input-order-id">状态</label>
                     <select class="form-control" name="status">
-                        <option id="status2" value="">全部</option>
-                        <option id="status1" value="1"> 启用</option>
-                        <option id="status0" value="0">禁用</option>
+                        <option id="status3" value="">全部</option>
+                        <option id="status1" value="1">正常</option>
+                        <option id="status2" value="2">待认证</option>
+                        <option id="status0" value="0">认证失败</option>
                     </select>
                     <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
                             id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
                     </button>
-                    <a href="{:url('edit')}"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
                 </form>
             </div>
             <div id="ajax_return">
@@ -61,12 +51,20 @@
                                 <td><img src="{$row.header_img}" style="max-width: 100px" alt=""></td>
                                 <td><a href="{$row.play_url}" target="_blank">{$row.play_url}</a></td>
                                 <td>{if condition="$row.type == 1"} 视频动态 {else /} 认证视频 {/if}</td>
-                                <td>{if condition="$row.status == 1"} 正常 {elseif condition="$row.status == 2"/} 认证中 {else /} 认证失败|已删除 {/if}</td>
+                                <td>{if condition="$row.status == 1"} 正常 {elseif condition="$row.status == 2"/} 认证中 {else /} 认证失败 {/if}</td>
                                 <td>
-                                    <a href="{:url('edit',['id'=>$row.pid])}" class="btn btn-primary ">修改</a>
-                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-url="{:url('change',['id'=>$row.pid,'type'=>0])}">禁用 </span>
-                                    {else /} <span class="btn btn-primary change"  data-url="{:url('change',['id'=>$row.pid,'type'=>1])}">启用</span> {/if}
+                                    {if condition="$row.type == 1"}
+
+                                        {if condition="$row.status == 2"}
+                                            <span class="btn btn-primary change" data-url="{:url('change',['id'=>$row.pid,'type'=>1])}">审核通过</span>
+                                            <span class="btn btn-primary change" data-url="{:url('change',['id'=>$row.pid,'type'=>0])}">驳回</span>
+                                        {/if}
+
+                                    {/if}
+
                                     <span class="btn btn-danger check_del" data-url="{:url('delete',['id'=>$row['pid']])}">删除</span>
+
+
                                 </td>
                             </tr>
                             {/volist}

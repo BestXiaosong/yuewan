@@ -12,7 +12,7 @@ class Vod extends Base
         return $this->alias('a')
             ->join('users u','u.user_id = a.user_id','LEFT')
             ->where($map)
-            ->order('a.pid')
+            ->order('a.pid desc')
             ->field('a.*,u.nick_name,u.header_img')
             ->paginate('',false,['query'=>request()->param()]);
     }

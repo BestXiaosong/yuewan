@@ -46,17 +46,18 @@
                         <div class="tab-pane active" id="tab_tongyong">
                             <table class="table table-bordered">
                                 <tbody>
+
                                 <tr>
-                                    <td>礼物图片:</td>
-                                    <td>{:uploadHtml('img',$data.img,'single_img')}</td>
+                                    <td>价格(元):</td>
+                                    <td><input placeholder="价格" class="form-control" name="price" type="text" value="{$data.price}"></td>
                                 </tr>
                                 <tr>
-                                    <td>礼物名称:</td>
-                                    <td><input placeholder="礼物名称" class="form-control" name="gift_name" type="text" value="{$data.gift_name}"></td>
+                                    <td>到账金额(钻):</td>
+                                    <td><input placeholder="到账金额" class="form-control" name="money" type="text" value="{$data.money}"></td>
                                 </tr>
                                 <tr>
-                                    <td>礼物价格:</td>
-                                    <td><input placeholder="礼物价格" class="form-control" name="price" type="text" value="{$data.price}"></td>
+                                    <td>排序:(值越小排序越高)</td>
+                                    <td><input placeholder="排序" class="form-control" name="sort" type="number" value="{$data.sort}"></td>
                                 </tr>
 
                                 <tr>
@@ -75,7 +76,7 @@
                     </div>
                     <div class="pull-right">
                         <label class="control-label col-sm-2"></label>
-                        <input type="hidden" name="id" value="{$data.gift_id}">
+                        <input type="hidden" name="id" value="{$data.r_id}">
                         <input class="btn btn-primary submit" type="submit" value="保存">
                     </div>
                 </form>
@@ -87,10 +88,6 @@
 {block name="js"}
 <script>
     $(function () {
-        var type   = "{$data.type}";
-        if(type != ''){
-            $('#type'+type).attr('selected',true)
-        }
 
         var status   = "{$data.status}";
         if(status != ''){

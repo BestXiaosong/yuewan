@@ -5,24 +5,16 @@ namespace Yansongda\Pay\Exceptions;
 class GatewayException extends Exception
 {
     /**
-     * error raw data.
+     * Bootstrap.
      *
-     * @var array
+     * @author yansongda <me@yansonga.cn>
+     *
+     * @param string       $message
+     * @param array|string $raw
+     * @param int|string   $code
      */
-    public $raw = [];
-
-    /**
-     * [__construct description].
-     *
-     * @author JasonYan <me@yansongda.cn>
-     *
-     * @param string     $message
-     * @param string|int $code
-     */
-    public function __construct($message, $code, $raw = [])
+    public function __construct($message, $raw = [], $code = 4)
     {
-        parent::__construct($message, intval($code));
-
-        $this->raw = $raw;
+        parent::__construct($message, $raw, $code);
     }
 }

@@ -1,8 +1,8 @@
 <?php
 namespace app\api\controller;
-use app\common\logic\Async;
 use app\common\model\Bankroll;
 use app\common\model\Job;
+use app\common\model\RechargeConfig;
 use think\Db;
 use app\common\model\Users;
 
@@ -194,14 +194,6 @@ class User extends Base
 
 
 
-
-
-
-
-
-
-
-
     /**
      * Created by xiaosong
      * E-mail:306027376@qq.com
@@ -235,6 +227,75 @@ class User extends Base
         api_return(0,'更换手机失败');
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 用户钱包余额
+     */
+    public function wallet()
+    {
+        $data = $this->userBalance();
+
+        $map['user_id'] = $this->user_id;
+        $map['status']  = 1;
+
+        $data['ID'] = Db::name('user_id')->where($map)->value('ID');
+
+        $data['account_id'] = Db::name('user_account')->where($map)->value('account_id');
+
+        api_return(1,'获取成功',$data);
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 用户账户余额
+     */
+    protected function userBalance()
+    {
+
+        $data = Db::name('users')->where('user_id',$this->user_id)->field('money,cash')->find();
+        $data['total'] = bcadd($data['money'],$data['cash'],2);
+        return $data;
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取用户账户余额
+     */
+    public function balance()
+    {
+
+        api_return(1,'获取成功',$this->userBalance());
+
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 充值参数获取
+     */
+    public function rechargeConfig()
+    {
+        $data['balance'] = $this->userBalance();
+
+        $map['status'] = 1;
+
+        $model = new RechargeConfig();
+
+        $data['rows']  = $model->getRows($map);
+
+        api_return(1,'获取成功',$data);
+
+    }
+
+
+
+    
     /**
      * Created by xiaosong
      * E-mail:306027376@qq.com
