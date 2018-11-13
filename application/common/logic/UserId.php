@@ -10,14 +10,14 @@ namespace app\common\logic;
 use think\Model;
 
 
-class UserId extends Base
+class UserId extends Model
 {
     public function saveChange($data){
         if(is_numeric($data['ID'])){
             if($data['status'] == 1){
-                db('users')->where(['user_id'=>$data['user_id']])->update(['ID'=>$data['ID'],'check'=>1]);
+                db('users')->where(['user_id'=>$data['user_id']])->update([$this->getPk()=>$data['ID'],'check'=>1]);
             }
-            return $this->validate(true)->allowField(true)->save($data,['ID'=>$data['ID']]);
+            return $this->validate(true)->allowField(true)->save($data,[$this->getPk()=>$data['ID']]);
         }
     }
 
@@ -26,7 +26,7 @@ class UserId extends Base
         $data['create_time'] = time();
         $data['update_time'] = time();
         $id =  $this->validate(true)->insertGetId($data);
-        $result = db('users')->where(['user_id'=>$data['user_id']])->update(['ID'=>$id,'check'=>1]);
+        $result = db('users')->where(['user_id'=>$data['user_id']])->update([$this->getPk()=>$id,'check'=>1]);
         if($result){
             return true;
         }else{

@@ -16,7 +16,7 @@ class NewsCollect extends Model
 
     public function addCollect($user_id,$news_id)
     {
-        $this->validate(true)->save(['user_id'=>$user_id,'news_id'=>$news_id]);
+        $this->validate(true)->save(['user_id'=>$user_id,$this->getPk()=>$news_id]);
         return $this->collect_id;
     }
 

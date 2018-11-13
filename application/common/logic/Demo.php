@@ -8,7 +8,7 @@ class Demo extends Model
 {
     public function saveChange($data){
         if(is_numeric($data['id'])){
-            return $this->validate(true)->allowField(true)->isUpdate(true)->save($data,['cid'=>$data['id']]);
+            return $this->validate(true)->allowField(true)->isUpdate(true)->save($data,[$this->getPk()=>$data['id']]);
         }else{
             $data['create_time'] = time();
             return $this->validate(true)->allowField(true)->save($data);

@@ -27,7 +27,7 @@ class Room extends Model
         if(is_numeric($data['id'])){
 //            $data['push_url'] = getPushUrl($config['bizid'],$data['id'],$config['key'],$data['time']);
 //            $data['play_url'] = getPlayUrl($config['bizid'],$data['id']);
-            return $this->validate('room.edit')->allowField(true)->isUpdate(true)->save($data,['room_id'=>$data['id']]);
+            return $this->validate('room.edit')->allowField(true)->isUpdate(true)->save($data,[$this->getPk()=>$data['id']]);
         }else{
             return  $this->validate('room.add_room')->allowField(true)->save($data);
 //            if($this->getLastInsID()){

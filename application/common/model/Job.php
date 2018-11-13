@@ -19,15 +19,33 @@ class Job extends Model
     {
         $map['pid'] = 0;
 
-        $rows = $this->where($map)->select();
+        $rows = $this->where($map)->field('j_id,job')->order('sort')->select();
 
         foreach ($rows as $k => $v){
             $map['pid'] = $v['j_id'];
-            $rows[$k]['son'] = $this->where($map)->select();
+            $rows[$k]['items'] = $this->where($map)->field('j_id,job')->order('sort')->select();
         }
 
         return $rows;
 
+    }
+
+
+    public function cate($pid = 0,$rows = [],$max = 0){
+        $where['pid'] = $pid;
+        $result = $this->where($where)->order('sort')->select();
+        $max    = $max + 3;
+        foreach($result as $k => $v){
+            if ($max == 3){
+                $v['_name'] = $v['job'];
+                $rows[] = $v;
+                $rows   = $this->cate($v['j_id'],$rows,$max);
+            }else{
+                $v['_name'] = str_repeat('&nbsp',$max).'└─ &nbsp'.$v['job'];
+                $rows[] = $v;
+            }
+        }
+        return $rows;
     }
 
 

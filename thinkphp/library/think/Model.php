@@ -253,6 +253,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      */
     public function getQuery($buildNewQuery = false)
     {
+
         if ($buildNewQuery) {
             return $this->buildQuery();
         } elseif (!isset(self::$links[$this->class])) {

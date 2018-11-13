@@ -25,7 +25,7 @@ class Users extends Model
 //                unset($data['password']);
 //            }
             $data['token_expire'] = 0;
-            return $this->allowField(true)->save($data, ['user_id' => $data['id']]);
+            return $this->allowField(true)->save($data, [$this->getPk() => $data['id']]);
         } else {
             $validate = validate('users');
             if (!$validate->scene('back_add')->check($data)) api_return(0, $validate->getError());

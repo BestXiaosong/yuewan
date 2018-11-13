@@ -4,12 +4,12 @@ namespace app\common\logic;
 use think\Model;
 
 
-class Banner extends Base
+class Banner extends Model
 {
     public function saveChange($data){
         $data['update_time'] = time();
         if(is_numeric($data['id'])){
-            return $this->validate(true)->allowField(true)->save($data,['bid'=>$data['id']]);
+            return $this->validate(true)->allowField(true)->save($data,[$this->getPk()=>$data['id']]);
         }else{
             $data['create_time'] = time();
             return $this->validate(true)->allowField(true)->save($data);

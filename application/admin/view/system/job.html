@@ -1,0 +1,202 @@
+{extend name="public:common_edit"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="input-order-id">分类</label>
+                        {:arr2select('pid',$data,'全部',input('pid'),'j_id','job')}
+                    </div>
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                    <a onclick="add_child(this)" data-id="{$pid}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加分类</a>
+                    <!--<a onclick="add(this)"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加主分类</a>-->
+                    <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>序号</td>
+                                <td>工作</td>
+                                <td>排序</td>
+                                <td>状态</td>
+                                <td>上次修改时间</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$key}</td>
+                                <td>{$row._name}</td>
+                                <td>{$row.sort}</td>
+                                <td>{if condition="$row.status == 1"} 启用 {else /} 禁用 {/if}</td>
+                                <td>{$row.update_time}</td>
+                                <td>
+                                    {if condition="$row.pid == $pid"}<a class="btn btn-primary" data-order="{$row.sort}" data-id="{$row.j_id}" onclick="add_child(this)">添加子分类</a>
+
+
+                                    {/if}
+                                    <a class="btn btn-primary "  data-id="{$row.j_id}" data-sort="{$row.sort}" data-status="{$row.status}"  data-job="{$row.job}" data-pid="{$row.pid}"onclick="edit(this)">修改</a>
+                                </td>
+                            </tr>
+
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+        <div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                        <h4 class="modal-title" id="myModalLabel1"> 添加分类</h4></div>
+                    <div class="modal-body">
+                        <form id="bjy-form" class="form-inline" action="{:url('jobEdit')}" method="post"><input
+                                type="hidden" name="pid" value="0">
+                            <table class="table table-striped table-bordered table-hover table-condensed">
+                                <tr>
+                                    <th width="18%">工作：</th>
+                                    <td><input class="form-control" type="text" name="job"></td>
+                                </tr>
+                                <tr>
+                                    <th width="18%">排序(数值低排名在前)：</th>
+                                    <td><input class="form-control" type="text" name="sort"></td>
+                                </tr>
+                                <tr>
+                                    <th>状态：</th>
+                                    <td>
+                                        <select class="form-control" type="text" name="status">
+                                            <option id="status1" value="1"> 启用</option>
+                                            <option id="status0" value="0">禁用</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td><input class="btn btn-success submit" type="submit" value="添加"></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                        <h4 class="modal-title" id="myModalLabel"> 修改分类</h4></div>
+                    <div class="modal-body">
+                        <form id="bjy-form1" class="form-inline" action="{:url('jobEdit')}" method="post">
+                            <input class="form-control" type="hidden" name="id">
+                            <table class="table table-striped table-bordered table-hover table-condensed">
+                                <tr>
+                                    <th width="18%">工作：</th>
+                                    <td><input class="form-control" type="text" name="job"></td>
+                                </tr>
+                                <tr>
+                                    <th width="18%">排序(数值低排名在前)：</th>
+                                    <td><input class="form-control" type="text" name="sort"></td>
+                                </tr>
+                                <tr>
+                                    <th>状态：</th>
+                                    <td>
+                                        <select class="form-control" type="text" name="status">
+                                            <option id="sel_1" value="1"> 启用</option>
+                                            <option id="sel_0" value="0">禁用</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td><input class="btn btn-success submit" type="submit" value="修改"></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+
+    // 添加菜单
+    function add() {
+        $("input[name='goods_name'],input[name='name']").val('');
+        $("input[name='pid']").val(0);
+        $('#bjy-add').modal('show');
+    }
+
+
+    // 修改菜单
+    // function edit(obj) {
+    //     var id = $(obj).data('id');
+    //     var name = $(obj).data('name');
+    //     var status = $(obj).data('status');
+    //     $("input[name='id']").val(id);
+    //     $('#type'+status).select();
+    //     $("input[name='goods_name']").val(name);
+    //     $('#bjy-edit').modal('show');
+    // }
+
+
+    // 修改菜单
+    function edit(obj) {
+        var id = $(obj).data('id');
+
+        var sort = $(obj).data('sort');
+
+        var job = $(obj).data('job');
+
+        console.log(job);
+
+
+        var status = $(obj).data('status');
+        $("input[name='id']").val(id);
+        $("input[name='sort']").val(sort);
+        $('#sel_'+status).attr('selected',true);
+        $("input[name='job']").val(job);
+        $('#bjy-edit').modal('show');
+    }
+
+
+
+
+    // 添加子菜单
+    function add_child(obj) {
+        var ruleId = $(obj).data('id');
+        $("input[name='pid']").val(ruleId);
+        $("input[name='job']").val('');
+        $("input[name='sort']").val('99');
+        $('#bjy-add').modal('show');
+    }
+
+</script>
+
+
+
+{/block}
+
+
+

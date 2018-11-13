@@ -1,0 +1,154 @@
+{extend name="public:common_edit"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+
+                    <a onclick="add(this)" data-id="{$pid}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>序号</td>
+                                <td>等级</td>
+                                <td>所需经验</td>
+                                <td>颜色代码</td>
+                                <td>上次修改时间</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$key}</td>
+                                <td>{$row.level}</td>
+                                <td>{$row.experience}</td>
+                                <td>{$row.color}</td>
+                                <td>{:fmt_time($row.update_time)}</td>
+                                <td>
+                                    <a class="btn btn-primary "  data-id="{$row.lv_id}" data-level="{$row.level}"  data-experience="{$row.experience}" data-color="{$row.color}"onclick="edit(this)">修改</a>
+                                </td>
+                            </tr>
+
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+        <div class="modal fade" id="bjy-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                        <h4 class="modal-title" id="myModalLabel1"> 会员等级编辑</h4></div>
+                    <div class="modal-body">
+                        <form id="bjy-form" class="form-inline" action="{:url('levelEdit')}" method="post">
+                            <table class="table table-striped table-bordered table-hover table-condensed">
+                                <tr>
+                                    <th width="18%">等级：</th>
+                                    <td><input class="form-control" type="text" name="level"></td>
+                                </tr>
+                                <tr>
+                                    <th width="18%">所需经验：</th>
+                                    <td><input class="form-control" type="text" name="experience"></td>
+                                </tr>
+                                <tr>
+                                    <th width="18%">颜色代码：</th>
+                                    <td><input class="form-control" type="text" name="color"></td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td><input class="btn btn-success submit" type="submit" value="添加"></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="bjy-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times;</button>
+                        <h4 class="modal-title" id="myModalLabel">会员等级编辑</h4></div>
+                    <div class="modal-body">
+                        <form id="bjy-form1" class="form-inline" action="{:url('levelEdit')}" method="post">
+                            <input class="form-control" type="hidden" name="id">
+                            <table class="table table-striped table-bordered table-hover table-condensed">
+                                <tr>
+                                    <th width="18%">等级：</th>
+                                    <td><input class="form-control" type="text" name="level"></td>
+                                </tr>
+                                <tr>
+                                    <th width="18%">所需经验：</th>
+                                    <td><input class="form-control" type="text" name="experience"></td>
+                                </tr>
+                                <tr>
+                                    <th width="18%">颜色代码：</th>
+                                    <td><input class="form-control" type="text" name="color"></td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td><input class="btn btn-success submit" type="submit" value="修改"></td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+
+    // 添加菜单
+    function add() {
+        $("input[name='level'],input[name='experience'],input[name='color']").val('');
+        $('#bjy-add').modal('show');
+    }
+
+
+    // 修改菜单
+    function edit(obj) {
+        var id = $(obj).data('id');
+
+        var level = $(obj).data('level');
+
+        var experience = $(obj).data('experience');
+
+        var color = $(obj).data('color');
+
+        $("input[name='id']").val(id);
+        $("input[name='level']").val(level);
+        $("input[name='color']").val(color);
+        $("input[name='experience']").val(experience);
+        $('#bjy-edit').modal('show');
+    }
+
+
+
+</script>
+
+
+
+{/block}
+
+
+

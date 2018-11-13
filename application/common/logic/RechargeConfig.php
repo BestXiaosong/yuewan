@@ -8,7 +8,7 @@ class RechargeConfig extends Model
 {
     public function saveChange($data){
         if(is_numeric($data['id'])){
-            return $this->validate(true)->allowField(true)->save($data,['r_id'=>$data['id']]);
+            return $this->validate(true)->allowField(true)->save($data,[$this->getPk()=>$data['id']]);
         }else{
             return $this->validate(true)->allowField(true)->save($data);
         }

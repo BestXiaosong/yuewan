@@ -1,5 +1,6 @@
 <?php
 namespace app\api\controller;
+use app\common\logic\UserAccount;
 use app\common\model\Bankroll;
 use app\common\model\Job;
 use app\common\model\RechargeConfig;
@@ -12,6 +13,12 @@ class User extends Base
     //用户id
     protected $user_id = 0;
 
+    // 用户等级
+    protected $level = null;
+
+    //用户经验值
+    protected $experience = null;
+
 
     public function _initialize()
     {
@@ -19,10 +26,6 @@ class User extends Base
         $this->user_id = $this->checkToken();
     }
 
-    public function test()
-    {
-        return $this->R_token($this->user_id);
-    }
 
     /**
      * 退出登陆
@@ -36,6 +39,50 @@ class User extends Base
         }
         api_return(0,'操作失败');
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取自己的配置信息
+     */
+    protected function selfExtra($str = '')
+    {
+
+        if (!$this->$str){
+
+            $data = Db::name('user_extend')->where('user_id',$this->user_id)->cache(1)->find();
+
+            $this->level = $data['level'];
+            $this->experience = $data['experience'];
+
+            if ($str){
+                return $data[$str];
+            }
+
+        }else{
+            return $this->$str;
+        }
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * @param string $str
+     * @param int $user_id
+     * @return mixed
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * 获取其它用户的配置信息
+     */
+    protected function otherExtra($str = '',$user_id = 0){
+        $data = Db::name('user_extend')->where('user_id',$user_id)->cache(1)->find();
+        return $data[$str];
+    }
+
+
+
 
     /**
      * 获取用户信息
@@ -293,8 +340,68 @@ class User extends Base
 
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取我的提现账户
+     */
+    public function account()
+    {
 
+        $type = input('post.type');
 
+        if ($type != 1 && $type != 2) api_return(0,'查询类型错误');
+
+        $map['user_id'] = $this->user_id;
+        $map['type']    = $type;
+
+        $data = Db::name('user_account')->field('account_id,real_name,account,remark,status')->where($map)->find();
+
+        api_return(1,'获取成功',$data);
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 提现账号编辑
+     */
+    public function editAccount()
+    {
+
+        $data = request()->only(['remark','id','account','real_name','type'],'POST');
+
+        if ($data['type'] != 1 && $data['type'] != 2) api_return(0,'账号类型错误');
+
+        $map['user_id'] = $this->user_id;
+        $map['type']    = $data['type'];
+
+        $account = Db::name('user_account')->where($map)->find();
+
+        if (is_numeric($data['id'])){
+
+            if ($data['id'] != $account['account_id']) api_return(0,'参数错误');
+
+            if ($account['status'] == 2) api_return(0,'账号正在审核中,请勿重复操作');
+
+        }else{
+
+            //添加时验证
+            if ($account) api_return(0,'您已添加有提现账号,不能继续添加新账号');
+
+        }
+
+        $data['user_id'] = $this->user_id;
+        $data['status']  = 2;
+
+        $model = new UserAccount();
+
+        $result = $model->saveChange($data);
+
+        if ($result) api_return(1,'提交成功');
+        api_return(0,$model->getError());
+
+    }
     
     /**
      * Created by xiaosong
@@ -351,4 +458,43 @@ class User extends Base
         $data['backGround'] = Db::name('extend')->where('id',1)->value('backGround');
         api_return(1,'',$data);
     }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 根据用户当前等级和当前经验获取下一等级信息
+     */
+    protected function nextLevel($level,$experience)
+    {
+
+        $rows = Db::name('user_level')->cache(300)->select();
+
+        $array = array_key($rows,'level');
+
+        $key = $level+1;
+        $data['level']          = $level;
+        $data['nexLevel']       = $array[$key]['level'];
+        $data['experience']     = $array[$key]['experience'];
+        $data['nextExperience'] = $array[$key]['experience'] - $experience;
+
+        return $data;
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取用户会员信息
+     */
+    public function level()
+    {
+
+        $data = $this->nextLevel($this->selfExtra('level'),$this->selfExtra('experience'));
+
+        api_return(1,'获取成功',$data);
+
+    }
+
+
 }

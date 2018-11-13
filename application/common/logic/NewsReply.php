@@ -14,11 +14,11 @@ use think\Model;
 class NewsReply extends Model
 {
     public function saveChange($data){
-        //ÅĞ¶ÏÊÇ·ñÒÑ¾­ÆÀÂÛ
+        //ï¿½Ğ¶ï¿½ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½
         $res = $this->where('news_id',$data['news_id'])->where('user_id',$data['user_id'])->find();
         if(!empty($res)){
             $reply_id = $res->getAttr('reply_id');
-            return $this->validate(true)->allowField(true)->isUpdate(true)->save($data,['reply_id'=>$reply_id]);
+            return $this->validate(true)->allowField(true)->isUpdate(true)->save($data,[$this->getPk()=>$reply_id]);
         }else{
             return $this->validate('news_reply.add')->allowField(true)->save($data);
         }

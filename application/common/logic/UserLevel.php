@@ -4,10 +4,8 @@ namespace app\common\logic;
 use think\Model;
 
 
-class VodCategory extends Model
+class UserLevel extends Model
 {
-    protected $autoWriteTimestamp = 'datetime';
-
     public function saveChange($data){
         if(is_numeric($data['id'])){
             return $this->validate(true)->allowField(true)->save($data,[$this->getPk()=>$data['id']]);
@@ -15,4 +13,8 @@ class VodCategory extends Model
             return $this->validate(true)->allowField(true)->save($data);
         }
     }
+
+
+
+
 }

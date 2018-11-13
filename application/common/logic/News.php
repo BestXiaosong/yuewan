@@ -17,7 +17,7 @@ class News extends Model
     {
         if (is_numeric($data['id'])) {
             return $this->validate('news.edit')->allowField(true)
-                ->isUpdate(true)->save($data, ['news_id' => $data['id']]);
+                ->isUpdate(true)->save($data, [$this->getPk() => $data['id']]);
         } else {
             return $this->validate('news.add')->allowField(true)->save($data);
         }

@@ -32,10 +32,8 @@ class AppGateway implements GatewayInterface
 
         Log::info('Starting To Pay An Alipay App Order', [$endpoint, $payload]);
 
-        return http_build_query($payload);
 
-
-//        return Response::create(http_build_query($payload));
+        return Response::create(http_build_query($payload));
     }
 
     /**

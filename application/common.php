@@ -514,7 +514,6 @@ function sendSms($mobile = 0)
         'tpl_value' => "#code#=$val&#m#=5" //您设置的模板变量，根据实际情况修改
     );
     $content = juhecurl($sendUrl, $smsConf, 1); //请求发送短信
-//    dump($content);exit;
     if ($content) {
         $result = json_decode($content, true);
         $error_code = $result['error_code'];
@@ -969,4 +968,20 @@ function getVideoCover($file,$time = null,$name = '1.jpg') {
     $result = system($str);
     dump($result);
 }
+
+//判断是否为非0整数
+function isInt($num){
+
+    if (!is_numeric($num)) return false;
+
+    if ($num == 0) return false;
+
+    if(floor($num)==$num){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
 

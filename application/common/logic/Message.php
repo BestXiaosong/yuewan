@@ -16,7 +16,7 @@ class Message extends Model
     public function saveChange($data){
         $data['update_time'] = time();
         if(is_numeric($data['id'])){
-            return $this->validate(true)->allowField(true)->save($data,['mid'=>$data['id']]);
+            return $this->validate(true)->allowField(true)->save($data,[$this->getPk()=>$data['id']]);
         }else{
             $data['create_time'] = time();
             return $this->validate(true)->allowField(true)->save($data);
