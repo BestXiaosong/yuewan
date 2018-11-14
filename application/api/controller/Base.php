@@ -532,7 +532,7 @@ class Base extends Controller
      * @return bool
      *
      */
-    protected function Push($type,$j_push_id = '',$title = '来自聊天约玩直播的推送消息',$room_id)
+    protected function Push($type,$j_push_id = '',$title = '来自萌趴直播的推送消息',$room_id)
     {
         if (!$j_push_id) return false;
 

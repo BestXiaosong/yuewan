@@ -14,8 +14,32 @@ use think\Model;
 /**
  * 基础model
  */
-class Base extends Model{
-    protected $insert = ['status'=>1];
+class Logic extends Model
+{
+
+    public function saveChange($table = null,$data = [],$validate = true)
+    {
+
+        if (!$table){
+
+            $this->error = '请确认要操作的表名';
+            return false;
+
+        }else{
+
+            $this->setTable(config('database.prefix').$table);
+
+        }
+
+        if(is_numeric($data['id'])){
+            return $this->validate($validate)->allowField(true)->save($data,[$this->getPk()=>$data['id']]);
+        }else{
+            return $this->validate($validate)->allowField(true)->save($data);
+        }
+
+    }
+
+
 
     /**
      * 添加数据

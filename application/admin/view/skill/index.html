@@ -1,0 +1,99 @@
+{extend name="public:common_index"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="input-order-id">技能名</label>
+                        <div class="input-group">
+                            <input type="text" name="skill_name" value="{$Think.get.skill_name}" placeholder="技能名"
+                                   id="input-order-id" class="form-control">
+                        </div>
+
+                        <label class="control-label" for="input-order-id">类型</label>
+                        <select class="form-control" name="type">
+                            <option id="type" value="">全部</option>
+                            <option id="type1" value="1">娱乐</option>
+                            <option id="type2" value="2">游戏</option>
+                        </select>
+                        <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                                id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                        </button>
+                    </div>
+
+                    <a href="{:Url('edit')}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                    <!--<a href="{:url('examiner_batch')}" class="btn btn-primary pull-right"><i class="fa fa-folder-open-o"></i>批量导入</a>-->
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>序号</td>
+                                <td>缩略图</td>
+                                <td>技能名</td>
+                                <td>排序</td>
+                                <td>类型</td>
+                                <td>状态</td>
+                                <td>上次修改时间</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$key}</td>
+                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.img}" alt=""></td>
+                                <td>{$row.skill_name}</a></td>
+                                <td>{$row.sort}</td>
+                                <td>{if condition="$row.type == 1"} 娱乐 {else /} 游戏 {/if}</td>
+                                <td>{if condition="$row.status == 1"} 可申请 {else /} 不可申请 {/if}</td>
+                                <td>{$row.update_time}</td>
+                                <td>
+                                    <a class="btn btn-primary " href="{:url('edit',['id'=>$row.skill_id])}">编辑</a>
+                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>0])}">不可申请 </span>
+                                    {else /} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>1])}">可申请</span> {/if}
+                                    <span class="btn btn-danger check_del" data-message="" data-url="{:url('del',['id'=>$row.skill_id,'type'=>1])}">删除</span>
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+    $(function () {
+        var status   = "{$Think.get.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+        var type   = "{$Think.get.type}";
+        if(type != ''){
+            $('#type'+type).attr('selected',true)
+        }
+
+    })
+
+</script>
+
+
+
+{/block}
+
+
+

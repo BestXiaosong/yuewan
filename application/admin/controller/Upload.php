@@ -63,15 +63,19 @@ class Upload extends Controller
         $accessKey = $qiniu_config['ACCESSKEY'];
         $secretKey = $qiniu_config['SECRETKEY'];
         $bucket = $qiniu_config['bucket'];
-        $file = substr(input('file'),(strripos(input('file'),'/')+1));
+
+        $domain = config('qiniu.domain');
+
+        $file = explode($domain,input('file'))[1];
         $auth = new Auth($accessKey, $secretKey);
         $config = new Config();
         $bucketManager = new BucketManager($auth,$config);
-        $bucketManager->delete($bucket,$file);
-//        $data = $bucketManager->delete($bucket,$file);
-//        if ($data == null || $data == ''){
-//            echo '删除成功';
-//        }
+//        $bucketManager->delete($bucket,$file);
+        $data = $bucketManager->delete($bucket,$file);
+        if ($data == null || $data == ''){
+            $this->success('删除成功');
+        }
+        $this->error('删除失败');
     }
 
     /**

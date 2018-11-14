@@ -16,6 +16,7 @@ use think\Model;
  */
 class Base extends Model{
 
+
     /**
      * 添加数据
      * @param  array $data  添加的数据

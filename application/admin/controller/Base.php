@@ -6,6 +6,7 @@
  * Time: 9:08
  */
 namespace app\admin\controller;
+use app\common\logic\Logic;
 use rongyun\api\RongCloud;
 use think\Controller;
 use think\Db;
@@ -27,6 +28,7 @@ class Base extends  Controller
 
 
         if ($session != 1){
+            
             $url =strtolower(preg_replace('/(?<=[a-z])([A-Z])/', '_$1', request()->controller())).'/'.strtolower(preg_replace('/(?<=[a-z])([A-Z])/', '_$1', request()->action()));
 
             //不需要验证权限的数组
@@ -63,6 +65,67 @@ class Base extends  Controller
             }
         }
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 修改返显单独查询
+     */
+    protected function _find(string $table){
+        if (!$table){
+
+            $this->error('系统错误');
+
+        }
+        $id = input('id');
+
+        if (!is_numeric($id)) return;
+
+        $data = Db::name($table)->where(Db::name($table)->getPk(),$id)->find();
+
+        if(!is_null($data)){
+
+            $data['pk'] = Db::name($table)->getPk();
+
+            $this->assign('data',$data);
+
+        }
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 修改数据
+     */
+    protected function _edit($table = '',$title = '编辑',$url = '',$validate = true)
+    {
+
+        if (request()->isPost()){
+
+            $data = input('post.');
+
+            $model = new Logic();
+
+            $result = $model->saveChange($table,$data,$validate);
+
+            if ($result){
+
+                $this->success('操作成功',$url);
+
+            }
+
+            $this->error($model->getError());
+
+        }
+
+        $this->_find($table);
+        $this->assign([
+            'title' => $title,
+        ]);
+    }
+
+
 
     //获取单独数据 对应配置分类  及用户昵称
     protected function _show_name($db = '',$id = 0,$db2 = '',$field2 = '',$where = []){
@@ -200,6 +263,53 @@ class Base extends  Controller
         }
         return $menu_list;
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 更改status
+     */
+    public function _change($table = null)
+    {
+        $data = input();
+
+        if (!$table){
+            $this->error('请先指定数据表');
+        }
+
+        $result = Db::name($table)->update(['status'=>$data['type'],Db::name($table)->getPk()=>$data['id']]);
+
+        if($result !== false){
+            $this->success('操作成功');
+        }
+        $this->error('操作失败');
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 删除数据
+     */
+    public function _del($table = null)
+    {
+        if (!$table) $this->error('请先指定数据库');
+
+        $id     = input('id');
+
+        if (!is_numeric($id)) $this->error('参数错误');
+
+        $result = Db::name($table)->delete($id);
+
+        if ($result !== false){
+
+            $this->success('删除成功');
+
+        }
+        $this->error('删除失败');
+    }
+
+
+
     /**
      * 菜单列表详情
      * @return array

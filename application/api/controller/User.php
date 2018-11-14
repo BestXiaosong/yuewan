@@ -474,7 +474,9 @@ class User extends Base
 
         $key = $level+1;
         $data['level']          = $level;
+        $data['color']          = $array[$level]['color'];
         $data['nexLevel']       = $array[$key]['level'];
+        $data['nexColor']       = $array[$key]['color'];
         $data['experience']     = $array[$key]['experience'];
         $data['nextExperience'] = $array[$key]['experience'] - $experience;
 

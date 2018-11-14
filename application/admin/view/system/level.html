@@ -70,6 +70,13 @@
                                     <td><input class="form-control" type="text" name="color"></td>
                                 </tr>
                                 <tr>
+                                    <th>拾色器</th>
+                                    <td>
+                                        <input type="color"  onchange="clickColor(this)" value="#ff0000">
+                                    </td>
+                                </tr>
+
+                                <tr>
                                     <th></th>
                                     <td><input class="btn btn-success submit" type="submit" value="添加"></td>
                                 </tr>
@@ -101,6 +108,12 @@
                                 <tr>
                                     <th width="18%">颜色代码：</th>
                                     <td><input class="form-control" type="text" name="color"></td>
+                                </tr>
+                                <tr>
+                                    <th>拾色器</th>
+                                    <td>
+                                        <input type="color" name="" onchange="clickColor(this)" value="#ff0000">
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th></th>
@@ -135,11 +148,22 @@
 
         var color = $(obj).data('color');
 
+        var reg = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+        if (reg.test(color)){
+            $("input[type='color']").val(color);
+
+        }
         $("input[name='id']").val(id);
         $("input[name='level']").val(level);
         $("input[name='color']").val(color);
         $("input[name='experience']").val(experience);
         $('#bjy-edit').modal('show');
+    }
+
+    function clickColor(btn) {
+        var color = $(btn).val();
+        console.log('color:'+color);
+        $("input[name='color']").val(color);
     }
 
 

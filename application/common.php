@@ -414,7 +414,7 @@ function deHashToken($str)
  * 极光推送公用方法
  *
  */
- function Push($type = 0,$j_push_id = '',$title = '来自聊天约玩直播的推送消息',$room_id)
+ function Push($type = 0,$j_push_id = '',$title = '来自萌趴直播的推送消息',$room_id)
 {
     if (!$j_push_id) return false;
 
