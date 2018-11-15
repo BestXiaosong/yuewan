@@ -98,12 +98,17 @@ class Base extends  Controller
      * E-mail:306027376@qq.com
      * 修改数据
      */
-    protected function _edit($table = '',$title = '编辑',$url = '',$validate = true)
+    protected function _edit($table = '',$title = '编辑',$url = '',$validate = true,$data = null)
     {
 
         if (request()->isPost()){
 
-            $data = input('post.');
+
+            if (!$data){
+
+                $data = input('post.');
+
+            }
 
             $model = new Logic();
 

@@ -54,12 +54,12 @@
                                 <td>{$row.skill_name}</a></td>
                                 <td>{$row.sort}</td>
                                 <td>{if condition="$row.type == 1"} 娱乐 {else /} 游戏 {/if}</td>
-                                <td>{if condition="$row.status == 1"} 可申请 {else /} 不可申请 {/if}</td>
+                                <td>{if condition="$row.status == 1"} 开放申请 {else /} 禁止申请 {/if}</td>
                                 <td>{$row.update_time}</td>
                                 <td>
                                     <a class="btn btn-primary " href="{:url('edit',['id'=>$row.skill_id])}">编辑</a>
-                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>0])}">不可申请 </span>
-                                    {else /} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>1])}">可申请</span> {/if}
+                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>0])}">禁止申请</span>
+                                    {else /} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>1])}">开发申请</span> {/if}
                                     <span class="btn btn-danger check_del" data-message="" data-url="{:url('del',['id'=>$row.skill_id,'type'=>1])}">删除</span>
                                 </td>
                             </tr>

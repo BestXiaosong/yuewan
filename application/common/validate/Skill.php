@@ -10,6 +10,12 @@ class Skill extends Validate
         'skill_name|技能名'  =>  'require|Name',
         'sort|排序'  =>  'require|<:100',
         'img|图片地址'  =>  'require',
+        'gift_id|可接收礼物'  =>  'require',
+        'explain|技能说明'  =>  'require|max:100',
+        'request|技能资质要求'  =>  'require|max:500',
+        'header_exp|示例头像'  =>  'require',
+        'skill_img|技能示例图'  =>  'require',
+        'spec|邀约规格'  =>  'require',
     ];
 
     /**

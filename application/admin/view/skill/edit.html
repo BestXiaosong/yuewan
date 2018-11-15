@@ -73,8 +73,8 @@
                                     <td>状态:</td>
                                     <td>
                                         <select class="form-control" name="status">
-                                            <option id="status1" value="1"> 启用</option>
-                                            <option id="status0" value="0">禁用</option>
+                                            <option id="status1" value="1">开放申请</option>
+                                            <option id="status0" value="0">禁止申请</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -85,6 +85,41 @@
                                     </td>
                                 </tr>
 
+                                <tr>
+                                    <td>邀约形式:</td>
+                                    <td>
+                                        <div id="form">
+
+
+                                            {:form_id_html($data['form_id'])}
+
+                                            <!--<div style="margin-top: 15px;">-->
+                                                <!--<input type="hidden" name="form_id[]" value="">-->
+                                                <!--<input style="float: left" placeholder="邀约形式" class="form-control" name="form_name[]" type="text" value="">-->
+                                                <!--<input onclick="delStr()" style="margin-left: 5px" type="button" class="btn" value="删除">-->
+                                            <!--</div>-->
+                                            <!--<div style="clear: both"></div>-->
+
+
+
+
+                                        </div>
+
+                                        <div style="clear: both"></div>
+                                        <div style="margin-top: 15px">
+                                            <input type="button" class="add btn btn-primary" value="新增形式" name="" id="">
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>邀约规格:(例:每半小时)</td>
+                                    <td>
+                                        <input placeholder="邀约规格" class="form-control" name="spec" type="text" value="{$data.spec}">
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>技能资质要求:</td>
                                     <td>
@@ -97,6 +132,21 @@
                                         <textarea name="grade"  class="form-control" cols="30" rows="10">{$data.grade}</textarea>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>技能标签:(以英文逗号隔开 例:狙击高手,杀人狂魔)</td>
+                                    <td>
+                                        <textarea name="tag"  class="form-control" cols="30" rows="10">{$data.tag}</textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>可接收礼物:</td>
+                                    <td>
+                                        {:checkBox('gift_id',$gift,$data.gift_id,gift_name)}
+                                    </td>
+                                </tr>
+
+
                                 <tr>
                                     <td>申请示例头像:</td>
                                     <td>{:uploadHtml('header_exp',$data.header_exp,'single_img')}</td>
@@ -140,6 +190,39 @@
 {block name="js"}
 <script type="text/javascript" src="https://unpkg.com/qiniu-js@v2.4.0/dist/qiniu.min.js"></script>
 <script>
+
+    $('.add').click(function () {
+
+        var str = '<div style="margin-top: 15px;">\n' +
+            '                                                <input type="hidden" name="form_id[]" value="">\n' +
+            '                                                <input style="float: left" placeholder="邀约形式" class="form-control" name="form_name[]" type="text" value="">\n' +
+            '                                                <input  style="margin-left: 5px" type="button" class="btn delStr" value="删除">\n' +
+            '                                            </div>\n' +
+            '                                            <div style="clear: both"></div>';
+        $("#form").append(str);
+
+
+    });
+
+
+
+    //浮动层删除
+    $(document).on("click",".delStr",function() {
+
+        $(this).parent('div').remove();
+
+    });
+
+
+
+
+
+
+    // function delStr(_this) {
+    //
+    //     $(_this).parent('div').remove();
+    //
+    // }
 
     $('.qiniu').click(function () {
         var file = $('#file')[0].files[0];
