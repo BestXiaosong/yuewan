@@ -82,6 +82,37 @@ class User extends Base
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取用户信息
+     */
+    protected function userInfo($field = '',$user_id = null,$cache = 3){
+
+        if ($user_id){
+
+            $map['user_id'] = $user_id;
+
+        }else{
+
+            $map['user_id'] = $this->user_id;
+
+        }
+
+        if (strstr($field,',') || empty($field)){
+
+            return Db::name('users')->field($field)->where($map)->cache($cache)->find();
+
+        }else{
+
+            return Db::name('users')->where($map)->cache($cache)->value($field);
+
+        }
+
+    }
+
+
+
 
 
     /**

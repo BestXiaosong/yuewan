@@ -169,4 +169,20 @@ class Skill extends Base
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 资质申请列表
+     */
+    public function apply()
+    {
+
+
+
+
+
+    }
+
+
+
 }
