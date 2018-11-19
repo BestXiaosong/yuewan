@@ -167,7 +167,7 @@ class Base extends Controller
         $code  = input("post.$code");
         $cache = cache('code'.$phone);
         if (!$cache || $code != $cache){
-            api_return(0,$msg);
+//            api_return(0,$msg);
         }else{
             cache('code'.$phone,null);
         }

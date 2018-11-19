@@ -10,6 +10,7 @@ namespace app\admin\controller;
 use app\common\logic\Logic;
 use app\common\logic\SkillForm;
 use app\common\model\Skill as model;
+use app\common\model\SkillApply;
 use Qiniu\Auth;
 use think\Db;
 use think\queue\connector\Database;
@@ -177,9 +178,56 @@ class Skill extends Base
     public function apply()
     {
 
+        $map = [];
+
+        if (input('skill_name')) $map['skill_name'] = ['like','%'.trim(input('skill_name')).'%'];
+
+        if(!isEmpty($_GET['type'])) $map['type'] = trim(input('type'));
+
+        $model = new SkillApply();
+        $rows  = $model->getList($map);
+        $this->assign([
+            'title' => '技能列表',
+            'rows' => $rows,
+            'pageHTML' => $rows->render(),
+        ]);
+
+        return view();
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 资质申请编辑
+     */
+    public function apply_edit()
+    {
+
+        if (request()->isPost()){
+            $data = input('post.');
+
+            if (!is_numeric($data['id'])){
+                $this->error('参数错误');
+            }
+            $result = Db::name('skill_apply')->where('apply_id',$data['id'])->update(['status'=>$data['status']]);
+
+            if ($result){
+                $this->success('操作成功',url('apply'));
+            }
+            $this->error('操作失败');
+
+        }
 
 
+        $model = new SkillApply();
 
+        $data = $model->getDetail(['a.apply_id'=>input('id')]);
+
+        $this->assign([
+            'title' => '技能申请编辑',
+            'data' => $data,
+        ]);
+        return view();
 
     }
 

@@ -54,20 +54,19 @@
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
-                                    <td width="10%">用户电话:</td>
+                                    <td width="10%">用户昵称:</td>
                                     <td>
-                                        {$data.phone}
+                                        {$data.nick_name}
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>类型:</td>
+                                    <td>{if condition="$row.type == 1"} 意见反馈 {else /} 小调查 {/if}</td>
                                 </tr>
                                 <tr>
                                     <td>内容:</td>
                                     <td>{$data.content}</td>
                                 </tr>
-                                <tr>
-                                    <td>联系邮箱:</td>
-                                    <td>{$data.e_mail}</td>
-                                </tr>
-                                <input type="hidden" name="url" value="{:request()->query()}">
                                 </tbody>
                             </table>
                         </div>

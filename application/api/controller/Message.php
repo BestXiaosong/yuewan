@@ -8,7 +8,7 @@
 
 namespace app\api\controller;
 
-
+use \app\common\logic\Opinion;
 use think\Request;
 
 class Message extends User
@@ -27,14 +27,16 @@ class Message extends User
     public function feedBack()
     {
         $user_id = $this->user_id;
-        $param = Request::instance()->post();
+        $param   = Request::instance()->post();
         $param['user_id'] = $user_id;
-        $logic = new \app\common\logic\Opinion();
-        $res = $logic->saveOpinion($param);
-        if($res['code']==1){
-            api_return(1,'反馈成功','');
+        $logic  = new Opinion();
+        $result = $logic->saveOpinion($param);
+        if($result){
+
+            api_return(1,'提交成功');
+
         }
-        api_return(0,$res['msg']);
+        api_return(0,$logic->getError());
     }
 
 }

@@ -8,9 +8,9 @@
             <div class="navbar navbar-default">
                 <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
                     <div class="form-group">
-                        <label class="control-label" for="input-order-id">手机号码</label>
+                        <label class="control-label" for="input-order-id">昵称</label>
                         <div class="input-group">
-                            <input type="text" name="phone" value="{$Think.get.phone}" placeholder="用户手机号码"
+                            <input type="text" name="nick_name" value="{$Think.get.nick_name}" placeholder="昵称"
                              class="form-control">
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                             <thead>
                             <tr>
                                 <td>id</td>
-                                <td>电话</td>
+                                <td>昵称</td>
                                 <td>IP地址</td>
                                 <td>设备</td>
                                 <td>登录时间</td>
@@ -39,7 +39,7 @@
                             {volist name="rows" id="row" key="key"}
                             <tr>
                                 <td>{$row.lid}</td>
-                                <td>{$row.phone}</td>
+                                <td>{$row.nick_name}</td>
                                 <td>{$row.ip}</td>
                                 <td>{$row.model}</td>
                                 <td>{$row.create_time}</td>

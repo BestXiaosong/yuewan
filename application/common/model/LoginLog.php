@@ -11,7 +11,7 @@ class LoginLog extends Base
             ->join('users c','c.user_id = b.user_id','LEFT')
             ->order('b.create_time DESC')
             ->where($where)
-            ->field('b.*,c.phone')
+            ->field('b.*,c.nick_name')
             ->paginate(15,false,['query'=>request()->param()]);
     }
 

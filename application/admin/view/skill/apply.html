@@ -36,10 +36,11 @@
                             <thead>
                             <tr>
                                 <td>序号</td>
-                                <td>缩略图</td>
+                                <td>申请用户头像</td>
+                                <td>申请用户</td>
+                                <td>技能缩略图</td>
                                 <td>技能名</td>
-                                <td>排序</td>
-                                <td>类型</td>
+                                <td>申请说明</td>
                                 <td>状态</td>
                                 <td>上次修改时间</td>
                                 <td>操作</td>
@@ -50,17 +51,17 @@
                             {volist name="rows" id="row" key="key"}
                             <tr>
                                 <td>{$key}</td>
-                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.img}" alt=""></td>
-                                <td>{$row.skill_name}</a></td>
-                                <td>{$row.sort}</td>
-                                <td>{if condition="$row.type == 1"} 娱乐 {else /} 游戏 {/if}</td>
-                                <td>{if condition="$row.status == 1"} 开放申请 {else /} 禁止申请 {/if}</td>
+                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.header_img}" alt=""></td>
+                                <td>{$row.nick_name}</a></td>
+                                <td><img style="max-width: 80px;max-height: 80px;" src="{$row.skill_img}" alt=""></td>
+                                <td>{$row.skill_name}</td>
+                                <td>{$row.explain}</td>
+                                <td>{if condition="$row.status == 0"}待审核 {elseif condition="$row.status == 1"/}审核通过 {else /} 审核失败{/if}</td>
                                 <td>{$row.update_time}</td>
                                 <td>
-                                    <a class="btn btn-primary " href="{:url('edit',['id'=>$row.skill_id])}">编辑</a>
-                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>0])}">禁止申请</span>
-                                    {else /} <span class="btn btn-primary change" data-message="" data-url="{:url('change',['id'=>$row.skill_id,'type'=>1])}">开放申请</span> {/if}
-                                    <span class="btn btn-danger check_del" data-message="" data-url="{:url('del',['id'=>$row.skill_id,'type'=>1])}">删除</span>
+                                    <a class="btn btn-primary " href="{:url('apply_edit',['id'=>$row.apply_id])}">审核</a>
+
+                                    <span class="btn btn-danger check_del" data-message="" data-url="{:url('del',['id'=>$row.apply_id,'type'=>1])}">删除</span>
                                 </td>
                             </tr>
                             {/volist}

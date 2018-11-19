@@ -33,7 +33,7 @@ class Login extends Base
                         $this->log($row['user_id']);
                         $token = $this->makeToken($row['user_id']);
                         $r_token = $this->R_token($row['user_id']);
-                        api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
+                        api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token,'is_register'=>0]);
                     }
                     api_return(0,'账号被禁用');
                 }else{
@@ -44,7 +44,7 @@ class Login extends Base
                         $this->log($model->user_id);
                         $token = $this->makeToken($model->user_id);
                         $r_token = $this->R_token($model->user_id);
-                        api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
+                        api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token,'is_register'=>1]);
                     }else{
                         api_return(0,'登录失败,请稍后重试');
                     }
@@ -84,7 +84,7 @@ class Login extends Base
                     $this->log($row['user_id']);
                     $token = $this->makeToken($row['user_id']);
                     $r_token = $this->R_token($row['user_id']);
-                    api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
+                    api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token,'is_register'=>0]);
                 }else{
                     api_return(0,'账号被禁用');
                 }
@@ -98,7 +98,7 @@ class Login extends Base
                     $this->log($model->user_id);
                     $token = $this->makeToken($model->user_id);
                     $r_token = $this->R_token($model->user_id);
-                    api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token]);
+                    api_return(1,'登陆成功',['token'=>$token,'r_token'=>$r_token,'is_register'=>1]);
                 }
             }
         }

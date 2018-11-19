@@ -25,6 +25,12 @@
                             <option id="status1" value="1"> 已处理</option>
                             <option id="status0" value="0">未处理</option>
                         </select>
+                        <label class="control-label" for="input-order-id">类型</label>
+                        <select class="form-control" name="type">
+                            <option id="type" value="">全部</option>
+                            <option id="type1" value="1">意见反馈</option>
+                            <option id="type2" value="2">小调查</option>
+                        </select>
 
                         <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
                                 id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
@@ -44,6 +50,7 @@
                                 <td>序号</td>
                                 <td>手机号码</td>
                                 <td>内容摘要</td>
+                                <td>类型</td>
                                 <td>反馈时间</td>
                                 <td>是否查看</td>
                                 <td>是否处理</td>
@@ -57,6 +64,7 @@
                                 <td>{$key}</td>
                                 <td>{$row.phone}</td>
                                 <td>{$row.content|sub_str=60}</a></td>
+                                <td>{if condition="$row.type == 1"} 意见反馈 {else /} 小调查 {/if}</a></td>
                                 <td>{$row.create_time}</td>
                                 <td>{if condition="$row.is_read == 1"} 已查看 {else /} 未查看 {/if}</td>
                                 <td>{if condition="$row.status == 1"} 已处理 {else /} 未处理 {/if}</td>
@@ -87,7 +95,10 @@
             $('#status'+status).attr('selected',true)
         }
         var is_read = "{$Think.get.is_read}"
-        $('#is_read'+is_read).attr('selected','selected')
+        $('#is_read'+is_read).attr('selected','selected');
+
+        var type = "{$Think.get.type}"
+        $('#type'+type).attr('selected','selected')
     })
 
 </script>

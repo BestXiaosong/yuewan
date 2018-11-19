@@ -107,8 +107,8 @@ class User extends Base
     public function log()
     {
         $where = [];
-        if(!empty($_GET['phone'])){
-            $where['c.phone'] = ['like','%'.trim(input('get.phone')).'%'];
+        if(!empty($_GET['nick_name'])){
+            $where['c.nick_name'] = ['like','%'.trim(input('get.nick_name')).'%'];
         }
         $model = new LoginLog();
         $rows = $model->getList($where);

@@ -98,6 +98,7 @@ class Message extends Base
         $where = [];
         if (!isEmpty($_GET['status'])) $where['a.status'] = trim(input('get.status'));
         if (!isEmpty($_GET['is_read'])) $where['a.is_read'] = trim(input('get.is_read'));
+        if (!isEmpty($_GET['type'])) $where['a.type'] = trim(input('get.type'));
 
         $rows = $model->getList($where);
         $this->assign('rows', $rows);

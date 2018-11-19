@@ -9,7 +9,7 @@ class Opinion extends Base
 
     public function getList($filter = []){
 
-        $field = 'a.e_mail,a.status,a.oid,a.content,a.is_read,a.create_time,u.phone';
+        $field = 'a.type,a.status,a.oid,a.content,a.is_read,a.create_time,u.phone';
 
         return $this->alias('a')
             ->where($filter)
@@ -22,7 +22,7 @@ class Opinion extends Base
     public function getOne($id){
 
        return $this->alias('a')
-            ->field('a.e_mail,a.oid,a.content,u.phone')
+            ->field('a.oid,a.content,u.nick_name')
             ->order('a.oid DESC')
             ->join(['cl_users'=>'u'],'u.user_id = a.user_id')
             ->where('oid',$id)->find();
