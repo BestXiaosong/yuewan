@@ -112,7 +112,34 @@ class User extends Base
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取用户扩展信息
+     */
+    protected function userExtra($field = '',$user_id = null,$cache = 3){
 
+        if ($user_id){
+
+            $map['user_id'] = $user_id;
+
+        }else{
+
+            $map['user_id'] = $this->user_id;
+
+        }
+
+        if (strstr($field,',') || empty($field)){
+
+            return Db::name('user_extend')->field($field)->where($map)->cache($cache)->find();
+
+        }else{
+
+            return Db::name('user_extend')->where($map)->cache($cache)->value($field);
+
+        }
+
+    }
 
 
     /**
@@ -528,6 +555,39 @@ class User extends Base
         api_return(1,'获取成功',$data);
 
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 修改用户配置信息
+     */
+    public function editExtra()
+    {
+
+        $data = request()->only(['invite','dispatch','filter','j_push_id','log','lat','place'],'post');
+
+        if (!$data) api_return(0,'请输入要修改的数据');
+
+        $data['id'] = $this->user_id;
+
+        $result = $this->_edit('user_extend','base.edit_extend',$data);
+
+        if ($result){
+
+            api_return(1,'修改成功');
+
+        }
+
+        api_return(0,$this->editError);
+
+    }
+
+
+
+
+
+
+
 
 
 }

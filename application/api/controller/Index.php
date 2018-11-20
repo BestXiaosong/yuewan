@@ -3,17 +3,9 @@
 namespace app\api\controller;
 
 use app\common\model\Banner;
-use app\common\model\News as NewsModel;
-use app\common\model\NewsCollect as NewsCollectModel;
-use app\common\model\PlayCategory;
-use app\common\model\Room;
-use app\common\model\RoomActivity;
-use think\Request;
 use think\Db;
-use app\common\model\Gift as Gifts;
 use app\common\model\Users;
 use app\common\model\RoomFollow;
-use think\Config;
 
 class Index extends Base
 {
@@ -33,6 +25,19 @@ class Index extends Base
 
 
 
+    /**
+     * 获取banner及广告图
+     */
+    public function getBanner()
+    {
+        $model = new Banner();
+        $where['status'] = 1;
+        $where['cid'] = input('post.cid');
+        $limit = is_numeric(input('post.num')) ? input('post.num') : 6;
+        $rows = $model->getBanner($where,$limit);
+        if (!empty($rows)) api_return(1, '获取成功', $rows);
+        api_return(0, '暂无数据');
+    }
 
 
 
@@ -65,11 +70,6 @@ class Index extends Base
         api_return(666,999);
     }
 
-//    public function pushUrl()
-//    {
-//        $data = $this->getPlayInfo(1);
-//        api_return(1,'获取成功',$data);
-//    }
 
     //生成微信分享二维码
 
@@ -78,7 +78,6 @@ class Index extends Base
         $res = code($data);
         api_return(1,'成功',$res);
     }
-
 
 
 
@@ -94,19 +93,6 @@ class Index extends Base
 
 
 
-    /**
-     * 获取banner及广告图
-     */
-    public function getBanner()
-    {
-        $model = new Banner();
-        $where['status'] = 1;
-        $where['cid']    = input('post.cid');
-        $limit = is_numeric(input('post.num'))?input('post.num'):6;
-        $rows  = $model->getBanner($where,$limit);
-        if (!empty($rows)) api_return(1,'获取成功',$rows);
-        api_return(0,'暂无数据');
-    }
 
 
     /**
@@ -121,63 +107,6 @@ class Index extends Base
         api_return(0,'暂无数据');
     }
 
-    /**
-     * 获取当前角色粉丝列表
-     */
-    public function my_fans(){
-        $id = input('post.id');
-        if (!empty($id)){
-            $role_id = dehashid($id);
-            if (!is_numeric($role_id)) api_return(0,'参数错误');
-        }else{
-            $this->user_id;
-            $role_id = $this->role_id;
-        }
-        $model = new Users();
-        $list_num = $this->request->post('list_num')?$this->request->post('list_num'):'';
-        $result = $model->fans($role_id,$list_num);
-        if($result){
-            api_return(1,'获取成功',$result);
-        }else{
-            api_return(0,'暂无数据');
-        }
-    }
-
-
-    /**
-     * 根据role_id获取角色信息及是否关注
-     */
-    public function roleInfo()
-    {
-        $role_id = input('id');
-        $where['a.role_id'] = dehashid($role_id);
-//        $where['a.role_id'] = input('post.id');
-        if (!is_numeric($where['a.role_id'])) api_return(0,'参数错误');
-        $model = new \app\common\model\Role();
-        $data  = $model->getOne($where,$this->role_id);
-        if ($data !== false) {
-            if (!empty(input('post.chat'))){
-                $chat = input('post.chat');
-                $data['baned'] = $this->chatbanList($chat,$role_id);
-                $info = explode('_',$chat);
-                $room_id = $info[1];
-                $roomInfo = Db::name('room')->where('room_id',$room_id)->field('user_id')->cache(60)->find();
-                if ($roomInfo['user_id'] == $this->user_id){
-                    $data['is_admin'] = 1;
-                }else{
-                    $roomfollow = new RoomFollow();
-                    $res = $roomfollow->getStatus(dehashid($room_id), $where['a.role_id']);
-                    if ($res['status'] == 2) {
-                        $data['is_admin'] = 1;
-                    }else{
-                        $data['is_admin'] = 0;
-                    }
-                }
-            }
-            api_return(1,'获取成功',$data);
-        }
-        api_return(0,'服务器繁忙,请稍后重试');
-    }
 
     /**
      * 获取融云token
@@ -192,28 +121,42 @@ class Index extends Base
 
 
 
-    /**
-     * 回放视频搜索
-     */
-    public function vediosearch()
-    {
-        $where['v.title'] = ['like','%'.trim($this->request->post('title')).'%'];
-//        $where['title'] = ['like','%数%'];
-        $where['v.status'] = 1;
-        $id = $this->user_id;
-        $model = new \app\common\model\Vod();
-        $result = $model->getVedio($where,$id);
-        if($result){
-            api_return(1,'成功',$result);
-        }else{
-            api_return(0,'暂无数据');
-        }
-    }
-
     public function img()
     {
         getVideoCover('http://file.51soha.com/vod0v21072460.mp4');
     }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 广场
+     */
+    public function square()
+    {
+
+        $data = input('post.');
+
+        $map = [];
+
+        if ($data['sex']){
+
+            $map['a.sex'] = $data['sex'];
+            
+        }
+
+
+
+        $model = new Users();
+
+        $rows  = $model->rows($map);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+
+
 
 
 }

@@ -1,21 +1,13 @@
 <?php
 namespace app\api\controller;
 
+use app\common\logic\Logic;
 use rongyun\api\RongCloud;
-use think\Cache;
 use think\Controller;
 use think\Db;
 use Qiniu\Auth;
 use Qiniu\Config;
 use Qiniu\Storage\BucketManager;
-use Qiniu\Pili\Client;
-use function Qiniu\Pili\HDLPlayURL;
-use function Qiniu\Pili\HLSPlayURL;
-use Qiniu\Pili\Hub;
-use Qiniu\Pili\Mac;
-use function Qiniu\Pili\RTMPPlayURL;
-use function Qiniu\Pili\RTMPPublishURL;
-use function Qiniu\Pili\SnapshotPlayURL;
 use think\Exception;
 use think\Request;
 
@@ -283,6 +275,37 @@ class Base extends Controller
 
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 修改数据
+     */
+    public function _edit($table = '',$validate = true,$data = null)
+    {
+
+        if (!$data){
+
+            $data = input('post.');
+
+        }
+
+        $model = new Logic();
+
+        $result = $model->saveChange($table,$data,$validate);
+
+        if ($result){
+
+            return true;
+
+        }
+
+        $this->editError = $model->getError();
+
+        return false;
+
+    }
+
+    protected $editError = '系统繁忙,请稍后重试';
 
     /**
      * Created by xiaosong

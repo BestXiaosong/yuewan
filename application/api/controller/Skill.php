@@ -95,7 +95,7 @@ class Skill extends User
 
         $this->ApiLimit(2,$this->user_id);
 
-        $data = request()->only(['skill_id','img','video','voice','explain'],'post');
+        $data = request()->only(['skill_id','img','video','voice','explain','is_use'],'post');
 
         $where['skill_id'] = $data['skill_id'];
         $where['status']   = 1;
@@ -123,6 +123,16 @@ class Skill extends User
 
             }
 
+        }else{
+            $skillInfo = Db::name('skill')->where('skill_id',$data['skill_id'])->cache(60)->find();
+            $data['my_gift_id'] = $skillInfo['gift_id'];
+            $data['my_form']    = $skillInfo['form_id'];
+
+            $gift['gift_id'] = ['in',$skillInfo['gift_id']];
+            $gift['status']  = 1;
+
+            $data['mini_price'] = Db::name('gift')->where($gift)->order('price')->value('price');
+
         }
 
         $data['user_id'] = $this->user_id;
@@ -142,15 +152,87 @@ class Skill extends User
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * 资质设置
+     * 资质上下架
      */
-    public function set()
+    public function shelf(int $id,int $is_use)
     {
+
+        $map['skill_id'] = $id;
+        $map['user_id']  = $this->user_id;
+        $map['status']   = 1;
+
+        $model = new SkillApply();
+
+        $data  = $model->where($map)->find();
+
+        if ($data){
+
+            $result = $data->validate('base.skill_shelf')->save(['is_use'=>$is_use]);
+
+            if ($result){
+
+                api_return(1,'修改成功');
+
+            }
+
+            api_return(0,$data->getError());
+
+        }else{
+
+            api_return(0,'参数错误');
+
+        }
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 资质设置--显示页
+     */
+    public function setSkill()
+    {
+        $data['extend']   = $this->userExtra('invite,dispatch,filter');
+
+        $map['a.user_id'] = $this->user_id;
+        $map['a.status']  = 1;
+        $map['a.is_use']  = 1;
+
+        $model = new \app\common\model\SkillApply();
+
+        $data['rows']  = $model->getRows($map);
+
+        api_return(1,'获取成功',$data);
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 技能编辑
+     */
+    public function editSkill()
+    {
+
+        $data = request()->only(['my_form','my_gift_id'],'post');
+
+
+
 
 
 
 
     }
+
+
+
+
+
+
+
+
+
+
 
 
 }

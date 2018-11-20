@@ -26,21 +26,16 @@ class Base extends Validate
         'sex|性别'=>'require|integer|in:1,2',
         'img_max|形象照最大数量	'=>'require|integer',
         'header_img|头像'=>'require',
+        'is_use|上下架'  =>  'require|between:0,1',
+        'invite|闪电邀约'  =>  'between:0,1',
+        'dispatch|接受派单'  =>  'between:0,1',
+        'filter|屏蔽未认证用户信息'  =>  'between:0,1',
     ];
 
-    protected $message = [
-        'nick_name.length'  =>  '昵称为6到12位中文或字母的组合',
-        'nick_name.chsDash'  =>  '昵称只能是汉字、字母和数字',
-        'nick_name.require'  =>  '昵称不能为空',
-        'content.length'  =>  '评论为1到59个字符',
-        'day.require' => '考试提醒时间不能为空',
-        'grade.in' => '评分类型错误',
-        'grade.require' => '评分内容不能为空',
-        'gid.require' => '商品id不能为空',
-        'content.require' => '评价内容不能为空',
-    ];
 
     protected $scene = [
+        'edit_extend'=>['invite','dispatch','filter'],
+        'skill_shelf' => ['is_use'],
         'extend' => ['img_max'],
         'nick_name'   =>  ['nick_name'],
         'front_user_add'   =>  ['phone'],
@@ -56,6 +51,20 @@ class Base extends Validate
         'key' => ['password'],
         'setKey' => ['phone','password','trade_password'],
     ];
+
+
+    protected $message = [
+        'nick_name.length'  =>  '昵称为6到12位中文或字母的组合',
+        'nick_name.chsDash'  =>  '昵称只能是汉字、字母和数字',
+        'nick_name.require'  =>  '昵称不能为空',
+        'content.length'  =>  '评论为1到59个字符',
+        'day.require' => '考试提醒时间不能为空',
+        'grade.in' => '评分类型错误',
+        'grade.require' => '评分内容不能为空',
+        'gid.require' => '商品id不能为空',
+        'content.require' => '评价内容不能为空',
+    ];
+
 
     /**
      * 验证昵称是否允许使用

@@ -119,11 +119,7 @@ class Skill extends Base
 
                 $this->success('操作成功',url('index'));
             }
-            $this->error('操作失败');
-
-
-
-
+            $this->error($model->getError());
 
         }
 

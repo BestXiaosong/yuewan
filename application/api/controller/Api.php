@@ -9,28 +9,12 @@
 namespace app\api\controller;
 
 use app\common\model\Banner;
-use app\common\model\Coin;
-use app\common\model\PlayCategory;
-use rongyun\api\RongCloud;
 use think\Db;
 
 class Api extends User
 {
 
 
-    /**
-     * 获取banner及广告图
-     */
-    public function getBanner()
-    {
-        $model = new Banner();
-        $where['status'] = 1;
-        $where['cid'] = input('post.cid');
-        $limit = is_numeric(input('post.num')) ? input('post.num') : 6;
-        $rows = $model->getBanner($where, $limit);
-        if (!empty($rows)) api_return(1, '获取成功', $rows);
-        api_return(0, '暂无数据');
-    }
 
 
 
