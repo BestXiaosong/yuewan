@@ -5,7 +5,6 @@ namespace app\api\controller;
 use app\common\model\Banner;
 use think\Db;
 use app\common\model\Users;
-use app\common\model\RoomFollow;
 
 class Index extends Base
 {
@@ -142,10 +141,8 @@ class Index extends Base
         if ($data['sex']){
 
             $map['a.sex'] = $data['sex'];
-            
+
         }
-
-
 
         $model = new Users();
 
@@ -156,7 +153,47 @@ class Index extends Base
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 分类获取
+     */
+    public function cate(int $type)
+    {
+
+        $model = new \app\common\model\Skill();
+
+        $map['type'] = $type;
+
+        $rows  = $model->getRows($map);
+
+        api_return(1,'获取成功',$rows);
+
+    }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 分类详情
+     */
+    public function detail(int $id)
+    {
 
+        $map['skill_id'] = $id;
+        $map['status']   = 1;
+
+        $model = new \app\common\model\Skill();
+
+        $data  = $model->getDetail($map);
+
+        api_return(1,'获取成功',$data);
+
+    }
+
+
+    
+    
+    
+    
 }

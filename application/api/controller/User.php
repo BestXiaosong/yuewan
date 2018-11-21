@@ -50,7 +50,7 @@ class User extends Base
 
         if (!$this->$str){
 
-            $data = Db::name('user_extend')->where('user_id',$this->user_id)->cache(1)->find();
+            $data = Db::name('user_extend')->where('user_id',$this->user_id)->cache(3)->find();
 
             $this->level = $data['level'];
             $this->experience = $data['experience'];

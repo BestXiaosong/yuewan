@@ -66,7 +66,7 @@ class Users extends Model
             ['user_extend e','e.user_id = a.user_id','left']
         ];
 
-        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.sign,e.online_time,e.online_status,e.room_id';
+        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.sign,e.online_time,e.online_status,e.room_id,e.noble,e.level';
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -74,14 +74,36 @@ class Users extends Model
             ->cache(15)
             ->paginate()->each(function ($item){
 
+                if ($item['online_status']){
 
-                if ($item->online_status){
                     $item['status'] = '当前在线';
+
                 }else{
+
                     $item['status'] = formatTime($item['online_time']);
+
                 }
 
-                if ($item->room_id){
+                if ($item['noble']){
+                    //无贵族身份 不查询等级颜色
+                    $item['color'] = '';
+                }else{
+
+                    //用户拥有等级  查询等级颜色
+                    if ($item['level'] > 0){
+
+                        $level['level'] = $item['level'];
+
+                        $item['color'] = Db::name('user_level')->where($level)->cache(15)->value('color');
+
+                    }else{
+                        $item['color'] = '';
+                    }
+
+                }
+
+
+                if ($item['room_id']){
 
                     $item['skill']['apply_id']   = 0;
                     $item['skill']['skill_name'] = '';
@@ -104,7 +126,6 @@ class Users extends Model
                         ->find();
 
                 }
-
 
                 $item['user_id'] = hashid($item['user_id']);
 

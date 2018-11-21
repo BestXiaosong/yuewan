@@ -9,6 +9,7 @@
 namespace app\api\controller;
 
 use app\common\model\Banner;
+use app\common\model\SkillApply;
 use think\Db;
 
 class Api extends User
@@ -61,9 +62,125 @@ class Api extends User
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 筛选分类下用户
+     */
+    public function screen()
+    {
+
+        $data  = input('post.');
+        $map   = [];
+        $order = '';
+
+        //是否使用距离查询 默认false
+        $distance = false;
+
+        $map['a.status']  = 1;
+        $map['a.is_use']  = 1;
+
+        $map['a.skill_id'] = $data['skill_id'];
+
+        if ($data['grade']){
+
+            $map['a.my_grade'] = ['in',$data['grade']];
+
+        }
+
+        if ($data['form_id']){
+
+            $map['a.my_form'] = ['like','%'.$data['form_id'].'%'];
+
+        }
+
+        if ($data['sex']){
+            $map['u.sex'] = $data['sex'];
+        }
 
 
+        switch ($data['order']){ //筛选条件
 
+            case 'new': //新人
+
+                $map['a.num'] = ['<=',3];
+
+                break;
+
+            case 'discount': //特惠
+
+                $order = ['a.mini_price'];
+
+                break;
+            case 'score': //根据好评排序
+
+                $order = 'a.score desc';
+
+                break;
+
+
+            case 'online':
+
+                $map['e.online_status'] = 1;
+
+                break;
+
+
+            case 'city': //同城查询 根据距离查询
+
+                $distance = true;
+
+                break;
+
+            default://热门
+
+                $order = ['a.num'=>'desc','a.score'=>'desc'];
+
+                break;
+
+        }
+
+        $model = new SkillApply();
+
+        if ($distance){
+            //根据距离查询
+//            $map['a.user_id'] = ['neq',$this->user_id];
+            $page = input('page');
+            $max  = Db::name('extend')->where('id',1)->cache(60)->value('distance');
+            $rows = $model->getCity($map,$this->userExtra('log,lat'),$page,$max);
+
+        }else{
+
+            $rows  = $model->getUsers($map,$order);
+
+        }
+
+
+//        print_r($rows);exit;
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 获取与当前用户相反的性别数字
+     */
+    protected function sex(){
+
+        if ($this->userInfo('sex') == 1){
+
+            return 2;
+
+        }else{
+
+            return 1;
+
+        }
+
+    }
 
 
 

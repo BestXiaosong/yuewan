@@ -58,7 +58,15 @@
                                     <td>排序:</td>
                                     <td><input placeholder="排序" class="form-control" name="sort" type="text" value="{$data.sort}"></td>
                                 </tr>
-
+                                <tr>
+                                    <td>开启闪电邀约:</td>
+                                    <td>
+                                        <select class="form-control" name="is_fast">
+                                            <option id="is_fast1" value="1">开启</option>
+                                            <option id="is_fast0" value="0">关闭</option>
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>类型:</td>
                                     <td>
@@ -308,6 +316,14 @@
         if(type != ''){
             $('#type'+type).attr('selected',true)
         }
+
+
+
+        var is_fast   = "{$data.is_fast}";
+        if(is_fast != ''){
+            $('#is_fast'+is_fast).attr('selected',true)
+        }
+
 
         var status   = "{$data.status}";
         if(status != ''){
