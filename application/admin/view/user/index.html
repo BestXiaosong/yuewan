@@ -9,9 +9,9 @@
             <div class="navbar navbar-default">
                 <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
                     <div class="form-group">
-                        <label class="control-label" for="input-order-id">手机号码</label>
+                        <label class="control-label" for="input-order-id">用户昵称</label>
                         <div class="input-group">
-                            <input type="text" name="phone" value="{$Think.get.phone}" placeholder="用户手机号码"
+                            <input type="text" name="nick_name" value="{$Think.get.nick_name}" placeholder="用户昵称"
                              class="form-control">
                         </div>
                     </div>
@@ -84,8 +84,8 @@
                                     <tr>
                                         <th width="20%">指定用户：</th>
                                         <td>
-                                            <input class="form-control" placeholder="用户手机号码" type="text" name="phone">
-                                            <span style="color: red">ps:不填手机号码默认推送给所有用户</span>
+                                            <input class="form-control" placeholder="用户id" type="text" name="user_id">
+                                            <span style="color: red">ps:不填用户id默认推送给所有用户</span>
                                         </td>
 
                                     </tr>

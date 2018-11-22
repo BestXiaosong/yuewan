@@ -24,9 +24,7 @@ class User extends Base
         if(!empty($_GET['nick_name'])){
             $where['nick_name'] = ['like','%'.trim(input('get.nick_name')).'%'];
         }
-        if(!empty($_GET['phone'])){
-            $where['phone'] = ['like','%'.trim(input('get.phone')).'%'];
-        }
+
         if(!empty($_GET['user_id'])){
             $where['user_id'] = trim(input('get.user_id'));
         }
@@ -152,83 +150,13 @@ class User extends Base
         return view();
     }
 
-    /**
-     * 角色列表
-     */
-    public function role()
-    {
-        $where = [];
-        if(!empty($_GET['role_name'])){
-            $where['a.role_name'] = ['like','%'.trim(input('get.role_name')).'%'];
-        }
-        if(!isEmpty($_GET['status'])){
-            $where['a.status'] = trim(input('get.status'));
-        }
-        $where['u.status'] = 1;
-        $model = new Role();
-        $rows = $model->getList($where);
-        $this->assign([
-            'title' => '角色列表',
-            'rows' => $rows,
-            'pageHTML' => $rows->render(),
-            'status' => array_key($this->status,'status'),
-        ]);
-        return view();
-    }
 
-    protected $status = [
-      ['status'=>1,'name'=>'正常'],
-      ['status'=>0,'name'=>'禁用'],
-      ['status'=>2,'name'=>'拍卖中'],
-    ];
 
-    public function role_change()
-    {
-        $data = input();
-        $result = Db::name('role')->update(['status'=>$data['type'],'role_id'=>$data['id']]);
-        if($result !== false){
-            $this->success('操作成功');
-        }
-        $this->error('操作失败');
-    }
 
-    public function role_del()
-    {
-        $id     = input('param.id');
-        $result = Db::name('role')->where('role_id',$id)->delete();
-        if ($result){
-            $this->success('删除成功');
-        }
-        $this->error('删除失败');
-    }
 
-    /**
-     * 角色信息编辑
-     */
-    public function role_edit()
-    {
-        if(request()->isPost()){
-            $data  = input('post.');
-            $model = new \app\common\logic\Role();
-            $name = $model
-                ->where('role_name',$data['role_name'])
-                ->where('role_id','<>',$data['id'])
-                ->value('role_id');
-            if ($name){
-                $this->error('该昵称已存在');
-            }
-            $result = $model->saveChange($data);
-            if($result !== false){
-                $this->success('操作成功',url('user/role'));
-            }
-            $this->error($model->getError());
-        }
-        $this->_show('role','role_id');
-        $this->assign([
-            'title' => '角色信息编辑',
-        ]);
-        return view();
-    }
+
+
+
     /**
      * 用户资金明细列表
      */
@@ -259,21 +187,6 @@ class User extends Base
         return view('money_detail');
     }
 
-
-    /**
-     * 角色推荐设置
-     */
-    public function top()
-    {
-        $data = input();
-        $result = Db::name('role')->update(['top'=>$data['val'],'update_time'=>time(),'role_id'=>$data['id']]);
-        if($result !== false){
-            $this->success('操作成功');
-        }
-        $this->error('操作失败');
-    }
-
-
     /**
      * Created by xiaosong
      * E-mail:306027376@qq.com
@@ -284,8 +197,8 @@ class User extends Base
         if (request()->isPost()){
             $data = input('post.');
             $push_id = 'all';
-            if ($data['phone']){
-                $push_id = Db::name('users')->where('phone',$data['phone'])->value('j_push_id');
+            if (is_numeric($data['user_id'])){
+                $push_id = Db::name('user_extend')->where('user_id',$data['user_id'])->value('j_push_id');
                 if (empty($push_id)) $this->error('推送失败,用户无推送id');
             }
             $result = j_push($data['title'],$push_id);

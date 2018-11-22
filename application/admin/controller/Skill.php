@@ -9,6 +9,7 @@
 namespace app\admin\controller;
 use app\common\logic\Logic;
 use app\common\logic\SkillForm;
+use app\common\logic\SkillTag;
 use app\common\model\Skill as model;
 use app\common\model\SkillApply;
 use Qiniu\Auth;
@@ -72,10 +73,11 @@ class Skill extends Base
                     $id = $model->getLastInsID();
                 }
 
+
+                //添加更新形式
                 $rows = [];
 
                 $add  = [];
-
 
                 foreach ($data['form_name'] as $k => $v){
 
@@ -90,7 +92,6 @@ class Skill extends Base
                     }
 
                 }
-
 
                 $skill = new SkillForm();
 
@@ -110,12 +111,56 @@ class Skill extends Base
 
                 }
 
+
+                //添加更新标签
+                $rows2 = [];
+
+                $add2  = [];
+
+
+                foreach ($data['tag_name'] as $k => $v){
+
+                    $arr = [];
+                    $arr['tag_name'] = $v;
+                    $arr['tag']   = $data['tag'][$k];
+                    $arr['skill_id']  = $id;
+                    if ($arr['tag']){
+                        $rows2[] = $arr;
+                    }else{
+                        $add2[] = $arr;
+                    }
+
+                }
+
+
+                $tag = new SkillTag();
+
+                $tag->where($map)->update(['skill_id'=>0]);
+
+                if ($rows2){
+
+                    $tag->saveAll($rows2);
+
+                }
+
+                if($add2){
+
+                    $tag->insertAll($add2);
+
+                }
+
+
+
                 $column = $skill->where($map)->column('form_id');
 
                 $form_id = implode(',',$column);
 
-                $model->where($map)->update(['form_id'=>$form_id]);
+                $column2 = $tag->where($map)->column('tag');
 
+                $tag = implode(',',$column2);
+
+
+                $model->where($map)->update(['form_id'=>$form_id,'tag'=>$tag]);
 
                 $this->success('操作成功',url('index'));
             }

@@ -29,6 +29,43 @@ class SkillApply extends Model
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 技能详情页
+     *
+     */
+    public function detail($map = [])
+    {
+        //TODO 完成技能详情页
+
+        $field = 'a.my_grade,a.apply_id,a.skill_id,a.user_id,a.img,a.voice,a.video,s.skill_name,u.nick_name,u.header_img,e.online_time,e.online_status';
+
+
+        $data = $this->alias('a')
+            ->join('skill s','s.skill_id = a.skill_id','LEFT')
+            ->join('users u','u.user_id = a.user_id','LEFT')
+            ->join('user_extend e','e.user_id = a.user_id','LEFT')
+            ->where($map)
+            ->field($field)
+            ->find();
+
+
+        $img['user_id'] = $data['user_id'];
+        $img['status']  = 1;
+        $img['type']    = 1;
+
+        $data['imgs'] = Db::name('user_img')->where($img)->field('img')->select();
+
+        $data['user_id'] = hashid($data['user_id']);
+
+
+        return $data;
+
+
+    }
+
+
     public function getMy($map = [])
     {
         return $this->alias('a')
@@ -66,8 +103,6 @@ class SkillApply extends Model
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * @param array $map
-     * @param string $order
      * 用户筛选
      */
     public function getUsers($map = [],$order = '')
@@ -174,18 +209,77 @@ class SkillApply extends Model
 
         if (count($rows) <= 15 && $distance < $max){
 
-            $distance += 5;
+            $distance += 10;
 
             return $this->getCity($map,$userExtra,$distance,$max);
 
         }else{
 
             if ($distance >= $max){
+                //超过最大范围不允许继续请求
                 $hasNext = false;
             }else{
                 $hasNext = true;
             }
-            return ['data'=>$rows,'hasNext'=>$hasNext,'thisPage'=>$distance];
+
+            foreach ($rows as $k => $item){
+
+                if ($item['online_status']){
+
+                    $rows[$k]['status'] = '当前在线';
+
+                }else{
+
+                    $rows[$k]['status'] = formatTime($item['online_time']);
+
+                }
+
+                if ($item['noble']){
+                    //无贵族身份 不查询等级颜色
+                    $rows[$k]['color'] = '';
+                }else{
+
+                    //用户拥有等级  查询等级颜色
+                    if ($item['level'] > 0){
+
+                        $level['level'] = $item['level'];
+
+                        $rows[$k]['color'] = Db::name('user_level')->where($level)->cache(15)->value('color');
+
+                    }else{
+                        $rows[$k]['color'] = '';
+                    }
+
+                }
+
+                if ($item['room_id']){
+
+                    $rows[$k]['skill']['apply_id']   = 0;
+                    $rows[$k]['skill']['skill_name'] = '';
+
+                }else{
+                    //用户不在房间中   查询是否有技能
+                    $skill['a.skill_id'] = $item['skill_id'];
+                    $skill['a.user_id']  = $item['user_id'];
+
+                    $rows[$k]['skill'] = Db::name('skill_apply')
+                        ->alias('a')
+                        ->join( [
+
+                            ['skill s','s.skill_id = a.skill_id','left']
+
+                        ])
+                        ->where($skill)
+                        ->field('a.apply_id,s.skill_name')
+                        ->find();
+
+                }
+
+                $rows[$k]['user_id'] = hashid($item['user_id']);
+
+            }
+
+            return ['hasNext'=>$hasNext,'thisPage'=>$distance,'data'=>$rows];
 
         }
 

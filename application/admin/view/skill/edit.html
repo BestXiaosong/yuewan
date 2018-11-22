@@ -94,10 +94,9 @@
                                 </tr>
 
                                 <tr>
-                                    <td>邀约形式:</td>
+                                    <td>邀约形式:(例:在线连麦)</td>
                                     <td>
                                         <div id="form">
-
 
                                             {:form_id_html($data['form_id'])}
 
@@ -109,13 +108,30 @@
                                             <!--<div style="clear: both"></div>-->
 
 
-
-
                                         </div>
 
                                         <div style="clear: both"></div>
                                         <div style="margin-top: 15px">
                                             <input type="button" class="add btn btn-primary" value="新增形式" name="" id="">
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+
+
+                                <tr>
+                                    <td>技能标签:(例:狙击高手)</td>
+                                    <td>
+                                        <div id="tag">
+
+                                            {:tag_id_html($data['tag'])}
+
+                                        </div>
+
+                                        <div style="clear: both"></div>
+                                        <div style="margin-top: 15px">
+                                            <input type="button" class="tag btn btn-primary" value="新增标签" name="" >
                                         </div>
 
                                     </td>
@@ -140,12 +156,7 @@
                                         <textarea name="grade"  class="form-control" cols="30" rows="10">{$data.grade}</textarea>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>技能标签:(以英文逗号隔开 例:狙击高手,杀人狂魔)</td>
-                                    <td>
-                                        <textarea name="tag"  class="form-control" cols="30" rows="10">{$data.tag}</textarea>
-                                    </td>
-                                </tr>
+
 
                                 <tr>
                                     <td>可接收礼物:</td>
@@ -212,7 +223,18 @@
 
     });
 
+    $('.tag').click(function () {
 
+        var str = '<div style="margin-top: 15px;">\n' +
+            '                                                <input type="hidden" name="tag[]" value="">\n' +
+            '                                                <input style="float: left" placeholder="标签名" class="form-control" name="tag_name[]" type="text" value="">\n' +
+            '                                                <input  style="margin-left: 5px" type="button" class="btn delStr" value="删除">\n' +
+            '                                            </div>\n' +
+            '                                            <div style="clear: both"></div>';
+        $("#tag").append(str);
+
+
+    });
 
     //浮动层删除
     $(document).on("click",".delStr",function() {

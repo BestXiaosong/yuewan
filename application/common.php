@@ -710,7 +710,32 @@ function form_id_html($form_id = null){
     
 }
 
+function tag_id_html($tag = null){
 
+    if (!$tag){
+        return;
+    }
+    $map['tag'] = ['in',$tag];
+    $rows = \think\Db::name('skill_tag')->where($map)->select();
+
+    $str = '';
+
+    foreach ($rows as $k => $v){
+
+        $str .=
+            '
+            <div style="margin-top: 15px;">
+             <input type="hidden" name="tag[]" value="'.$v['tag'].'">
+                <input style="float: left"  class="form-control" name="tag_name[]" type="text" value="'.$v['tag_name'].'">
+                 <input  style="margin-left: 5px" type="button" class="btn delStr" value="删除">
+            <div style="clear: both"></div></div>
+            
+            ';
+    }
+
+    return $str;
+
+}
 
 function checkBox($name, $rows, $default, $text)
 {

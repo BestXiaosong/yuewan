@@ -4,7 +4,7 @@ namespace app\common\logic;
 use think\Model;
 
 
-class SkillForm extends Model
+class SkillTag extends Model
 {
     public function saveChange($data){
 

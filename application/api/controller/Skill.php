@@ -222,7 +222,32 @@ class Skill extends User
 
 
 
+
+
+
     }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 用户技能详情页
+     */
+    public function skillDetail()
+    {
+        $id = input('post.id');
+
+        $map['a.status']   = 1;
+        $map['a.apply_Id'] = $id;
+
+        $model = new \app\common\model\SkillApply();
+
+        $data  = $model->detail($map);
+
+        api_return(1,'获取成功',$data);
+
+    }
+
 
 
 

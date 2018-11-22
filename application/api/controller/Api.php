@@ -10,6 +10,7 @@ namespace app\api\controller;
 
 use app\common\model\Banner;
 use app\common\model\SkillApply;
+use function Composer\Autoload\includeFile;
 use think\Db;
 
 class Api extends User
@@ -95,7 +96,9 @@ class Api extends User
         }
 
         if ($data['sex']){
+
             $map['u.sex'] = $data['sex'];
+
         }
 
 
@@ -112,7 +115,7 @@ class Api extends User
                 $order = ['a.mini_price'];
 
                 break;
-            case 'score': //根据好评排序
+            case 'score': //根据好评排序 评分
 
                 $order = 'a.score desc';
 
@@ -143,11 +146,26 @@ class Api extends User
         $model = new SkillApply();
 
         if ($distance){
+
             //根据距离查询
-//            $map['a.user_id'] = ['neq',$this->user_id];
-            $page = input('page');
-            $max  = Db::name('extend')->where('id',1)->cache(60)->value('distance');
-            $rows = $model->getCity($map,$this->userExtra('log,lat'),$page,$max);
+            $page = input('page')??5;
+
+            $cache = cache('city_'.$this->user_id.'_'.$page);
+
+            //如果当前用户筛选距离有缓存  返回缓存  没有缓存 就查询数据后返回数据并缓存下来  保留30s
+
+            if ($cache){
+
+                $rows = $cache;
+
+            }else{
+                //TODO 人多了之后把排除自己加上
+//                $map['a.user_id'] = ['neq',$this->user_id];
+                $max  = Db::name('extend')->where('id',1)->cache(60)->value('distance');
+
+                $rows = $model->getCity($map,$this->userExtra('log,lat'),$page,$max);
+                cache('city_'.$this->user_id.'_'.$page,$rows,30);
+            }
 
         }else{
 
@@ -181,6 +199,27 @@ class Api extends User
         }
 
     }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 颜值筛选
+     */
+    public function vod()
+    {
+
+        $map = [];
+        $map['a.status'] = 1;
+
+        $model = new \app\common\model\Vod();
+
+        $rows = $model->getRows($map);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
 
 
 
