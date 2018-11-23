@@ -67,7 +67,7 @@ class Users extends Model
             $validate = validate('base');
             if (!$validate->scene('front_user_add')->check($data)) api_return(0, $validate->getError());
             $data['header_img'] = config('default_img');
-            $data['nick_name']  = '约玩用户'.substr($data['phone'],-4);
+            $data['nick_name']  = '萌趴用户'.substr($data['phone'],-4);
 //            $data['salt'] = generateStr(); //密码盐
 //            $data['password'] = md5(md5($data['password']).$data['salt']);
             $result = $this->allowField(true)->save($data);

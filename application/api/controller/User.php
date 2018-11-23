@@ -357,14 +357,70 @@ class User extends Base
      * E-mail:306027376@qq.com
      * 用户账户余额
      */
-    protected function userBalance()
+    protected function userBalance($user_id = null)
     {
 
-        $data = Db::name('users')->where('user_id',$this->user_id)->field('money,cash')->find();
+        if (!$user_id){
+
+            $user_id = $this->user_id;
+
+        }
+
+        $data = Db::name('users')->where('user_id',$user_id)->field('money,cash')->find();
         $data['total'] = bcadd($data['money'],$data['cash'],2);
         return $data;
 
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 扣除用户账户余额
+     */
+    protected function moneyDec($money = 0,$user_id = null){
+
+        if (!$user_id){
+
+            $user_id = $this->user_id;
+
+        }
+
+        $balance = $this->userBalance($user_id);
+
+        if ($money > $balance['total']) api_return(0,'余额不足');
+
+        if ($balance['money'] >= $money){
+
+            $result = Db::name('users')->where('user_id',$user_id)->setDec('money',$money);
+            if (!$result) api_return(0,'扣款失败');
+
+        }else{
+
+
+            if ($balance['money'] > 0){
+
+                $next = bcsub($money,$balance['money'],2);
+                $result = Db::name('users')->where('user_id',$user_id)->setDec('money',$balance['money']);
+                if (!$result) api_return(0,'扣款失败');
+
+            }else{
+
+                $next = $money;
+
+            }
+
+            $result = Db::name('users')->where('user_id',$user_id)->setDec('cash',$next);
+
+            if (!$result){
+                Db::name('users')->where('user_id',$user_id)->setInc('money',$balance['money']);
+                api_return(0,'扣款失败');
+            }
+
+        }
+
+    }
+
+
 
     /**
      * Created by xiaosong

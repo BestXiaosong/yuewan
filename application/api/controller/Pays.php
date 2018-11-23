@@ -50,7 +50,7 @@ class Pays extends User
         $order_num = 'YW'.hashid($this->user_id).time().rand(1000,9999);
 
         switch ($data['type']){
-            case 'recharge':
+            case 'recharge': //钻石充值
                 $map['r_id']   = $data['id'];
                 $map['status'] = 1;
                 $config = Db::name('recharge_config')->where($map)->find();
@@ -58,7 +58,7 @@ class Pays extends User
 
                 $price = $config['price'];
 
-                $subject = '约玩'.$config['money'].'钻充值';
+                $subject = '萌趴'.$config['money'].'钻充值';
 
                 $body = json_encode([
                     'user_id' => hashid($this->user_id),
@@ -67,7 +67,7 @@ class Pays extends User
                 ]);
 
                 break;
-            case 'gift':
+            case 'gift': //礼物赠送
                 $map['gift_id'] = $data['id'];
                 $map['status']  = 1;
                 $gift = Db::name('gift')->where($map)->find();
@@ -86,7 +86,7 @@ class Pays extends User
 
                 $price = bcmul($gift['price'],$num,2);
 
-                $subject = '约玩礼物('.$gift['gift_name'].')赠送';
+                $subject = '萌趴礼物('.$gift['gift_name'].')赠送';
 
                 $body = json_encode([
                     'user_id' => hashid($this->user_id),
@@ -96,7 +96,25 @@ class Pays extends User
                 ]);
 
                 break;
+            case 'invite': //邀约订单付款
 
+                $map['order_id']   = $data['order_id'];
+                $map['status'] = 0;
+                $order = Db::name('order')->where($map)->find();
+
+                if (!$order) api_return(0,'订单号错误');
+
+                $price = $order['price'];
+
+                $subject = '萌趴邀约';
+
+                $body = json_encode([
+                    'user_id' => hashid($this->user_id),
+                    'order_id'=>$data['order_id'],
+                    'type' => $data['type']
+                ]);
+
+                break;
             default:
                 api_return(0,'类型错误');
                 break;

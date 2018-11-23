@@ -286,6 +286,10 @@ function combineArray($arr1, $arr2)
 }
 
 
+
+
+
+
 /**
  * 格式化时间
  */
@@ -1045,5 +1049,37 @@ function isInt($num){
     }
 }
 
+/**
+ * Created by xiaosong
+ * E-mail:4155433@gmail.com
+ * 将数字转换为最多$n位小数
+ */
+function numberDecimal($num,$n = 2){
 
+
+    if (floor($num) != $num){
+
+        $temp = explode ( '.', $num );
+
+        $decimal = end ( $temp );
+
+        $count = strlen ( $decimal );
+
+        if ($count >= $n){
+
+            $count = $n;
+
+        }
+
+        $numStr = number_format($num,$count);
+
+    }else{
+
+        $numStr = "$num";
+
+    }
+
+    return $numStr;
+
+}
 

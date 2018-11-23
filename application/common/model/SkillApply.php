@@ -37,10 +37,8 @@ class SkillApply extends Model
      */
     public function detail($map = [])
     {
-        //TODO 完成技能详情页
 
         $field = 'a.my_grade,a.apply_id,a.skill_id,a.user_id,a.img,a.voice,a.video,s.skill_name,u.nick_name,u.header_img,e.online_time,e.online_status';
-
 
         $data = $this->alias('a')
             ->join('skill s','s.skill_id = a.skill_id','LEFT')
@@ -50,6 +48,58 @@ class SkillApply extends Model
             ->field($field)
             ->find();
 
+        if ($data['online_status'] == 1){
+            $data['status'] = '当前在线';
+        }else{
+            $data['status'] = formatTime($data['online_time']);;
+        }
+
+
+//
+//        $form['a.skill_id'] = $data['skill_id'];
+//        $form['a.user_id']  = $data['user_id'];
+//        $form['a.status']   = 1;
+//        $form['s.status']   = 1;
+//
+//        $data['forms'] = Db::name('skill_form_user')->alias('a')
+//            ->join('skill_form s','s.form_id = a.form_id','LEFT')
+//            ->where($form)
+//            ->order('a.num desc')
+//            ->field('a.num,s.form_name')
+//            ->select();
+//
+//        $tag['a.skill_id'] = $data['skill_id'];
+//        $tag['a.user_id']  = $data['user_id'];
+//        $tag['a.status']   = 1;
+//        $tag['t.status']   = 1;
+//
+//        $data['tags'] = Db::name('skill_tag_user')->alias('a')
+//            ->join('skill_tag t','t.tag = a.tag','LEFT')
+//            ->where($tag)
+//            ->order('a.num desc')
+//            ->field('a.num,t.tag_name')
+//            ->select();
+
+//        $comment['a.to_user']  = $data['user_id'];
+//        $comment['a.skill_id'] = $data['skill_id'];
+//        $comment['a.status']   = 5;
+//
+//        $comments = Db::name('order')->alias('a')
+//            ->join('users u','u.user_id = a.user_id','LEFT')
+//            ->join('gift g','g.gift_id = a.gift_id','LEFT')
+//            ->where($comment)
+//            ->field('a.score,g.gift_name,g.thumbnail,g.img,a.num,a.tags,a.content,a.update_time,u.nick_name,u.header_img,u.user_id')
+//            ->select();
+//
+//        foreach ($comments as $k => $v){
+//
+//            $tags['tag']    = ['in',$v['tags']];
+//            $tags['status'] = 1;
+//            $comments[$k]['tags'] = Db::name('skill_tag')->where($tags)->field('tag_name')->select();
+//            $comments[$k]['user_id'] = hashid($v['user_id']);
+//        }
+//
+//        $data['comments'] = $comments;
 
         $img['user_id'] = $data['user_id'];
         $img['status']  = 1;
@@ -59,9 +109,7 @@ class SkillApply extends Model
 
         $data['user_id'] = hashid($data['user_id']);
 
-
         return $data;
-
 
     }
 
@@ -77,20 +125,45 @@ class SkillApply extends Model
     }
 
 
-    public function getRows($map = [])
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * param bool $my 为true时获取我接受礼物和标
+     */
+    public function getRows($map = [],$my = false)
     {
 
         $rows = $this->alias('a')
             ->join('skill s','s.skill_id = a.skill_id','LEFT')
             ->where($map)
             ->field('s.skill_name,a.apply_id,a.my_form,a.my_gift_id,s.form_id,s.gift_id,a.mini_price,s.spec')
+            ->cache(15)
             ->select();
         foreach ($rows as $k => $v){
-            $form['form_id']  = ['in',$v['form_id']];
+
+            if ($my){
+
+                $form['form_id']  = ['in',$v['my_form']];
+
+            }else{
+
+                $form['form_id']  = ['in',$v['form_id']];
+
+            }
+
             $form['status']   = 1;
             $rows[$k]['form'] = Db::name('skill_form')->where($form)->field('form_id,form_name')->cache(10)->select();
 
-            $gift['gift_id']  = ['in',$v['gift_id']];
+            if ($my){
+
+                $gift['gift_id']  = ['in',$v['gift_id']];
+
+            }else{
+
+                $gift['gift_id']  = ['in',$v['my_gift_id']];
+
+            }
+
             $gift['status']   = 1;
             $rows[$k]['gift'] = Db::name('gift')->where($gift)->field('gift_id,gift_name,thumbnail,img,price')->order('price')->cache(10)->select();
 

@@ -7,9 +7,12 @@
  */
 
 namespace app\api\controller;
+use app\common\logic\Logic;
 use app\common\logic\SkillApply;
+use app\common\model\Order;
 use app\common\model\Skill as model;
 use think\Db;
+use think\Exception;
 
 class Skill extends User
 {
@@ -214,6 +217,7 @@ class Skill extends User
     public function editSkill()
     {
 
+        //TODO 完成技能编辑
         $data = request()->only(['my_form','my_gift_id'],'post');
 
 
@@ -231,14 +235,14 @@ class Skill extends User
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * 用户技能详情页
+     * 技能详情
      */
     public function skillDetail()
     {
         $id = input('post.id');
 
         $map['a.status']   = 1;
-        $map['a.apply_Id'] = $id;
+        $map['a.apply_id'] = $id;
 
         $model = new \app\common\model\SkillApply();
 
@@ -249,7 +253,193 @@ class Skill extends User
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 根据申请id   获取用户技能申请详情
+     */
+    protected function getApply()
+    {
+        $id = input('post.id');
 
+        $map['status']   = 1;
+        $map['apply_id'] = $id;
+
+        return Db::name('skill_apply')->where($map)->cache(15)->find();
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 技能详情 -- 技能统计
+     */
+    public function skillCount()
+    {
+
+        $data = $this->getApply();
+
+        $form['a.skill_id'] = $data['skill_id'];
+        $form['a.user_id']  = $data['user_id'];
+        $form['a.status']   = 1;
+        $form['s.status']   = 1;
+
+        $rows['forms'] = Db::name('skill_form_user')->alias('a')
+            ->join('skill_form s','s.form_id = a.form_id','LEFT')
+            ->where($form)
+            ->order('a.num desc')
+            ->field('a.num,s.form_name')
+            ->cache(15)
+            ->select();
+
+        $tag['a.skill_id'] = $data['skill_id'];
+        $tag['a.user_id']  = $data['user_id'];
+        $tag['a.status']   = 1;
+        $tag['t.status']   = 1;
+
+        $rows['tags'] = Db::name('skill_tag_user')->alias('a')
+            ->join('skill_tag t','t.tag = a.tag','LEFT')
+            ->where($tag)
+            ->order('a.num desc')
+            ->field('a.num,t.tag_name')
+            ->cache(15)
+            ->select();
+
+        $map['to_user']  = $data['user_id'];
+        $map['skill_id'] = $data['skill_id'];
+        $map['status']   = 5;
+
+        $rows['count']['num'] = Db::name('order')->where($map)->count('order_id');
+
+        $score = Db::name('order')->where($map)->avg('score');
+
+        $rows['count']['score'] = numberDecimal($score);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 技能详情--技能评论
+     */
+    public function skillComment()
+    {
+
+        $data = $this->getApply();
+
+        $map['a.to_user']  = $data['user_id'];
+        $map['a.skill_id'] = $data['skill_id'];
+        $map['a.status']   = 5;
+
+        $model = new Order();
+
+        $rows  = $model->getComment($map);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 邀约界面
+     */
+    public function invite()
+    {
+        $id = dehashid(input('post.id'));
+
+        if (!is_numeric($id)) api_return(0,'参数错误');
+
+        $rows['userInfo'] = $this->userInfo('nick_name,header_img',$id);
+
+        $map['a.user_id'] = $id;
+        $map['a.is_use']  = 1;
+        $map['a.status']  = 1;
+
+        $model = new \app\common\model\SkillApply();
+
+        $rows['rows'] = $model->getRows($map,true);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 下单
+     */
+    public function order()
+    {
+
+        $this->ApiLimit(1,$this->user_id);
+
+        $data = request()->only(['skill_id','to_user','form_id','gift_id','num','order_time','type'],'post');
+
+        $to_user = dehashid($data['to_user']);
+
+        if (!is_numeric($to_user)) api_return(0,'参数错误');
+
+        if ($to_user == $this->user_id){
+            api_return(0,'您不能向自己下单');
+        }
+
+        $data['to_user'] = $to_user;
+
+        $map['status']  = 1;
+        $map['user_id'] = $to_user;
+        $map['is_use']  = 1;
+
+        $apply = Db::name('skill_apply')->where($map)->find();
+
+        if (!$apply) api_return(0,'用户无此技能');
+
+        if (!strstr($apply['my_form'],$data['form_id'])) api_return(0,'用户不接受此邀约形式');
+        if (!strstr($apply['my_gift_id'],$data['gift_id'])) api_return(0,'用户不接受此礼物');
+        if (!isInt($data['num'])) api_return(0,'数量错误');
+
+        $where['gift_id'] = $data['gift_id'];
+        $where['status']  = 1;
+        $price = Db::name('gift')->where($where)->value('price');
+        if (!$price) api_return(0,'礼物信息错误');
+
+        $data['price'] = bcmul($price,$data['num'],2);
+
+        $data['user_id'] = $this->user_id;
+
+        Db::startTrans();
+        try{
+            //余额支付
+            if ($data['type'] == 'integral'){
+
+                $this->moneyDec($data['price']);
+
+                $data['status'] = 1;
+            }
+
+            $model = new Logic();
+
+            $result = $model->saveChange('order',$data,'order.add');
+
+            if (!$result){
+
+                api_return(0,$model->getError());
+
+            }
+
+            Db::commit();
+        }catch (Exception $e){
+            Db::rollback();
+            api_return(0,'服务器繁忙,请稍后重试',$e->getMessage());
+        }
+
+        api_return(1,'下单成功',$model->order_id);
+
+    }
 
 
 
