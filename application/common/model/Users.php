@@ -111,7 +111,7 @@ class Users extends Model
                 }else{
                     //用户不在房间中   查询是否有技能
                     $skill['a.user_id'] = $item['user_id'];
-                    $skill['a.status']  = 1;
+//                    $skill['a.status']  = 1;
                     $skill['a.is_use']  = 1;
 
                     $item['skill'] = Db::name('skill_apply')
@@ -134,6 +134,41 @@ class Users extends Model
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     */
+    public function search($map = [],$user_id = 0,$distance = false)
+    {
 
+        if ($distance){
+
+        }else{
+
+            $rows = $this->alias('a')->where($map)->field('user_id,uuid,nick_name,header_img')->paginate();
+
+        }
+
+        $items = $rows->items();
+
+        $where['user_id'] = $user_id;
+        $where['status']  = 1;
+
+        foreach ($items as $k => $v){
+
+            $where['follow_user'] = $v['user_id'];
+            $items[$k]['is_follow'] = Db::name('user_follow')->where($where)->value('follow_id');
+
+            $items[$k]['user_id'] = hashid($v['user_id']);
+
+        }
+
+        return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$items];
+
+    }
+    
+    
+    
+    
 
 }

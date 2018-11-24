@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\logic\Users;
 use app\common\model\LoginLog;
+use app\common\model\MoneyDetail;
 use app\common\model\Role;
 use think\Db;
 use think\Validate;
@@ -152,11 +153,6 @@ class User extends Base
 
 
 
-
-
-
-
-
     /**
      * 用户资金明细列表
      */
@@ -164,7 +160,11 @@ class User extends Base
     {
         $id = $this->request->param('id');
         $where = [];
-        $where['user_id'] = $id;
+        if (is_numeric($id)){
+
+            $where['user_id'] = $id;
+
+        }
         $where['status'] = 1;
         if(!empty($_GET['start'])&&empty($_GET['end'])){
             $where['create_time'] = ['>=',strtotime($_GET['start'])];
@@ -174,11 +174,8 @@ class User extends Base
         }elseif(!empty($_GET['start'])&&!empty($_GET['end'])){
             $where['create_time'] = ['between',array(strtotime($_GET['start']),strtotime($_GET['end']))];
         }
-//        print_r($_GET);exit;
-        $model = new \app\common\model\MoneyDetail();
+        $model = new MoneyDetail();
         $rows = $model->money_detail_list($where);
-//        echo $rows;exit;
-//        print_r($rows);exit;
         $this->assign([
             'title' => '资金明细',
             'rows' => $rows,

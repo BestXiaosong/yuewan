@@ -8,9 +8,9 @@
             <div class="navbar navbar-default">
                 <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
                     <div class="form-group">
-                        <label class="control-label" for="input-order-id">手机号码</label>
+                        <label class="control-label" for="input-order-id">用户昵称</label>
                         <div class="input-group">
-                            <input type="text" name="phone" value="{$Think.get.phone}" placeholder="手机号码"
+                            <input type="text" name="nick_name" value="{$Think.get.nick_name}" placeholder="用户昵称"
                                    id="input-order-id" class="form-control">
                         </div>
                     </div>
@@ -39,11 +39,10 @@
                             <thead>
                             <tr>
                                 <td>ID</td>
-                                <td>手机号码</td>
-                                <td>充值货币</td>
+                                <td>用户昵称</td>
+                                <td>充值方式</td>
                                 <td>金额</td>
                                 <td>充值时间</td>
-                                <td>操作</td>
                             </tr>
                             </thead>
                             <tbody>
@@ -51,13 +50,17 @@
                             {volist name="rows" id="row" }
                             <tr>
                                 <td>{$row.b_id}</td>
-                                <td>{$row.phone}</td>
-                                <td>{$row.money_type}</td>
+                                <td>{$row.nick_name}</td>
+                                <td>
+                                    {switch name="$row.trade_type"}
+                                    {case value="1"}微信{/case}
+                                    {case value="2"}支付宝{/case}
+                                    {case value="3"}苹果内购{/case}
+                                    {default /}未知类型
+                                    {/switch}
+                                </td>
                                 <td>{$row.money}</td>
                                 <td>{$row.create_time}</td>
-                                <td>
-                                    <a class="btn btn-primary " href="{:url('money/detail2',['id'=>$row.b_id])}">查看详情</a>
-                                </td>
                             </tr>
                             {/volist}
                             <!-- 列表循环结束 -->

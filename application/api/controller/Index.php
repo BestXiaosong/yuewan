@@ -181,7 +181,7 @@ class Index extends Base
     {
 
         $map['skill_id'] = $id;
-        $map['status']   = 1;
+//        $map['status']   = 1;
 
         $model = new \app\common\model\Skill();
 

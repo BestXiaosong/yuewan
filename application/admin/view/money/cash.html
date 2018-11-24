@@ -8,9 +8,9 @@
             <div class="navbar navbar-default">
                 <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
                     <div class="form-group">
-                        <label class="control-label" for="input-order-id">手机号码</label>
+                        <label class="control-label" for="input-order-id">用户昵称</label>
                         <div class="input-group">
-                            <input type="text" name="phone" value="{$Think.get.phone}" placeholder="手机号码"
+                            <input type="text" name="nick_name" value="{$Think.get.nick_name}" placeholder="用户昵称"
                                    id="input-order-id" class="form-control">
                         </div>
                         <label class="control-label" for="input-order-id">状态</label>
@@ -41,9 +41,9 @@
                             <thead>
                             <tr>
                                 <td>ID</td>
-                                <td>手机号码</td>
-                                <td>提现货币</td>
-                                <td>金额</td>
+                                <td>用户昵称</td>
+                                <td>提现金额</td>
+                                <td>提现方式</td>
                                 <td>状态</td>
                                 <td>提现申请时间</td>
                                 <td>操作</td>
@@ -54,16 +54,22 @@
                             {volist name="rows" id="row" }
                             <tr>
                                 <td>{$row.b_id}</td>
-                                <td>{$row.phone}</td>
-                                <td>{$row.money_type}</td>
+                                <td>{$row.nick_name}</td>
                                 <td>{$row.money}</td>
+                                <td>
+                                    {switch name="$row.acType"}
+                                    {case value="1"}银行卡{/case}
+                                    {case value="2"}支付宝{/case}
+                                    {default /}未知类型
+                                    {/switch}
+                                </td>
                                 <td>{$status[$row.status]['msg']}</td>
                                 <td>{$row.create_time}</td>
                                 <td>
                                     {if condition="$row.status == 2"}
                                         <a class="btn btn-primary " href="{:url('money/edit',['id'=>$row.b_id])}">审核</a>
                                     {else /}
-                                        <a class="btn btn-primary " href="{:url('money/detail',['id'=>$row.b_id])}">查看详情</a>
+                                        <a class="btn btn-primary " href="{:url('money/edit',['id'=>$row.b_id])}">查看详情</a>
                                     {/if}
 
                                 </td>

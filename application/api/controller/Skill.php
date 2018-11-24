@@ -217,17 +217,35 @@ class Skill extends User
     public function editSkill()
     {
 
-        //TODO 完成技能编辑
-        $data = request()->only(['my_form','my_gift_id'],'post');
+        $data = request()->only(['my_form','my_gift_id','apply_id'],'post');
 
+        $map['apply_id'] = $data['apply_id'];
+        $map['status']   = 1;
+        $map['user_id']  = $this->user_id;
 
+        $model = new \app\common\model\SkillApply();
 
+        $row = $model->where($map)->find();
 
+        if (!$row) api_return(0,'非法参数');
 
+        $where['skill_id'] = $row['skill_id'];
 
+        $skill = Db::name('skill')->where($where)->find();
 
+        if (!strstr($skill['gift_id'],$data['my_gift_id'])) api_return(0,'礼物id错误');
 
+        $result = $row->update($data);
 
+        if ($result){
+
+            api_return(1,'修改成功');
+
+        }else{
+
+            api_return(0,$model->getError());
+
+        }
 
     }
 
@@ -378,7 +396,7 @@ class Skill extends User
 
         $this->ApiLimit(1,$this->user_id);
 
-        $data = request()->only(['skill_id','to_user','form_id','gift_id','num','order_time','type'],'post');
+        $data = request()->only(['skill_id','to_user','form_id','gift_id','num','order_time','type','remark'],'post');
 
         $to_user = dehashid($data['to_user']);
 

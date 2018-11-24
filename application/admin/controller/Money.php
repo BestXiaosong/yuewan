@@ -54,7 +54,7 @@ class Money extends Base
     {
         $where = [];
         if (!empty($_GET['status'])) $where['a.status']  = input('get.status');
-        if (!empty($_GET['phone'])) $where['a.status']  = ['like','%'.trim(input('get.phone')).'%'];
+        if (!empty($_GET['nick_name'])) $where['u.nick_name']  = ['like','%'.trim(input('get.nick_name')).'%'];
         $where['a.type'] = 1;
         $model = new Bankroll();
         $rows  = $model->cashList($where);
@@ -90,7 +90,7 @@ class Money extends Base
     {
         $where = [];
         if (!empty($_GET['status'])) $where['a.status']  = input('get.status');
-        if (!empty($_GET['phone'])) $where['a.status']  = ['like','%'.trim(input('get.phone')).'%'];
+        if (!empty($_GET['nick_name'])) $where['u.nick_name']  = ['like','%'.trim(input('get.nick_name')).'%'];
         $where['a.type'] = 2;
         $model = new Bankroll();
         $rows  = $model->cashList($where);
@@ -120,39 +120,30 @@ class Money extends Base
             $cash = $model->getDetail(['b_id'=>$data['id']]);
             if ($cash['status'] !== 2) $this->error('该申请已处理,请勿重复操作');
             if ($data['status'] == 1){//审核通过
-                if (empty($data['Keystore'])) $this->error('请输入付款钱包');
-                if (empty($data['Pwd'])) $this->error('请输入钱包密码');
-                $row['Sym']    = $cash['money_type'];
-                $row['Amount'] = $cash['money'];
-                $row['Nonce']  = -1;
-                $eth_cash = Db::name('extend')->where('id',1)->cache(60)->value($cash['money_type'].'_cash');
-                //手续费比例
-                $ratio = bcdiv($eth_cash,100);
-                //应付手续费
-                $charge = bcmul($cash['money'],$ratio,2);
-                $row['Gas']      = $charge;
-                $row['Limit']    = $charge;
-                $row['Pwd']      = $data['Pwd'];
-                $row['ETHAddr']  = $cash['ETHAddr'];
-                $row['Keystore'] = $data['Keystore'];
-                $data = MBerryApi($row,'api.WithDraw');
-                if ($data['Msg'] == 'success'){
-                    $update['status'] = 3;
-                    $update['TxHash'] = $data['Data']['TxHash'];
-                    $result = Db::name('bankroll')->where('b_id',$data['id'])->update($update);
-                    //写入平台流水
-                    stream($cash['money'],4,"用户(".$cash['phone'].')提现'.$cash['money'].$cash['money_type'],3);
-                    stream($charge,4,"用户(".$cash['phone'].')提现'.$cash['money'].$cash['money_type']."付出手续费$ratio%".$charge.$cash['money_type']);
-                    if (!$result)  $this->error('系统错误');
-                }else{
-                    $this->error($data['Msg']);
+
+                switch ($cash['acType']){
+                    case '1':
+
+                        $update['status'] = 5;
+                        Db::name('bankroll')->where('b_id',$data['id'])->update($update);
+
+                        break;
+                    case '2'://支付宝
+                        //TODO 支付宝申请下来后开放自动打款
+//                        break;
+                    default:
+                        api_return(0,'未处理提现方式');
                 }
+
+
+
+
             }else{//驳回
                 Db::startTrans();
                 try{
                     $update['status'] = 4;
                     Db::name('bankroll')->where('b_id',$data['id'])->update($update);
-                    Db::name('users')->where('user_id',$cash['user_id'])->setInc($cash['money_type'],$cash['money']);
+                    Db::name('users')->where('user_id',$cash['user_id'])->setInc('cash',$cash['money']);
                     Db::commit();
                 }catch (Exception $e){
                     Db::rollback();
@@ -172,21 +163,7 @@ class Money extends Base
     }
 
 
-    /**
-     * 提现详情
-     */
-    public function detail()
-    {
-        $model = new Bankroll();
-        $where['a.b_id'] = input('id');
-        $data = $model->getDetail($where);
-        $this->assign([
-            'data' => $data,
-            'title' => '提现详情',
-            'status' => $this->status,
-        ]);
-        return view();
-    }
+
         /*
          * 统计图
          */
@@ -197,6 +174,8 @@ class Money extends Base
         }else{
             $map['status'] = ['in','1,5'];
         }
+
+
         if(!empty($_GET['startDate'])){
             $startDate=strtotime(trim(input('get.startDate')));
         }
@@ -210,7 +189,7 @@ class Money extends Base
         }else if($endDate&&empty($startDate)){
             $map['create_time']=['< time',$endDate];
         }
-        $res  = Db::name('bankroll')->where($map)->field('create_time,money,status')->order('create_time')->select();
+        $res  = Db::name('bankroll')->where($map)->field('create_time,money,status,type')->order('create_time')->select();
         $rows = [];
         foreach ($res as $k => $v){
             $date = date('Y-m-d',$v['create_time']);

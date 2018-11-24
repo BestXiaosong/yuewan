@@ -8,9 +8,12 @@
 
 namespace app\api\controller;
 
+use app\common\logic\UserFollow;
 use app\common\model\Banner;
 use app\common\model\SkillApply;
+use app\common\model\Users;
 use function Composer\Autoload\includeFile;
+use Monolog\Handler\IFTTTHandler;
 use think\Db;
 
 class Api extends User
@@ -220,10 +223,134 @@ class Api extends User
 
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 用户查找
+     */
+    public function search()
+    {
+
+        $map = [];
+
+        $data = input('post.');
+
+        if ($data['nick_name']){
+
+            $map['a.nick_name|a.uuid'] = ['like','%'.trim($data['nick_name']).'%'];
+
+        }
+
+        if ($data['section']){
+
+            $time = ageDate($data['section']);
+            $map['a.birthday'] = ['between time',$time];
+
+        }
+
+        if ($data['sex']){
+
+            $map['a.sex'] = $data['sex'];
+
+        }
+
+        $map['a.user_id'] = ['neq',$this->user_id];
+
+        if ($data['city'] == 'distance'){
+            $distance = true;
+        }else{
+            $distance = false;
+        }
+
+        $model = new Users();
+
+        $rows = $model->search($map,$this->user_id,$distance);
+
+        api_return(1,'获取成功',$rows);
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 关注用户
+     */
+    public function follow()
+    {
+        $id = dehashid(input('post.id'));
+
+        if (!is_numeric($id)){
+            api_return(0,'用户id错误');
+        }
+
+        if ($id = $this->user_id){
+            api_return(0,'您不能关注自己');
+        }
+
+        $map['follow_user'] = $id;
+        $map['user_id']     = $this->user_id;
+
+        $model = new UserFollow();
+
+        $data = $model->get($map);
+
+        if ($data){
+
+            if ($data['status'] == 1){
+                api_return(0,'您已关注该用户,请勿重复操作');
+            }else{
+
+                $result = $data->save(['status'=>1]);
+            }
+
+        }else{
+            $result = $model->saveChange($map);
+        }
+
+        if ($result){
+            api_return(1,'关注成功');
+        }else{
+            api_return(0,$model->getError());
+        }
+
+    }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 取消关注
+     */
+    public function cancel()
+    {
+        $id = dehashid(input('post.id'));
 
+        if (!is_numeric($id)){
+            api_return(0,'用户id错误');
+        }
 
+        $map['follow_user'] = $id;
+        $map['user_id']     = $this->user_id;
+
+        $model = new UserFollow();
+
+        $data = $model->get($map);
+
+        if ($data && $data['status'] == 1){
+
+            $result = $data->save(['status'=>0]);
+
+            if ($result){
+                api_return(1,'取消关注成功');
+            }else{
+                api_return(0,$model->getError());
+            }
+
+        }else{
+            api_return(0,'您未关注该用户!');
+        }
+
+    }
 
 
 

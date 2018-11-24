@@ -6,21 +6,29 @@ namespace app\common\model;
 
 class MoneyDetail extends Base
 {
-    protected $dateFormat = 'Y/m/d H:i';
+    protected $dateFormat = 'Y-m-d H:i';
+
+    public function profile()
+    {
+        return $this->hasOne('users', 'user_id', 'user_id')->field('nick_name');
+    }
+
+
     public function getList($where = []){
-        $file = 'type,money,money_type,create_time,remark';
-        $rows = $this->order('create_time desc')->where($where)->field($file)->paginate();
+        $field = 'type,money,title,create_time,remark,order_id';
+        $rows = $this->order('create_time desc')->order('d_id desc')->where($where)->field($field)->paginate();
         $items = $rows->items();
-        if (empty($items)) return false;
+
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$items];
     }
+
+
     public function money_detail_list($where = [])
     {
-        return db('money_detail')->alias('m')
+        return $this->alias('m')
             ->where($where)
-            ->order('create_time desc')
+            ->order('d_id desc')
             ->paginate('',false,['query'=>request()->param()]);
-//        return db('money_detail')->getLastSql();
     }
 
 }

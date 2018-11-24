@@ -379,33 +379,6 @@ function dehashid($str, $length = 8)
 }
 
 
-//公钥加密
-function hashToken($str)
-{
-    $hash = new \Hashids\Hashids(config('hash_key'), 32);
-    return $hash->encode($str);
-}
-
-/**
- * Created by xiaosong
- * E-mail:306027376@qq.com
- * @param $str
- * @return string
- * @throws Exception
- * 公钥解密
- */
-function deHashToken($str)
-{
-    $hash = new \Hashids\Hashids(config('hash_key'), 32);
-    $rs = $hash->decode($str);
-    if (is_null($rs)) {
-        return '';
-    } else {
-        return $rs[0];
-    }
-}
-
-
 /**
  * Created by xiaosong
  * E-mail:306027376@qq.com
@@ -689,15 +662,6 @@ function form_id_html($form_id = null){
     $str = '';
 
     foreach ($rows as $k => $v){
-
-//        if ($v['status'] == 1){
-//            $status1 = 'checked=""';
-//            $status0 = '';
-//        }else{
-//            $status0 = 'checked=""';
-//            $status1 = '';
-//        }
-
 
         $str .=
             '
@@ -1021,19 +985,55 @@ if (!function_exists('fun_adm_each')){
     }
 }
 
+//根据年龄区间 获取日期区间
+//$section 年龄区间
+function ageDate($section = '1,2',$format = 'date',$type = 'array'){
 
-//获得视频文件的缩略图
-function getVideoCover($file,$time = null,$name = '1.jpg') {
-    if(empty($time))$time = '1';//默认截取第一秒第一帧
-    $strlen = strlen($file);
-    // $videoCover = substr($file,0,$strlen-4);
-    // $videoCoverName = $videoCover.'.jpg';//缩略图命名
-    //exec("ffmpeg -i ".$file." -y -f mjpeg -ss ".$time." -t 0.001 -s 320x240 ".$name."",$out,$status);
-    $str = "ffmpeg -i ".$file." -y -f mjpeg -ss 3 -t ".$time." -s 320x240 ".$name;
-    //echo $str."</br>";
-    $result = system($str);
-    dump($result);
+    $data   = explode(',',$section);
+    $endY   = date('Y') - $data[0];
+    $end    = date($endY.'-m-d 23:59:59');
+    $startY = date('Y') - $data[1];
+    $start  = date($startY.'-m-d 00:00:00');
+
+    if ($format != 'date'){
+        $end   = strtotime($end);
+        $start = strtotime($start);
+    }
+
+    if ($type != 'array'){
+        return $start.','.$end;
+    }else{
+        return [$start,$end];
+    }
 }
+
+
+//根据年月 获取当月时间区间
+//$returnFirstDay 为true返回开始日期，否则返回结束日期
+function getMonthRange($date,$format = 'date',$type = 'array'){
+
+    $timestamp = strtotime( $date );
+
+    $monthFirstDay = date( 'Y-m-1 00:00:00', $timestamp );
+
+    $mdays = date( 't', $timestamp );
+    $monthLastDay = date( 'Y-m-' . $mdays . ' 23:59:59', $timestamp );
+
+    if ($format != 'date'){
+        $monthFirstDay   = strtotime($monthFirstDay);
+        $monthLastDay    = strtotime($monthLastDay);
+    }
+
+    if ($type != 'array'){
+        return $monthFirstDay.','.$monthLastDay;
+    }else{
+        return [$monthFirstDay,$monthLastDay];
+    }
+
+}
+
+
+
 
 //判断是否为非0整数
 function isInt($num){

@@ -34,39 +34,26 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                         <tr>
-                            <td style="text-align: center">序号</td>
-                            <td style="text-align: center">资金类型</td>
-                            <td style="text-align: center">具体金额</td>
-                            <td style="text-align: center">来源</td>
-                            <td style="text-align: center">备注</td>
-                            <td style="text-align: center">使用时间</td>
+                            <td>序号</td>
+                            <td>用户昵称</td>
+                            <td>类型</td>
+                            <td>金额</td>
+                            <td>详情</td>
+                            <td>备注</td>
+                            <td>产生时间</td>
                         </tr>
                         </thead>
                         <tbody>
                         <!-- 列表循环开始 -->
                         {volist name="rows" id="row" key="key"}
                         <tr>
-                            <td style="text-align: center">{$key}</td>
-                            <td style="text-align: center">{if $row.type eq 1}收入{else}支出{/if}</td>
-                            <td style="text-align: center">{$row.money}</td>
-                            <td >{if $row.money_type eq 1}
-                                        红包
-                                {elseif $row.money_type eq 2}
-                                        竞猜
-                                {elseif $row.money_type eq 3}
-                                        兑换
-                                {elseif $row.money_type eq 4}
-                                        拍卖
-                                {elseif $row.money_type eq 5}
-                                        直播间付费
-                                {elseif $row.money_type eq 6}
-                                        充值
-                                {elseif $row.money_type eq 7}
-                                        其他
-                                {/if}
-                            </td>
+                            <td>{$key}</td>
+                            <td>{$row.profile.nick_name}</td>
+                            <td>{if $row.type eq 1}收入{else}支出{/if}</td>
+                            <td>{$row.money}</td>
+                            <td>{$row.title} </td>
                             <td>{$row.remark}</td>
-                            <td style="text-align: center">{$row.create_time|date='Y-m-d H:i',###}</td>
+                            <td>{$row.create_time}</td>
                         </tr>
                         {/volist}
                         <!-- 列表循环结束 -->

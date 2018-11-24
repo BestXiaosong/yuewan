@@ -128,7 +128,7 @@ class SkillApply extends Model
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * param bool $my 为true时获取我接受礼物和标
+     * param bool $my 为true时获取我接受礼物和形式
      */
     public function getRows($map = [],$my = false)
     {
@@ -136,10 +136,13 @@ class SkillApply extends Model
         $rows = $this->alias('a')
             ->join('skill s','s.skill_id = a.skill_id','LEFT')
             ->where($map)
-            ->field('s.skill_name,a.apply_id,a.my_form,a.my_gift_id,s.form_id,s.gift_id,a.mini_price,s.spec')
+            ->field('s.skill_name,a.apply_id,a.my_form,a.my_gift_id,s.form_id,s.gift_id,s.spec')
             ->cache(15)
             ->select();
         foreach ($rows as $k => $v){
+
+            $mini_price = Db::name('gift')->where('gift_id',$v['my_gift_id'])->value('price');
+            $rows[$k]['mini_price'] = $mini_price;
 
             if ($my){
 
@@ -157,10 +160,11 @@ class SkillApply extends Model
             if ($my){
 
                 $gift['gift_id']  = ['in',$v['gift_id']];
+                $gift['price']    = ['>=',$mini_price];
 
             }else{
 
-                $gift['gift_id']  = ['in',$v['my_gift_id']];
+                $gift['gift_id']  = ['in',$v['gift_id']];
 
             }
 

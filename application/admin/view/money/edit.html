@@ -47,33 +47,37 @@
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
-                                    <td>手机号码:</td>
-                                    <td>{$data.phone}</td>
+                                    <td>用户昵称:</td>
+                                    <td>{$data.nick_name}</td>
                                 </tr>
                                 <tr>
-                                    <td>提现货币类型:</td>
-                                    <td>{$data.money_type}</td>
+                                    <td>提现类型:</td>
+                                    <td>
+                                        {switch name="$data.acType"}
+                                        {case value="1"}银行卡{/case}
+                                        {case value="2"}支付宝{/case}
+                                        {default /}未知类型
+                                        {/switch}
+
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>金额:</td>
                                     <td>{$data.money}</td>
                                 </tr>
                                 <tr>
-                                    <td>提现地址:</td>
-                                    <td>{$data.ETHAddr}</td>
+                                    <td>账号:</td>
+                                    <td>{$data.account}</td>
+                                </tr>
+                                <tr>
+                                    <td>备注:</td>
+                                    <td>{$data.remark}</td>
                                 </tr>
                                 <tr>
                                     <td>提现发起时间:</td>
                                     <td>{$data.create_time}</td>
                                 </tr>
-                                <tr>
-                                    <td>支付钱包:</td>
-                                    <td><textarea name="Keystore" class="form-control"></textarea></td>
-                                </tr>
-                                <tr>
-                                    <td>密码钱包:</td>
-                                    <td><input type="text" class="form-control" name="Pwd" value="" placeholder="请输入钱包密码" ></td>
-                                </tr>
+
                                 </tbody>
                             </table>
                         </div>

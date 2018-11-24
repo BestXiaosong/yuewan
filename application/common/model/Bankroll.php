@@ -16,9 +16,10 @@ class Bankroll extends Model
     public function cashList($where = []){
         return $this->alias('a')
             ->join('users u','u.user_id = a.user_id','LEFT')
+            ->join('user_account ac','ac.account_id = a.account_id','LEFT')
             ->where($where)
             ->order('a.create_time desc')
-            ->field('a.*,u.phone')
+            ->field('a.*,u.nick_name,ac.type as acType')
             ->paginate('',false,['query'=>request()->param()]);
     }
 
@@ -37,15 +38,11 @@ class Bankroll extends Model
      */
     public function getRows($where = [])
     {
-        $rows = $this->where($where)->field('order_num,money,money_type,status,type,create_time')->paginate();
+        $rows = $this->where($where)->field('money,status,type,create_time,trade_type')->paginate();
         $item = $rows->items();
         if (empty($item)) return false;
         foreach ($item as $k => $v){
-            if ($v['type'] == 1){
-                $item[$k]['money'] = '+'.$v['money'];
-            }else{
-                $item[$k]['money'] = '-'.$v['money'];
-            }
+
             switch ($v['status']){
                 case 1:
                     $item[$k]['status'] = '充值成功';
@@ -62,7 +59,32 @@ class Bankroll extends Model
                 case 5:
                     $item[$k]['status'] = '提现成功';
                     break;
+                default:
+                    $item[$k]['trade_type'] = '未知状态';
+                    break;
             }
+
+            switch ($v['trade_type']){
+                case 1:
+                    $item[$k]['trade_type'] = '微信';
+                    break;
+                case 2:
+                    $item[$k]['trade_type'] = '支付宝';
+                    break;
+                case 3:
+                    $item[$k]['trade_type'] = '苹果内购';
+                    break;
+                case 4:
+                    $item[$k]['trade_type'] = '银行卡提现';
+                    break;
+                case 5:
+                    $item[$k]['trade_type'] = '支付宝提现';
+                    break;
+                default:
+                    $item[$k]['trade_type'] = '未知类型';
+                    break;
+            }
+
         }
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$item];
 
@@ -73,8 +95,9 @@ class Bankroll extends Model
     {
         return $this->alias('a')
             ->join('users u','u.user_id = a.user_id','LEFT')
+            ->join('user_account ac','ac.account_id = a.account_id','LEFT')
             ->where($where)
-            ->field('a.*,u.phone')
+            ->field('a.*,u.nick_name,ac.type as acType,ac.account,ac.remark,ac.real_name')
             ->find();
     }
 
