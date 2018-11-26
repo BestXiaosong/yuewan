@@ -138,33 +138,51 @@ class Users extends Model
      * Created by xiaosong
      * E-mail:4155433@gmail.com
      */
-    public function search($map = [],$user_id = 0,$distance = false)
+    public function search($map = [],$user_id = 0,$distance = false,$userExtra = [])
     {
 
         if ($distance){
 
+            $max  = Db::name('extend')->where('id',1)->cache(60)->value('distance');
+
+            $join = [
+                ['user_extend e','e.user_id = a.user_id','left'],
+            ];
+
+            $log = $userExtra['log'];
+            $lat = $userExtra['lat'];
+
+            $field = "e.place,(st_distance (point (e.log,e.lat),point($log,$lat) ) / 0.0111) AS distance,a.user_id,a.uuid,a.nick_name,a.header_img";
+            $items =  $this->alias('a')->where($map)->join($join)
+                ->field($field)
+                ->order('distance')
+                ->having("distance < $max")
+                ->cache(15)
+                ->select();
+            $thisPage = 1;
+            $hasNext  = false;
+
         }else{
 
-            $rows = $this->alias('a')->where($map)->field('user_id,uuid,nick_name,header_img')->paginate();
+            $rows = $this->alias('a')->where($map)->field('a.user_id,a.uuid,a.nick_name,a.header_img')->paginate();
+            $thisPage = $rows->currentPage();
+            $hasNext = $rows->hasMore();
+            $items = $rows->items();
 
         }
-
-        $items = $rows->items();
 
         $where['user_id'] = $user_id;
         $where['status']  = 1;
 
         foreach ($items as $k => $v){
 
-            $where['follow_user'] = $v['user_id'];
-            $items[$k]['is_follow'] = Db::name('user_follow')->where($where)->value('follow_id');
-
-            $items[$k]['user_id'] = hashid($v['user_id']);
+            $where['follow_user']   = $v['user_id'];
+            $items[$k]['is_follow'] = Db::name('user_follow')->where($where)->value('follow_id')?1:0;
+            $items[$k]['user_id']   = hashid($v['user_id']);
 
         }
 
-        return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$items];
-
+        return ['thisPage'=>$thisPage,'hasNext'=>$hasNext,'data'=>$items];
     }
     
     

@@ -18,7 +18,7 @@ class Bankroll extends Model
             ->join('users u','u.user_id = a.user_id','LEFT')
             ->join('user_account ac','ac.account_id = a.account_id','LEFT')
             ->where($where)
-            ->order('a.create_time desc')
+            ->order('a.b_id desc')
             ->field('a.*,u.nick_name,ac.type as acType')
             ->paginate('',false,['query'=>request()->param()]);
     }

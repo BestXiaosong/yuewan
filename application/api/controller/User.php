@@ -32,12 +32,8 @@ class User extends Base
      */
     public function loginOut()
     {
-        $user_id = $this->user_id;
-        $result  = Db::name('users')->where('user_id',$user_id)->update(['token_expire'=>0]);
-        if ($result !== false){
-            api_return(1,'操作成功');
-        }
-        api_return(0,'操作失败');
+        cache('token_'.hashid($this->user_id),null);
+        api_return(1,'退出成功');
     }
 
     /**
@@ -533,22 +529,6 @@ class User extends Base
         $result = Db::name('users')->where('user_id',$this->user_id)->update(['phone'=>$phone]);
         if ($result)api_return(1,'绑定成功');
         api_return(0,'绑定失败');
-    }
-
-
-
-
-    /**
-     * 充值提现记录表
-     */
-    public function bankroll()
-    {
-
-        $model = new Bankroll();
-        $where['user_id'] = $this->user_id;
-        $rows = $model->getRows($where);
-        if ($rows !== false)  api_return(1,'获取成功',$rows);
-        api_return(0,'暂无数据');
     }
 
 

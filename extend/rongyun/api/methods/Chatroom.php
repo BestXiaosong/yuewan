@@ -1,7 +1,5 @@
 <?php
-
-namespace rongyun\api\methods;
-use think\Exception;
+namespace chat\methods;
 class Chatroom{
 
 	private $SendRequest;
@@ -71,6 +69,38 @@ class Chatroom{
     		print_r($e->getMessage());
     	}
    }
+
+    /**
+     * 检测用户是否在聊天室方法
+     *
+     * @param  userId:要查询的用户 ID，每次最多不超过 1000 个用户 ID（必传）
+     * @param  chatroomId:要加入的聊天室 Id。（必传）
+     *
+     * @return $json
+     **/
+    public function exist($userId, $chatroomId) {
+        try{
+            if (empty($userId))
+                throw new Exception('Paramer "userId" is required');
+
+            if (empty($chatroomId))
+                throw new Exception('Paramer "chatroomId" is required');
+
+
+            $params = array (
+                'userId' => $userId,
+                'chatroomId' => $chatroomId
+            );
+
+            $ret = $this->SendRequest->curl('/chatroom/user/exist.json',$params,'urlencoded','im','POST');
+            if(empty($ret))
+                throw new Exception('bad request');
+            return $ret;
+
+        }catch (Exception $e) {
+            print_r($e->getMessage());
+        }
+    }
     
     /**
 	 * 查询聊天室信息方法 

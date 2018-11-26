@@ -162,8 +162,7 @@ class Api extends User
                 $rows = $cache;
 
             }else{
-                //TODO 人多了之后把排除自己加上
-//                $map['a.user_id'] = ['neq',$this->user_id];
+                $map['a.user_id'] = ['neq',$this->user_id];
                 $max  = Db::name('extend')->where('id',1)->cache(60)->value('distance');
 
                 $rows = $model->getCity($map,$this->userExtra('log,lat'),$page,$max);
@@ -256,15 +255,12 @@ class Api extends User
 
         $map['a.user_id'] = ['neq',$this->user_id];
 
-        if ($data['city'] == 'distance'){
-            $distance = true;
-        }else{
-            $distance = false;
-        }
-
         $model = new Users();
-
-        $rows = $model->search($map,$this->user_id,$distance);
+        if ($data['city'] == 'distance'){
+            $rows = $model->search($map,$this->user_id,true,$this->userExtra('log,lat'));
+        }else{
+            $rows = $model->search($map,$this->user_id);
+        }
 
         api_return(1,'获取成功',$rows);
 
