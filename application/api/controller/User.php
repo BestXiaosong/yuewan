@@ -114,27 +114,21 @@ class User extends Base
      * 获取用户扩展信息
      */
     protected function userExtra($field = '',$user_id = null,$cache = 3){
-
         if ($user_id){
-
             $map['user_id'] = $user_id;
-
         }else{
-
             $map['user_id'] = $this->user_id;
-
         }
-
+        $data =  Db::name('user_extend')->field($field)->where($map)->cache($cache)->find();
         if (strstr($field,',') || empty($field)){
-
-            return Db::name('user_extend')->field($field)->where($map)->cache($cache)->find();
-
+            if (!$field){ return $data; }
+            $arr = explode(',',$field);
+            foreach ($arr as $v){
+                $array[] = $data[$v];
+            }
         }else{
-
-            return Db::name('user_extend')->where($map)->cache($cache)->value($field);
-
+           return $data[$field];
         }
-
     }
 
 
@@ -619,9 +613,38 @@ class User extends Base
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 获取用户加速倍率或赠送金额
+     */
+//    protected function up($field = 'up',$user_id = null)
+//    {
+//       if (!$user_id){
+//           $user_id = $this->user_id;
+//       }
+//
+//       $data = $this->userExtra('VIP,VIP_time',$user_id);
+//       $up   = 1;
+//
+////        1-5 子爵、伯爵、公爵、国王、皇帝
+//
+//
+//
+//       if ($data['VIP_time'] > time()){
+//            $up = $VIP[$data['VIP']][$field];
+//       }
+//       return $up;
+//    }
 
-
-
+    protected  $VIP = [
+        0=>['up'=>1  ,'give'=>0  ,'name'=>'无'  ,'price'=>0],
+        1=>['up'=>1.1,'give'=>600,'name'=>'子爵','price'=>1000],
+        2=>['up'=>1.2,'give'=>600,'name'=>'伯爵','price'=>1000],
+        3=>['up'=>1.3,'give'=>600,'name'=>'公爵','price'=>1000],
+        4=>['up'=>1.6,'give'=>600,'name'=>'国王','price'=>1000],
+        5=>['up'=>2  ,'give'=>600,'name'=>'皇帝','price'=>1000],
+    ];
 
 
 

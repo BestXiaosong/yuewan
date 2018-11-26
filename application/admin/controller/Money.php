@@ -11,6 +11,7 @@ namespace app\admin\controller;
 
 use app\common\model\Bankroll;
 use app\common\model\CapitalFlow;
+use app\common\model\UserAccount;
 use think\Db;
 use think\Exception;
 
@@ -18,20 +19,10 @@ class Money extends Base
 {
 
     protected $status = [
-        2 => ['status' => '2' ,'msg' => '提现待审核'],
-        3 => ['status' => '3' ,'msg' => '提现处理中'],
-        4 => ['status' => '4' ,'msg' => '提现驳回'],
+        2 => ['status' => '2' ,'msg' => '待审核'],
+//        3 => ['status' => '3' ,'msg' => '提现处理中'],
+        4 => ['status' => '4' ,'msg' => '驳回'],
         5 => ['status' => '5' ,'msg' => '提现成功'],
-    ];
-
-    /**
-     * 金币类型1=>积分 2=>比特币  3=>以太币 4=>BCDN'
-     */
-    protected $money_type = [
-        1 => ['key' => '1' ,'val' => '积分'],
-        2 => ['key' => '2' ,'val' => '比特币'],
-        3 => ['key' => '3' ,'val' => '以太币'],
-        4 => ['key' => '4' ,'val' => 'BCDN'],
     ];
 
 
@@ -281,6 +272,36 @@ class Money extends Base
         ]);
         return view();
     }
-    
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 提现账号
+     */
+    public function account()
+    {
+
+        $where = [];
+        if (!empty($_GET['status'])) $where['a.status']  = input('get.status');
+        if (!empty($_GET['nick_name'])) $where['u.nick_name']  = ['like','%'.trim(input('get.nick_name')).'%'];
+
+        $model = new UserAccount();
+        $rows  = $model->getList($where);
+        $this->assign([
+            'title' => '充值记录',
+            'rows' => $rows,
+            'pageHTML' => $rows->render(),
+        ]);
+
+
+        return view();
+    }
+
+    public function change()
+    {
+        $this->_change('user_account');
+    }
+
+
     
 }

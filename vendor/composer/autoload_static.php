@@ -21,7 +21,6 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
     public static $prefixLengthsPsr4 = array (
         't' => 
         array (
-            'think\\worker\\' => 13,
             'think\\oracle\\' => 13,
             'think\\mongo\\' => 12,
             'think\\migration\\' => 16,
@@ -38,10 +37,6 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         array (
             'Yansongda\\Supports\\' => 19,
             'Yansongda\\Pay\\' => 14,
-        ),
-        'W' => 
-        array (
-            'Workerman\\' => 10,
         ),
         'S' => 
         array (
@@ -75,10 +70,6 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
     );
 
     public static $prefixDirsPsr4 = array (
-        'think\\worker\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/topthink/think-worker/src',
-        ),
         'think\\oracle\\' => 
         array (
             0 => __DIR__ . '/..' . '/topthink/think-oracle/src',
@@ -120,10 +111,6 @@ class ComposerStaticInitf9a4edff7ca5d83a52a9242e688ac24a
         'Yansongda\\Pay\\' => 
         array (
             0 => __DIR__ . '/..' . '/yansongda/pay/src',
-        ),
-        'Workerman\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/workerman/workerman',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (

@@ -15,6 +15,7 @@ use app\common\model\Users;
 use function Composer\Autoload\includeFile;
 use Monolog\Handler\IFTTTHandler;
 use think\Db;
+use think\Exception;
 
 class Api extends User
 {
@@ -349,8 +350,50 @@ class Api extends User
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 获取用户贵族等级
+     */
+    public function VIP()
+    {
+        api_return(1,'获取成功',$this->userExtra('VIP'));
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 购买贵族
+     */
+    public function buyVIP()
+    {
+
+        $this->ApiLimit(1,$this->user_id);
+
+        //type 购买方式
+        $data = request()->only(['VIP','type'],'post');
+        
+        $VIP = $this->VIP[$data['VIP']];
+
+        Db::startTrans();
+        try{
+            //余额支付
+            if ($data['type'] == 'integral'){
+
+                $this->moneyDec($data['price']);
+
+            }
 
 
 
+            Db::commit();
+        }catch (Exception $e){
+            Db::rollback();
+            api_return(0,'服务器繁忙,请稍后重试',$e->getMessage());
+        }
+
+        api_return(1,'购买成功');
+
+    }
 
 }

@@ -34,13 +34,6 @@ class Gift extends  User
 
 
 
-
-
-
-
-
-
-
             //我收到的礼物接口
         public function  recordGift()
         {
