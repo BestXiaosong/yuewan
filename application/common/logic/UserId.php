@@ -15,9 +15,11 @@ class UserId extends Model
     public function saveChange($data){
         if(is_numeric($data['ID'])){
             if($data['status'] == 1){
-                db('users')->where(['user_id'=>$data['user_id']])->update([$this->getPk()=>$data['ID'],'check'=>1]);
+                db('users')->where(['user_id'=>$data['user_id']])->update([$this->getPk()=>$data['ID']]);
             }
             return $this->validate(true)->allowField(true)->save($data,[$this->getPk()=>$data['ID']]);
+        }else{
+            return $this->validate(true)->allowField(true)->save($data);
         }
     }
 

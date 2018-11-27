@@ -9,83 +9,54 @@
 namespace app\admin\controller;
 
 
+use app\common\model\Helpers;
 use app\common\model\Opinion;
 use think\Db;
 use think\Request;
 
 class Message extends Base
 {
-    //系统消息列表
-    public function index()
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 帮助文档列表
+     */
+    public function helpers()
     {
-        $where['user_id'] = 0;
-        if (!empty($_GET['title'])) {
-            $where['title'] = ['like', '%' . input('get.title') . '%'];
-        }
-        if (!isEmpty($_GET['status'])) {
-            $where['status'] = input('get.status');
-        }
-        if (!isEmpty($_GET['type'])) {
-            $where['type'] = input('get.type');
-        }
-        $this->_list2('message', 'mid DESC', $where, '', true);
-        $this->assign('title', '系统公告列表');
-        return view();
-    }
 
-    public function edit()
-    {
-        if (request()->isPost()) {
-            $data = input('post.');
-            $model = new \app\common\logic\Message();
-            $data['user_id'] = 0;
-            $result = $model->saveChange($data);
-            if ($result !== false) {
-                $this->success('操作成功', url('/message/index'));
-            }
-            $this->error($model->getError());
-        }
-        $this->_show('message', 'mid');
-        $this->assign('title', '系统公告编辑');
-        return view();
-    }
+        $map   = [];
+        $model = new Helpers();
+        $rows  = $model->getList($map);
 
-
-    public function add()
-    {
-        if (request()->isPost()) {
-            $data = input('post.');
-            $model = new \app\common\logic\Message();
-            $data['user_id'] = 0;
-            $result = $model->saveChange($data);
-            if ($result !== false) {
-                $this->success('操作成功', url('/message/index'));
-            }
-            $this->error($model->getError());
-        }
-        $this->assign('title', '系统公告编辑');
+        $this->assign([
+            'title'=>'帮助文档列表',
+            'pageHTML'=>$rows->render(),
+            'rows'=>$rows
+        ]);
         return view();
+
     }
 
     public function change()
     {
-        $data = input();
-        $result = Db::name('message')->update(['status' => $data['type'], 'mid' => $data['id']]);
-        if ($result !== false) {
-            $this->success('操作成功');
-        }
-        $this->error('操作失败');
+        $field = input('str')?input('str'):'status';
+        $this->_change('helpers',$field);
     }
 
-    public function del()
+    /**
+     * 帮助文档编辑
+     */
+    public function edit()
     {
-        $id = input('id');
-        $result = Db::name('message')->delete($id);
-        if ($result !== false) {
-            $this->success('删除成功');
-        }
-        $this->error('删除失败');
+
+        $this->_edit('helpers','帮助文档编辑',url('helpers'),'helpers');
+
+        return view();
     }
+
+
+
+
 
     /////////////////反馈/////////////////////
 

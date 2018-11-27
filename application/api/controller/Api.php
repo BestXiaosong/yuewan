@@ -9,13 +9,13 @@
 namespace app\api\controller;
 
 use app\common\logic\UserFollow;
-use app\common\model\Banner;
+use app\common\logic\UserId;
+use app\common\model\Helpers;
 use app\common\model\SkillApply;
 use app\common\model\Users;
-use function Composer\Autoload\includeFile;
-use Monolog\Handler\IFTTTHandler;
 use think\Db;
 use think\Exception;
+use think\helper\Time;
 
 class Api extends User
 {
@@ -355,45 +355,64 @@ class Api extends User
      * E-mail:4155433@gmail.com
      * 获取用户贵族等级
      */
-    public function VIP()
+    public function noble()
     {
-        api_return(1,'获取成功',$this->userExtra('VIP'));
+        $data['noble'] = $this->userExtra('noble_id,noble_time');
+
+        $data['rows']  = Db::name('noble')->field('create_time,update_time',true)->order('noble_id')->select();
+
+        api_return(1,'获取成功',$data);
+
     }
 
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * 购买贵族
+     * 身份认证提交页面
      */
-    public function buyVIP()
+    public function checkView()
+    {
+        api_return(1,'获取成功',$this->extend('check_explain,face_example,back_example,self_example'));
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 身份认证
+     */
+    public function check()
     {
 
-        $this->ApiLimit(1,$this->user_id);
+        $data = request()->only(['real_name','ID_num','face','back','img'],'post');
 
-        //type 购买方式
-        $data = request()->only(['VIP','type'],'post');
-        
-        $VIP = $this->VIP[$data['VIP']];
+        if ($this->userInfo('ID')) api_return(0,'您已实名认证,请勿重复操作');
 
-        Db::startTrans();
-        try{
-            //余额支付
-            if ($data['type'] == 'integral'){
+        $map['user_id'] = $this->user_id;
 
-                $this->moneyDec($data['price']);
+        $model = new UserId();
 
+        $item = $model->where($map)->find();
+        $data['status'] = 3;
+
+        if ($item){
+
+            if ($item['status'] == 3) api_return(0,'您的身份认证正在审核中,请稍后重试');
+
+            $result = $item->validate(true)->save($data);
+            if (!$result){
+                api_return(0,$item->getError());
             }
-
-
-
-            Db::commit();
-        }catch (Exception $e){
-            Db::rollback();
-            api_return(0,'服务器繁忙,请稍后重试',$e->getMessage());
+        }else{
+            $data['user_id'] = $this->user_id;
+            $result = $model->saveChange($data);
         }
 
-        api_return(1,'购买成功');
-
+        if ($result) api_return(1,'提交成功,请耐心等待管理员审核');
+        api_return(0,$model->getError());
     }
+    
+    
+
+
 
 }

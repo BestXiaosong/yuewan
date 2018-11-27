@@ -66,7 +66,7 @@ class Users extends Model
             ['user_extend e','e.user_id = a.user_id','left']
         ];
 
-        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.sign,e.online_time,e.online_status,e.room_id,e.noble,e.level';
+        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level';
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -84,8 +84,9 @@ class Users extends Model
 
                 }
 
-                if ($item['noble']){
-                    //无贵族身份 不查询等级颜色
+                if ($item['noble_id']){
+                    //TODO 查询贵族等级
+                    //有贵族身份 不查询等级颜色
                     $item['color'] = '';
                 }else{
 

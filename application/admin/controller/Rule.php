@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 use app\common\logic\Explain;
+use app\common\logic\Logic;
 use app\common\model\Admins;
 use app\common\model\AuthGroup;
 use app\common\model\AuthGroupAccess;
@@ -8,6 +9,7 @@ use app\common\model\AuthRule;
 use app\common\model\Coin;
 use app\common\model\Version;
 use think\Db;
+use think\Exception;
 use think\Request;
 
 /**
@@ -54,6 +56,49 @@ class Rule extends \app\admin\controller\Base {
         ]);
         return view();
     }
+
+
+    /**
+     * 贵族设置
+     */
+    public function noble()
+    {
+        if (request()->isPost()){
+
+
+            $price = input('post.price/a');
+            $id = input('post.noble_id/a');
+            $give = input('post.give/a');
+            $speed = input('post.speed/a');
+
+            Db::startTrans();
+            try{
+
+                foreach ($price as $k => $v){
+                    $data[$k]['noble_id'] = $id[$k];
+                    $data[$k]['give'] = $give[$k];
+                    $data[$k]['speed'] = $speed[$k];
+                    $data[$k]['price'] = $v;
+                    Db::name('noble')->where('noble_id',$id[$k])->update($data[$k]);
+                }
+
+                Db::commit();
+            }catch (Exception $e){
+                Db::rollback();
+                $this->error($e->getMessage());
+            }
+
+            $this->success('修改成功');
+
+        }
+        $rows = Db::name('noble')->select();
+        $this->assign([
+            'title' => '贵族设置',
+            'rows' => $rows,
+        ]);
+        return view();
+    }
+
 
     /**
      * Created by xiaosong

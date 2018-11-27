@@ -5,11 +5,6 @@
     .form-control {
         max-width: 350px;
     }
-    .alert{
-        padding: 5px;
-        border: 1px solid #999999;
-    }
-
 
     .tb-name {
         width: 238px;
@@ -26,8 +21,6 @@
         display: none;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="/public/plugs/jQuery-Tags-Input/src/jquery.tagsinput.css" />
-<link rel="stylesheet" href="/public/admin/ueditor/themes/default/css/ueditor.min.css">
 {/block}
 {block name="main"}
 <section class="content">
@@ -54,31 +47,52 @@
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
+                                    <td>图标:</td>
+                                    <td>{:uploadHtml('img',$data.img,'single_img')}</td>
+                                </tr>
+                                <tr>
                                     <td>标题:</td>
                                     <td><input placeholder="标题" class="form-control" name="title" type="text" value="{$data.title}"></td>
                                 </tr>
                                 <tr>
-                                    <td>类型:</td>
+                                    <td>简介:</td>
+                                    <td><input placeholder="简介" class="form-control" name="brief" type="text" value="{$data.brief}"></td>
+                                </tr>
+                                <tr>
+                                    <td>排序:</td>
+                                    <td><input placeholder="排序" class="form-control" name="sort" type="text" value="{$data.sort}"></td>
+                                </tr>
+
+                                <tr>
+                                    <td>设为置顶:</td>
                                     <td>
-                                        <select class="form-control" name="type">
-                                            <option id="type0" value="0"> 系统消息</option>
-                                            <option id="type1" value="1">活动消息</option>
-                                            <!--<option id="type2" value="2">车防提醒</option>-->
+                                        <select class="form-control" name="is_top">
+                                            <option id="is_top0" value="0">否</option>
+                                            <option id="is_top1" value="1">是</option>
                                         </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>内容摘要:</td>
-                                    <td><textarea name="content" class="form-control" id="" cols="30" rows="10">{$data.content}</textarea></td>
+                                    <td>设为热门:</td>
+                                    <td>
+                                        <select class="form-control" name="is_hot">
+                                            <option id="is_hot0" value="0">否</option>
+                                            <option id="is_hot1" value="1">是</option>
+                                        </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>状态:</td>
                                     <td>
                                         <select class="form-control" name="status">
-                                            <option id="status1" value="1"> 显示</option>
-                                            <option id="status0" value="0">不显示</option>
+                                            <option id="status1" value="1">启用</option>
+                                            <option id="status0" value="0">禁用</option>
                                         </select>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>详情:</td>
+                                    <td><textarea name="content" id="editor" style="width: 900px;height: 500px">{$data.content}</textarea></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -86,7 +100,7 @@
                     </div>
                     <div class="pull-right">
                         <label class="control-label col-sm-2"></label>
-                        <input type="hidden" name="id" value="{$data.mid}">
+                        <input type="hidden" name="id" value="{$data.h_id}">
                         <input class="btn btn-primary submit" type="submit" value="保存">
                     </div>
                 </form>
@@ -96,17 +110,24 @@
 </section>
 {/block}
 {block name="js"}
-<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
-<script type="text/javascript" src="/public/plugs/jQuery-Tags-Input/src/jquery.tagsinput.js"></script>
+<link rel="stylesheet" href="/public/admin/ueditor/themes/default/css/ueditor.min.css">
 <script type="text/javascript" src="/public/admin/ueditor/ueditor.config.js"></script>
-<script type="text/javascript" src="/public/admin/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="/public/admin/ueditor/ueditor.all.js"></script>
 <script>
     $(function () {
         var ue = UE.getEditor('editor');
-        var type = "{$data.type}"
-        $('#type'+type).attr('selected','selected')
-        var status = "{$data.status}"
-        $('#status'+status).attr('selected','selected')
+        var is_top   = "{$data.is_top}";
+        if(is_top != ''){
+            $('#is_top'+is_top).attr('selected',true)
+        }
+        var is_hot  = "{$data.is_hot}";
+        if(is_hot != ''){
+            $('#is_hot'+is_hot).attr('selected',true)
+        }
+        var status   = "{$data.status}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
     })
 
 </script>

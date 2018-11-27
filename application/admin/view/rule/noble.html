@@ -1,0 +1,71 @@
+{extend name="public:common_edit"/}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>id</td>
+                                <td>贵族名</td>
+                                <td>价格</td>
+                                <td>赠送金额</td>
+                                <td>加速倍率</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row" key="key"}
+                            <tr>
+                                <td>{$row.noble_id}</td>
+                                <td>{$row.noble_name}</td>
+                                <td>
+                                    <input type="number" name="price[]" class="form-control" value="{$row.price}">
+                                    <input type="hidden" name="noble_id[]" value="{$row.noble_id}">
+                                </td>
+                                <td>
+                                    <input type="number" name="give[]" class="form-control" value="{$row.give}">
+                                </td>
+                                <td>
+                                    <input type="number" name="speed[]" class="form-control" value="{$row.speed}">
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pull-right">
+                        <label class="control-label col-sm-2"></label>
+
+                        <input class="btn btn-primary submit" type="submit" value="保存">
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+{/block}
+
+{block name="js"}
+<script>
+
+
+</script>
+
+
+
+{/block}
+
+
+

@@ -6,18 +6,13 @@ use app\common\model\Job;
 use app\common\model\RechargeConfig;
 use think\Db;
 use app\common\model\Users;
+use think\helper\Time;
 
 
 class User extends Base
 {
     //用户id
     protected $user_id = 0;
-
-    // 用户等级
-    protected $level = null;
-
-    //用户经验值
-    protected $experience = null;
 
 
     public function _initialize()
@@ -34,47 +29,6 @@ class User extends Base
     {
         cache('token_'.hashid($this->user_id),null);
         api_return(1,'退出成功');
-    }
-
-    /**
-     * Created by xiaosong
-     * E-mail:306027376@qq.com
-     * 获取自己的配置信息
-     */
-    protected function selfExtra($str = '')
-    {
-
-        if (!$this->$str){
-
-            $data = Db::name('user_extend')->where('user_id',$this->user_id)->cache(3)->find();
-
-            $this->level = $data['level'];
-            $this->experience = $data['experience'];
-
-            if ($str){
-                return $data[$str];
-            }
-
-        }else{
-            return $this->$str;
-        }
-
-    }
-
-    /**
-     * Created by xiaosong
-     * E-mail:306027376@qq.com
-     * @param string $str
-     * @param int $user_id
-     * @return mixed
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     * 获取其它用户的配置信息
-     */
-    protected function otherExtra($str = '',$user_id = 0){
-        $data = Db::name('user_extend')->where('user_id',$user_id)->cache(1)->find();
-        return $data[$str];
     }
 
 
@@ -95,14 +49,17 @@ class User extends Base
 
         }
 
+        $data =  Db::name('users')->where($map)->cache($cache)->find();
         if (strstr($field,',') || empty($field)){
-
-            return Db::name('users')->field($field)->where($map)->cache($cache)->find();
-
+            if (!$field){ return $data; }
+            $arr = explode(',',$field);
+            $array = [];
+            foreach ($arr as $v){
+                $array[$v] = $data[$v];
+            }
+            return $array;
         }else{
-
-            return Db::name('users')->where($map)->cache($cache)->value($field);
-
+            return $data[$field];
         }
 
     }
@@ -119,17 +76,44 @@ class User extends Base
         }else{
             $map['user_id'] = $this->user_id;
         }
-        $data =  Db::name('user_extend')->field($field)->where($map)->cache($cache)->find();
+        $data =  Db::name('user_extend')->where($map)->cache($cache)->find();
         if (strstr($field,',') || empty($field)){
             if (!$field){ return $data; }
             $arr = explode(',',$field);
+            $array = [];
             foreach ($arr as $v){
-                $array[] = $data[$v];
+                $array[$v] = $data[$v];
             }
+            return $array;
         }else{
            return $data[$field];
         }
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取用户会员信息
+     */
+    protected function userNoble($field = '',$user_id = null,$cache = 15){
+        if ($user_id){
+            $map['user_id'] = $user_id;
+        }else{
+            $map['user_id'] = $this->user_id;
+        }
+        $noble_id =  Db::name('user_extend')->where($map)->value('noble_id');
+        $data = Db::name('noble')->where('noble_id',$noble_id)->cache($cache)->find();
+        if (strstr($field,',') || empty($field)){
+            if (!$field){ return $data; }
+            $arr = explode(',',$field);
+            foreach ($arr as $v){
+                $array[$v] = $data[$v];
+            }
+        }else{
+            return $data[$field];
+        }
+    }
+
 
 
     /**
@@ -571,6 +555,65 @@ class User extends Base
         return $data;
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 根据经验值及当前等级获取应该修改的等级  用于升级时判断
+     */
+    protected function levelNum($experience = 0,$level = 0)
+    {
+        $rows = Db::name('user_level')->cache(300)->select();
+
+        $array = array_key($rows,'level');
+
+
+        $max = count($array)-$level;
+
+        for ($i = $level;$i <= $max;$i++){
+            $options = ['options'=>['min_range'=>$array[$i-1]['experience']+1,'max_range'=>$array[$i]['experience']]];
+            if(
+                filter_var($experience, FILTER_VALIDATE_INT, $options) !== false
+            ){
+                return $array[$i]['level'];
+            }
+        }
+
+    }
+
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 增加用户经验
+     */
+    protected function addLevel($experience = 0,$user_id = null)
+    {
+        if (!$experience) return;
+        if (!$user_id){
+            $user_id = $this->user_id;
+        }
+        $nowLevel = $this->userExtra('level',$user_id);
+        $nowExperience = $this->userExtra('experience',$user_id);
+        $data = $this->nextLevel($nowLevel,$nowExperience);
+
+        $item['experience'] = bcadd($experience,$nowExperience,0);
+
+        if ($experience >= $data['nextExperience']){
+           $maxLevel = Db::name('user_level')->order('level desc')->cache(30)->value('level');
+           if ($nowLevel < $maxLevel){
+               //达到等级升级经验且当前等级小于最大等级更新大厅VIP等级
+               $item['level'] = $this->levelNum($item['experience'],$nowLevel);
+           }
+        }
+
+        $result = Db::name('user_extend')->where('user_id',$user_id)->update($item);
+
+        if (!$result){
+            api_return(0,'增加经验失败!');
+        }
+        return true;
+    }
 
     /**
      * Created by xiaosong
@@ -580,7 +623,7 @@ class User extends Base
     public function level()
     {
 
-        $data = $this->nextLevel($this->selfExtra('level'),$this->selfExtra('experience'));
+        $data = $this->nextLevel($this->userExtra('level'),$this->userExtra('experience'));
 
         api_return(1,'获取成功',$data);
 
@@ -616,35 +659,34 @@ class User extends Base
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * 获取用户加速倍率或赠送金额
+     * 根据用户id和要购买的贵族id获取用户购买贵族所需的价格、赠送金额和购买后过期时间
      */
-//    protected function up($field = 'up',$user_id = null)
-//    {
-//       if (!$user_id){
-//           $user_id = $this->user_id;
-//       }
-//
-//       $data = $this->userExtra('VIP,VIP_time',$user_id);
-//       $up   = 1;
-//
-////        1-5 子爵、伯爵、公爵、国王、皇帝
-//
-//
-//
-//       if ($data['VIP_time'] > time()){
-//            $up = $VIP[$data['VIP']][$field];
-//       }
-//       return $up;
-//    }
+    protected function noblePrice(int $user_id)
+    {
+        $data = request()->only(['noble_id'],'post');
+        $noble = Db::name('noble')->where('noble_id',$data['noble_id'])->cache(60)->find();
+        if (!$noble) api_return(0,'参数错误');
+        //获取用户当前贵族信息
+        $userExtra = $this->userExtra('noble_id,noble_time',$user_id);
+        $data['noble_time'] = time() + Time::daysToSecond(31);
+        if (
+            $data['noble_id'] == $userExtra['noble_id'] &&
+            $userExtra['noble_time'] + Time::daysToSecond(31) > time()
+        ){
+            //处于续费保护期内
+            $renew_rebate = $this->extend('renew_rebate');
+            $rebate = bcdiv($renew_rebate,100,2);
+            if ($userExtra['noble_time'] > time()){
+                $data['noble_time'] = $userExtra['noble_time'] + Time::daysToSecond(31);
+            }
+        }else{
+            $rebate = 1;
+        }
+        $data['price'] = bcmul($noble['price'],$rebate,2);
+        $data['give']  = bcmul($noble['give'],$rebate,2);
+        return $data;
+    }
 
-    protected  $VIP = [
-        0=>['up'=>1  ,'give'=>0  ,'name'=>'无'  ,'price'=>0],
-        1=>['up'=>1.1,'give'=>600,'name'=>'子爵','price'=>1000],
-        2=>['up'=>1.2,'give'=>600,'name'=>'伯爵','price'=>1000],
-        3=>['up'=>1.3,'give'=>600,'name'=>'公爵','price'=>1000],
-        4=>['up'=>1.6,'give'=>600,'name'=>'国王','price'=>1000],
-        5=>['up'=>2  ,'give'=>600,'name'=>'皇帝','price'=>1000],
-    ];
 
 
 

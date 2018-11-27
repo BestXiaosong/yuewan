@@ -180,4 +180,42 @@ class Money extends  User
 
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 购买贵族
+     */
+    public function buyNoble()
+    {
+        $this->ApiLimit(1,$this->user_id);
+
+        $data = $this->noblePrice($this->user_id);
+        $update['noble_id']   = $data['noble_id'];
+        $update['noble_time'] = $data['noble_time'];
+        $price = $data['price'];
+        $give  = $data['give'];
+        if ($price <= 0) api_return(0,'价格错误');
+        Db::startTrans();
+        try{
+            //余额支付
+            $this->moneyDec($price);
+            //加上赠送金额
+            Db::name('users')->where('user_id',$this->user_id)->setInc('money',$give);
+            //增加经验
+            $this->addLevel($price,$this->user_id);
+            //更新贵族信息
+            Db::name('user_extend')->where('user_id',$this->user_id)->update($update);
+            Db::commit();
+        }catch (Exception $e){
+            Db::rollback();
+            api_return(0,'服务器繁忙,请稍后重试',$e->getMessage());
+        }
+
+        api_return(1,'购买成功');
+
+    }
+
+
+
+
 }

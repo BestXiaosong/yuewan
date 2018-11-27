@@ -59,6 +59,12 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>贵族续费保护期折扣(最大99)</td>
+                                    <td>
+                                        <input name="renew_rebate" class="form-control" type="number" value="{$data.renew_rebate}">
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td>最低提现金额</td>
                                     <td>
                                         <input name="money" class="form-control" type="number" value="{$data.money}">
@@ -81,6 +87,24 @@
                                     <td>
                                         <input name="distance" class="form-control" type="number" value="{$data.distance}">
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>身份认证说明(最大150字)</td>
+                                    <td>
+                                        <textarea name="check_explain" class="form-control" cols="30" rows="10">{$data.check_explain}</textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>身份认证正面示例照:</td>
+                                    <td>{:uploadHtml('face_example',$data.face_example,'single_img')}</td>
+                                </tr>
+                                <tr>
+                                    <td>身份认证反面示例照:</td>
+                                    <td>{:uploadHtml('back_example',$data.back_example,'single_img')}</td>
+                                </tr>
+                                <tr>
+                                    <td>身份认证自拍示例照:</td>
+                                    <td>{:uploadHtml('self_example',$data.self_example,'single_img')}</td>
                                 </tr>
                                 </tbody>
                             </table>

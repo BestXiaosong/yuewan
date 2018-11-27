@@ -580,7 +580,26 @@ class Base extends Controller
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 获取用户会员信息
+     */
+    protected function extend($field = '',$cache = 15){
 
+        $data =  Db::name('extend')->where('id',1)->cache($cache)->find();
+        if (strstr($field,',') || empty($field)){
+            if (!$field){ return $data; }
+            $arr   = explode(',',$field);
+            $array = [];
+            foreach ($arr as $v){
+                $array[$v] = $data[$v];
+            }
+            return $array;
+        }else{
+            return $data[$field];
+        }
+    }
 
 
 

@@ -1,0 +1,132 @@
+{extend name="public:common_edit"/}
+{block name="css"}
+    <link href="/public/plugs/switch-button/css/bootstrap-switch.css" rel="stylesheet">
+{/block}
+{block name="main"}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i>{$title}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="navbar navbar-default">
+                <form action="" id="search-form2" class="navbar-form form-inline" method="get" onsubmit="return false">
+                    <label class="control-label" for="input-order-id">房间名</label>
+                    <div class="input-group">
+                        <input type="text" name="room_name" value="{$Think.get.room_name}" placeholder="房间名"
+                               id="input-order-id" class="form-control">
+                    </div>
+                    <label class="control-label" for="input-order-id">直播分类</label>
+                    <div class="input-group">
+                        {:arr2select('cid',$cate,'全部',input('get.cid'),'cid','cate_name')}
+                    </div>
+                    <label class="control-label" for="input-order-id">是否推荐</label>
+                    <select class="form-control" name="top">
+                        <option id="top2" value="">全部</option>
+                        <option id="top1" value="1">是</option>
+                        <option id="top0" value="0">否</option>
+                    </select>
+                    <label class="control-label" for="input-order-id">状态</label>
+                    <select class="form-control" name="status">
+                        <option id="status2" value="">全部</option>
+                        <option id="status1" value="1"> 启用</option>
+                        <option id="status0" value="0">禁用</option>
+                    </select>
+                    <!--<label class="control-label" for="input-order-id">直播状态</label>-->
+                    <!--<select class="form-control" name="play">-->
+                        <!--<option id="play2" value="">全部</option>-->
+                        <!--<option id="play1" value="1">直播中</option>-->
+                    <!--</select>-->
+                    <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
+                            id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
+                    </button>
+                    <a href="{:url('edit')}"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
+                </form>
+            </div>
+            <div id="ajax_return">
+                <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td>id</td>
+                                <td>图标</td>
+                                <td>标题</td>
+                                <td>设为置顶</td>
+                                <td>设为热门</td>
+                                <td>排序</td>
+                                <td>状态</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 列表循环开始 -->
+                            {volist name="rows" id="row"}
+                            <tr>
+                                <td>{$row.h_id}</td>
+                                <td><img src="{$row.img}" style="max-width: 100px" alt=""></td>
+                                <td>{$row.title}</td>
+                                <td><input type="checkbox" class="checkbox is_top" {:ischeck($row.is_top)} data-size="small" data-id="{$row.h_id}" data-str="is_top"></td>
+                                <td><input type="checkbox" class="checkbox is_top" {:ischeck($row.is_hot)} data-size="small" data-id="{$row.h_id}" data-str="is_hot"></td>
+                                <td>{$row.sort}</td>
+                                <td>{if condition="$row.status == 1"} 启用 {else /} 禁用 {/if}</td>
+                                <td>
+                                    <a href="{:url('edit',['id'=>$row.h_id])}" class="btn btn-primary ">编辑</a>
+                                    {if condition="$row.status == 1"} <span class="btn btn-primary change" data-url="{:url('change',['id'=>$row.h_id,'type'=>0])}">禁用 </span>
+                                    {else /} <span class="btn btn-primary change"  data-url="{:url('change',['id'=>$row.h_id,'type'=>1])}">启用</span> {/if}
+                                    <span class="btn btn-danger check_del" data-url="{:url('delete',['id'=>$row['h_id']])}">删除</span>
+
+                                </td>
+                            </tr>
+                            {/volist}
+                            <!-- 列表循环结束 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div id='pagerarea'>{$pageHTML}</div>
+        </div>
+
+    </div>
+{/block}
+
+{block name="js"}
+<script src="/public/plugs/switch-button/js/bootstrap-switch.js"></script>
+<script>
+    $(document).ready(function(){
+        $(".checkbox").bootstrapSwitch({
+            onText:'是',
+            offText:'否'
+        });
+        $('.is_top').on('switchChange.bootstrapSwitch', function (event,state){
+            var val = state?1:0;
+            var id = $(this).attr('data-id');
+            var str = $(this).attr('data-str');
+            $.post("{:url('change')}",{id:id,type:val,str:str},function (data) {
+                if(data.code!=1){layer.msg('改变状态失败', {icon: 5, time: 2000});}
+            });
+        });
+    });
+    $(function () {
+        var top   = "{:input('get.top')}";
+        if(top != ''){
+            $('#top'+top).attr('selected',true)
+        }
+
+        var status   = "{:input('get.status')}";
+        if(status != ''){
+            $('#status'+status).attr('selected',true)
+        }
+        var play   = "{:input('get.play')}";
+        if(play != ''){
+            $('#play'+play).attr('selected',true)
+        }
+    })
+</script>
+
+
+
+{/block}
+
+
+

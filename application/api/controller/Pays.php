@@ -115,6 +115,21 @@ class Pays extends User
                 ]);
 
                 break;
+            case 'noble': //贵族购买付款
+
+                $noble = $this->noblePrice($this->user_id);
+
+                $price = $data['price'];
+
+                $subject = '萌趴贵族购买';
+
+                $body = json_encode([
+                    'user_id' => hashid($this->user_id),
+                    'noble' => $noble['noble'],
+                    'type' => $data['type']
+                ]);
+
+                break;
             default:
                 api_return(0,'类型错误');
                 break;

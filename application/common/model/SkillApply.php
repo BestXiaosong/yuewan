@@ -190,7 +190,7 @@ class SkillApply extends Model
             ['users u','u.user_id = a.user_id','left']
         ];
 
-        $field = 'e.place,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble,e.level';
+        $field = 'e.place,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level';
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -210,7 +210,9 @@ class SkillApply extends Model
 
                 }
 
-                if ($item['noble']){
+                if ($item['noble_id']){
+
+                    //TODO 查询贵族等级
                     //无贵族身份 不查询等级颜色
                     $item['color'] = '';
                 }else{
@@ -276,7 +278,7 @@ class SkillApply extends Model
         $log = $userExtra['log'];
         $lat = $userExtra['lat'];
 
-        $field = "e.place,(st_distance (point (e.log,e.lat),point($log,$lat) ) / 0.0111) AS distance,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble,e.level";
+        $field = "e.place,(st_distance (point (e.log,e.lat),point($log,$lat) ) / 0.0111) AS distance,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level";
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -311,7 +313,8 @@ class SkillApply extends Model
 
                 }
 
-                if ($item['noble']){
+                if ($item['noble_id']){
+                    //TODO 查询贵族等级
                     //无贵族身份 不查询等级颜色
                     $rows[$k]['color'] = '';
                 }else{

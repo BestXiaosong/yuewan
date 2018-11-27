@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\common\model\Banner;
+use app\common\model\Helpers;
 use think\Db;
 use app\common\model\Users;
 
@@ -191,7 +192,17 @@ class Index extends Base
 
     }
 
-
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 获取帮助文章
+     */
+    public function helpers()
+    {
+        $model = new Helpers();
+        $rows  = $model->getRows(['status'=>1]);
+        api_return(1,'获取成功',$rows);
+    }
     
     
     

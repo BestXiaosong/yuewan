@@ -27,19 +27,24 @@ class Base extends Validate
         'img_max|形象照最大数量	'=>'require|between:1,99',
         'invite_ratio|邀约抽成比例	'=>'require|between:1,99',
         'gift_ratio|礼物抽成比例	'=>'require|between:1,99',
+        'renew_rebate|续费保护期折扣	'=>'require|between:1,99',
         'vod_max|视频动态最大数量'=>'require|between:1,99',
         'header_img|头像'=>'require',
         'is_use|上下架'  =>  'require|between:0,1',
         'invite|闪电邀约'  =>  'between:0,1',
         'dispatch|接受派单'  =>  'between:0,1',
         'filter|屏蔽未认证用户信息'  =>  'between:0,1',
+        'check_explain|身份认证说明'  =>  'require|max:150',
+        'face_example|身份认证正面示例照'  =>  'require',
+        'back_example|身份认证反面示例照'  =>  'require',
+        'self_example|身份认证自拍示例照'  =>  'require',
     ];
 
 
     protected $scene = [
         'edit_extend'=>['invite','dispatch','filter'],
         'skill_shelf' => ['is_use'],
-        'extend' => ['img_max','vod_max','gift_ratio','invite_ratio'],
+        'extend' => ['img_max','vod_max','gift_ratio','invite_ratio','renew_rebate','check_explain','face_example','back_example','self_example'],
         'nick_name'   =>  ['nick_name'],
         'front_user_add'   =>  ['phone'],
         'third_user_add'   =>  ['open_id','sex','header_img','nick_name'],
