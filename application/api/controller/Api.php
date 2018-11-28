@@ -8,7 +8,6 @@
 
 namespace app\api\controller;
 
-use app\common\logic\UserFollow;
 use app\common\logic\UserId;
 use app\common\model\Helpers;
 use app\common\model\SkillApply;
@@ -19,9 +18,6 @@ use think\helper\Time;
 
 class Api extends User
 {
-
-
-
 
 
     /**
@@ -267,87 +263,6 @@ class Api extends User
 
     }
 
-    /**
-     * Created by xiaosong
-     * E-mail:4155433@gmail.com
-     * 关注用户
-     */
-    public function follow()
-    {
-        $id = dehashid(input('post.id'));
-
-        if (!is_numeric($id)){
-            api_return(0,'用户id错误');
-        }
-
-        if ($id = $this->user_id){
-            api_return(0,'您不能关注自己');
-        }
-
-        $map['follow_user'] = $id;
-        $map['user_id']     = $this->user_id;
-
-        $model = new UserFollow();
-
-        $data = $model->get($map);
-
-        if ($data){
-
-            if ($data['status'] == 1){
-                api_return(0,'您已关注该用户,请勿重复操作');
-            }else{
-
-                $result = $data->save(['status'=>1]);
-            }
-
-        }else{
-            $result = $model->saveChange($map);
-        }
-
-        if ($result){
-            api_return(1,'关注成功');
-        }else{
-            api_return(0,$model->getError());
-        }
-
-    }
-
-
-    /**
-     * Created by xiaosong
-     * E-mail:4155433@gmail.com
-     * 取消关注
-     */
-    public function cancel()
-    {
-        $id = dehashid(input('post.id'));
-
-        if (!is_numeric($id)){
-            api_return(0,'用户id错误');
-        }
-
-        $map['follow_user'] = $id;
-        $map['user_id']     = $this->user_id;
-
-        $model = new UserFollow();
-
-        $data = $model->get($map);
-
-        if ($data && $data['status'] == 1){
-
-            $result = $data->save(['status'=>0]);
-
-            if ($result){
-                api_return(1,'取消关注成功');
-            }else{
-                api_return(0,$model->getError());
-            }
-
-        }else{
-            api_return(0,'您未关注该用户!');
-        }
-
-    }
 
 
     /**
