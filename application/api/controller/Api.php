@@ -9,12 +9,9 @@
 namespace app\api\controller;
 
 use app\common\logic\UserId;
-use app\common\model\Helpers;
 use app\common\model\SkillApply;
 use app\common\model\Users;
 use think\Db;
-use think\Exception;
-use think\helper\Time;
 
 class Api extends User
 {

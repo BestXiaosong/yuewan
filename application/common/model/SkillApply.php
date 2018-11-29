@@ -51,7 +51,7 @@ class SkillApply extends Model
         if ($data['online_status'] == 1){
             $data['status'] = '当前在线';
         }else{
-            $data['status'] = formatTime($data['online_time']);;
+            $data['status'] = formatTime($data['online_time']);
         }
 
 
@@ -120,7 +120,8 @@ class SkillApply extends Model
             ->join('skill s','s.skill_id = a.skill_id','LEFT')
             ->join('users u','u.user_id  = a.user_id','LEFT')
             ->where($map)
-            ->field('s.skill_name,s.img,s.skill_id,a.is_use')
+            ->cache(3)
+            ->field('s.skill_name,s.img,s.skill_id,a.is_use,a.num')
             ->select();
     }
 
@@ -212,7 +213,7 @@ class SkillApply extends Model
 
                 if ($item['noble_id']){
 
-                    //TODO 查询贵族等级
+
                     //无贵族身份 不查询等级颜色
                     $item['color'] = '';
                 }else{
@@ -314,7 +315,7 @@ class SkillApply extends Model
                 }
 
                 if ($item['noble_id']){
-                    //TODO 查询贵族等级
+
                     //无贵族身份 不查询等级颜色
                     $rows[$k]['color'] = '';
                 }else{

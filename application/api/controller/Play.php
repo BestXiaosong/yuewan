@@ -9,9 +9,7 @@
 namespace app\api\controller;
 
 
-use app\common\logic\RoomActivity;
 use app\common\model\Banner;
-use app\common\model\PlayCategory;
 use app\common\model\Room;
 use app\common\model\RoomFollow;
 use think\Db;

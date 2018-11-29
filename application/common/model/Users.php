@@ -85,7 +85,7 @@ class Users extends Model
                 }
 
                 if ($item['noble_id']){
-                    //TODO 查询贵族等级
+
                     //有贵族身份 不查询等级颜色
                     $item['color'] = '';
                 }else{

@@ -4,7 +4,6 @@ namespace app\api\controller;
 
 use Qiniu\Auth as Auth;
 use Qiniu\Storage\UploadManager;
-use think\Controller;
 use think\Db;
 
 class Upload extends User

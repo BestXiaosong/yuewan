@@ -379,6 +379,9 @@ function dehashid($str, $length = 8)
 }
 
 
+
+
+
 /**
  * Created by xiaosong
  * E-mail:306027376@qq.com
@@ -1083,3 +1086,14 @@ function numberDecimal($num,$n = 2){
 
 }
 
+
+if (! function_exists('dd')) {
+    function dd(...$args)
+    {
+        http_response_code(500);
+
+        dump($args);
+
+        die(1);
+    }
+}

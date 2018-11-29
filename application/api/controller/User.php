@@ -1,9 +1,10 @@
 <?php
 namespace app\api\controller;
 use app\common\logic\UserAccount;
-use app\common\model\Bankroll;
+use app\common\model\GiftRecord;
 use app\common\model\Job;
 use app\common\model\RechargeConfig;
+use app\common\model\SkillApply;
 use think\Db;
 use app\common\model\Users;
 use think\helper\Time;
@@ -128,15 +129,13 @@ class User extends Base
     }
 
     /**
-     * 获取用户信息及修改
+     * 查询个人资料
      */
     public function info()
     {
-
         $model = new Users();
         $data  = $model->getInfo($this->user_id);
         api_return(1,'获取成功',$data);
-
     }
 
     /**
@@ -167,11 +166,8 @@ class User extends Base
                 }else{
                     api_return(0,'修改失败');
                 }
-
             }
-
             api_return(0,'非法参数');
-
         }
 
         //形象照添加
@@ -232,43 +228,76 @@ class User extends Base
      * E-mail:306027376@qq.com
      * 用户个人详情
      */
-
-
-    public function userDetail()
+    protected function userDetail($user_id)
     {
 
         $model = new Users();
-        $data  = $model->getInfo($this->user_id);
-        $data['constellation'] = get_constellation($data['birthday']);
-        $data['place'] = Db::name('user_extend')->where('user_id',$this->user_id)->value('place');
+        $userInfo = $model->getInfo($user_id);
+        $userInfo['constellation'] = get_constellation($userInfo['birthday']);
 
-        $data['onLine'] = checkOnline(hashid($this->user_id));
+        $extra = $this->userExtra('place,online_status,online_time');
+
+        $data  = array_merge($userInfo->getData(),$extra);
+
+       if ($data['online_status']){
+           $data['status'] = '当前在线';
+       }else{
+           $data['status'] = formatTime($data['online_time']);
+       }
 
         $map['status']  = 1;
         $map['user_id'] = $this->user_id;
 
-        $data['vod']   = Db::name('vod')->where($map)->field('pid,play_url,play_num')->select();
+        $data['vod']     = Db::name('vod')->where($map)->field('pid,play_url,play_num')->select();
 
-        $data['vod_max'] = Db::name('extend')->where('id',1)->value('vod_max');
+        $data['vod_max'] = $this->extend('vod_max');
 
         $gift['a.status']  = 1;
         $gift['a.user_id'] = $this->user_id;
         $data['gift_count'] = Db::name('gift_record')->alias('a')->where($gift)->sum('a.num');
 
-        $data['gift_list']  = Db::name('gift_record')
-            ->alias('a')
-            ->join([
-                ['gift g','g.gift_id = a.gift_id','left']
-            ])
-            ->where($gift)
-            ->field("sum(a.num)as num,g.img,g.gift_name")
-            ->group('a.gift_id')
-            ->order('g.price')
-            ->select();
+        $data['gift_list']  = (new GiftRecord())->giftCount($gift);
 
-//TODO 所在圈子  房间 家族  及自身通过的技能列表待处理
+        //TODO 所在圈子  房间 家族 待处理
+
+        $skill['a.user_id'] = $this->user_id;
+        $data['skill_list'] = (new SkillApply())->getMy();
+
+        return $data;
+
+    }
+
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 用户自身详情
+     */
+    public function selfInfo()
+    {
+        $data = $this->userDetail($this->user_id);
+
         api_return(1,'获取成功',$data);
 
+    }
+
+    public function otherInfo()
+    {
+
+        $user_id = dehashid(input('post.id'));
+
+        if (!is_numeric($user_id)) api_return(0,'参数错误');
+
+        $data = $this->userDetail($user_id);
+
+        $map['user_id']     = $this->user_id;
+        $map['follow_user'] = $user_id;
+        $map['status']      = 1;
+        $follow_id = Db::name('user_follow')->where($map)->value('follow_id');
+
+        $data['is_follow'] = $follow_id?1:0;
+
+        api_return(1,'获取成功',$data);
     }
 
 
@@ -352,46 +381,28 @@ class User extends Base
      * 扣除用户账户余额
      */
     protected function moneyDec($money = 0,$user_id = null){
-
         if (!$user_id){
-
             $user_id = $this->user_id;
-
         }
-
         $balance = $this->userBalance($user_id);
-
         if ($money > $balance['total']) api_return(0,'余额不足');
-
         if ($balance['money'] >= $money){
-
             $result = Db::name('users')->where('user_id',$user_id)->setDec('money',$money);
             if (!$result) api_return(0,'扣款失败');
-
         }else{
-
-
             if ($balance['money'] > 0){
-
                 $next = bcsub($money,$balance['money'],2);
                 $result = Db::name('users')->where('user_id',$user_id)->setDec('money',$balance['money']);
                 if (!$result) api_return(0,'扣款失败');
-
             }else{
-
                 $next = $money;
-
             }
-
             $result = Db::name('users')->where('user_id',$user_id)->setDec('cash',$next);
-
             if (!$result){
                 Db::name('users')->where('user_id',$user_id)->setInc('money',$balance['money']);
                 api_return(0,'扣款失败');
             }
-
         }
-
     }
 
 

@@ -21,17 +21,17 @@ class GiftRecord extends Model
     }
 
 
-
-    public function myList($where = [])
+    public function giftCount($where = [])
     {
         return $this->alias('a')
             ->join([
-                ['gift g','g.gift_id = a.gift_id']
+                ['gift g','g.gift_id = a.gift_id','left']
             ])
             ->where($where)
-            ->field('g.gift_id,g.gift_name,g.img,sum(a.num) as num')
+            ->field('g.gift_id,g.gift_name,g.img,sum(a.num) as num,g.thumbnail,g.price')
             ->group('gift_id')
-            ->cache(60)
+            ->cache(15)
+            ->order('g.price')
             ->select();
     }
 
@@ -81,34 +81,5 @@ class GiftRecord extends Model
     }
 
 
-    public function  giftChange($where=[]){
-//        $a=[];
-//        $num=$this->where($where)->sum('num');
-//        $price=db('gift')->where(['gift_id'=>$where['gift_id']])->value('price');
-//        $totalmoney=$price*$num;
-//        $a['num']=$num;
-//        $rate=db('extend')->value('gift_ratio');
-//        $a['rate']=$rate.'%';
-//        $as=$totalmoney*$num['rate'];
-//        $a['money']=$totalmoney-$as.'积分';
-//        return $a;
-
-        //可兑换礼物总数
-        $num = $this->where($where)->sum('num');
-        //礼物单价
-        $price = db('gift')->where(['gift_id'=>$where['gift_id']])->value('price');
-        //手续费%
-        $rate = db('extend')->value('gift_ratio');
-        $data['rate'] = $rate.'%';
-        $data['num']  = $num;
-        //礼物总值
-        $total = bcmul($price,$num,2);
-        //扣除金额
-        $data['rate_money'] = bcmul($total,($rate/100),2);
-        //可获得金额
-        $data['money'] = ($total - $data['rate_money']).'积分';
-        return $data;
-
-    }
 
 }
