@@ -9,6 +9,7 @@
 namespace app\api\controller;
 
 
+use app\common\model\ChatUsers;
 use app\common\model\RoomFollow;
 use think\Db;
 use think\Exception;
@@ -132,6 +133,7 @@ class Chat extends User
      */
     public function signOut()
     {
+        $this->ApiLimit(1,$this->user_id);
         $id = input('post.id');
 
         $map['group_id'] = $id;
@@ -164,16 +166,363 @@ class Chat extends User
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 获取房间|群组列表
+     */
+    public function groupList()
+    {
+
+        $type = input('post.type');
+        $map  = [];
+
+        if ($type != 1 && $type != 2) api_return(0,'参数错误');
+
+        $map['a.status']  = 1;
+        $map['a.user_id'] = $this->user_id;
+        $map['c.type']    = $type;
+        $model = new ChatUsers();
+
+        $rows = $model->getRows($map);
+
+        api_return(1,'获取成功',$rows);
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 邀人入群
+     */
+    public function invite()
+    {
+        $this->ApiLimit(1,$this->user_id);
+        $userIds  = input('post.userIds');
+        $group_id = input('post.group_id');
+
+        $userIds = explode(',',$userIds);
+
+        if (count($userIds) < 1 ) api_return(0,'请选择要邀请的用户!');
+
+        $model = new ChatUsers();
+
+        $map['a.user_id']  = $this->user_id;
+        $map['a.group_id'] = $group_id;
+        $map['a.status']   = 1;
+        $map['c.status']   = 1;
+
+        $master = $model->getDetail($map);
+
+        if (!$master) api_return(0,'您不在群组中,不能进行操作');
+
+//        if ($master['type'] == 2 && $master['group_user'] != $this->user_id){
+//            api_return(0,'您不是群主,不能进行操作');
+//        }
+
+        Db::startTrans();
+        try{
+
+            foreach ($userIds as $k => $v){
+
+                $user_id = dehashid($v);
+                if (!is_numeric($user_id)) api_return(0,'参数错误');
+                $where['group_id'] = $group_id;
+                $where['user_id']  = $user_id;
+                $data = $model->where($where)->field('chat_id,status')->find();
+
+                if ($data){
+                    if ($data['status'] == 1){
+                        //用户已在群组中,结束本次循环
+                        continue;
+                    }else{
+                        $save['status']  = 1;
+                        $save['chat_id'] = $data['chat_id'];
+                        $model->save($save,['chat_id'=>$save['chat_id']]);
+                    }
+
+                }else{
+                    $save['group_id'] = $group_id;
+                    $save['user_id']  = $user_id;
+                    $model->save($save);
+                }
+            }
+
+            Db::commit();
+        }catch (Exception $e){
+            Db::rollback();
+            api_return(0,$e->getMessage());
+        }
+
+        api_return(1,'拉入成功');
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 删除群成员
+     */
+    public function delUsers()
+    {
+        $this->ApiLimit(1,$this->user_id);
+        $userIds  = input('post.userIds');
+        $group_id = input('post.group_id');
+
+        $userIds = explode(',',$userIds);
+
+        if (count($userIds) < 1 ) api_return(0,'请选择要删除的用户!');
+
+        $model = new ChatUsers();
+
+        $map['a.user_id']  = $this->user_id;
+        $map['a.group_id'] = $group_id;
+        $map['a.status']   = 1;
+        $map['c.status']   = 1;
+
+        $master = $model->getDetail($map);
+
+        if (!$master) api_return(0,'您不在群组中,不能进行操作');
+
+        if ($master['group_user'] != $this->user_id){
+            api_return(0,'您不是群主,不能进行操作');
+        }
+
+        Db::startTrans();
+        try{
+
+            foreach ($userIds as $k => $v){
+
+                $user_id = dehashid($v);
+                if (!is_numeric($user_id)) api_return(0,'参数错误');
+
+                if ($user_id == $this->user_id){
+                    api_return(0,'您不能删除自己');
+                }
+
+                $where['group_id'] = $group_id;
+                $where['user_id']  = $user_id;
+                $data = $model->where($where)->field('chat_id,status')->find();
+
+                if ($data){
+                    if ($data['status'] == 1){
+
+                        $model->save(['status'=>0],['chat_id'=>$data['chat_id']]);
+
+                    }else{
+                        //用户不在群组中,结束本次循环
+                        continue;
+                    }
+
+                }else{
+                    api_return(0,'用户不在群组中');
+                }
+            }
+
+            Db::commit();
+        }catch (Exception $e){
+            Db::rollback();
+            api_return(0,$e->getMessage());
+        }
+
+        api_return(1,'删除成功');
+    }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 群管理界面
+     */
+    public function groupManage()
+    {
+        $id = input('post.id');
+
+        $map['group_id'] = $id;
+        $map['status']   = 1;
+
+        $field = 'group_user,group_id,type as group_type,group_name';
+        $group = Db::name('chat_group')->where($map)->field($field)->cache(3)->find();
+
+        if (!$group) api_return(0,'参数错误');
+
+        $model = new ChatUsers();
+
+        $user = $this->inGroup();
+
+        if ($user){
+            //如果在群里 判断是否具有管理权限及获取是否开启群消息通知状态
+
+            if ($group['group_user'] == $this->user_id){
+                $group['has_power'] = 1;
+            }else{
+                $group['has_power'] = 0;
+            }
+
+            unset($group['group_user']);
+
+            $shield['user_id']  = $this->user_id;
+            $shield['group_id'] = $id;
+            $shield['status']   = 1;
+
+            $shield_id = Db::name('chat_shield')->where($shield)->value('status');
+
+            $group['is_shield'] = $shield_id??0;
+
+        }else{
+
+            //不在群组中判断群组类型  群组为家族  返回code 400 指示前端跳转家族申请页面
+            if ($group['group_type'] == 2){
+                api_return(400,'您不在群组中');
+            }else{
+                api_return(0,'您不在群组中');
+            }
+        }
+
+        $condition['a.group_id'] = $id;
+        $condition['a.status']   = 1;
+
+        $rows = $model->getList($condition,$this->user_id);
+
+        api_return(1,'获取成功',['group'=>$group,'rows'=>$rows]);
+
+    }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 家族信息\家族介绍
+     */
+    public function groupInfo()
+    {
+
+        $field = 'group_user,group_id,type as group_type,group_name,img,tag';
+
+        $group = $this->groupCheck($field);
+
+        $group['tag'] = explode(',',$group['tag']);
+        $group['group_max'] = $this->extend('group_max');
+
+        $model = new ChatUsers();
+
+        $user = $this->inGroup();
+
+        if ($user){
+            $group['in'] = 1;
+        }else{
+            $group['in'] = 0;
+        }
+
+        $master = $this->userInfo('nick_name,header_img,user_id',$group['group_user']);
+        $master['user_id'] = hashid($master['user_id']);
+        $master['noble_id'] = $this->userExtra('noble_id',$group['group_user']);
+
+        $condition['a.group_id'] =  $group['group_id'];
+        $condition['a.status']   = 1;
+
+        $rows = $model->getList($condition,$group['group_user']);
+
+        //TODO 家族房间未查询
+        $group['user_count'] = count($rows) + 1;
+        unset($group['group_user']);
+
+        api_return(1,'获取成功',['group'=>$group,'master'=>$master,'rows'=>$rows]);
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 申请加入家族
+     */
+    public function applyGroup()
+    {
+
+        $this->ApiLimit(1,$this->user_id);
+
+        $group = $this->groupCheck();
+
+        $user = $this->inGroup();
+
+        if ($user){
+            api_return(0,'您已在家族中,请勿重复操作');
+        }else{
+            $cache = cache('applyGroup'. $group['group_id']);
+
+            if (in_array($this->user_id,$cache)){
+                api_return(0,'您已提交申请,请耐心等待审核');
+            }else{
+                $cache[] = $this->user_id;
+            }
+
+            cache('applyGroup'. $group['group_id'],$cache);
+
+            api_return(1,'申请提交成功,请耐心等待审核');
+
+        }
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 家族审核列表
+     */
+    public function applyList()
+    {
+
+        $group = $this->groupCheck();
+
+        $users = cache('applyGroup'. $group['group_id']);
 
 
+        //TODO  完成家族审核列表
 
 
+    }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 检查家族是否存在
+     */
+    protected function groupCheck($field = 'group_id,group_user')
+    {
+        $id = input('post.id');
+
+        $map['group_id'] = $id;
+        $map['status']   = 1;
+        $map['type']     = 2;
+
+        $group = Db::name('chat_group')->where($map)->field($field)->cache(3)->find();
+
+        if (!$group) api_return(0,'参数错误');
+
+        return $group;
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 判断用户是否在群组中
+     */
+    protected function inGroup($group_id = null,$user_id = null)
+    {
+        if ($user_id){
+            $where['user_id']  = $user_id;
+        }else{
+            $where['user_id']  = $this->user_id;
+        }
+        if ($group_id){
+            $where['group_id'] = $group_id;
+        }else{
+            $where['group_id'] = input('post.id');
+        }
+
+        $where['status']   = 1;
+
+        return Db::name('chat_users')->where($where)->value('chat_id');
+    }
 
 
 
