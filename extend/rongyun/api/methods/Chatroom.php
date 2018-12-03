@@ -1,5 +1,5 @@
 <?php
-namespace chat\methods;
+namespace rongyun\api\methods;
 class Chatroom{
 
 	private $SendRequest;

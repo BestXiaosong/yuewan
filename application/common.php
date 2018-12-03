@@ -378,7 +378,75 @@ function dehashid($str, $length = 8)
     }
 }
 
+/**
+ * Created by xiaosong
+ * E-mail:4155433@gmail.com
+ * @param int $room_id
+ * @return string
+ * 获取房间热度
+ */
+function hotValue($room_id = 0){
+    $hot = cache('hot'.$room_id);
+    if (!isEmpty($hot)) return "$hot";
+    $hot = 0;
+    $cache = cache('hotVal'.$room_id);
+    $now = time();
+    foreach ($cache as $k => $v){
 
+        if ($v['expiration_time'] > $now){
+            $hot += $v['hot'];
+        }
+    }
+    cache('hot'.$room_id,$hot,15);
+    return "$hot";
+}
+
+/**
+ * Created by xiaosong
+ * E-mail:4155433@gmail.com
+ * @param $room_id |房间id
+ * @param int $num |要增加的热度
+ * @param null $out_time |热度过期时间  若无过期时间  默认为房间人数增加的热度
+ * 增加房间热度
+ */
+function addHot($room_id,$num = 1,$out_time = null){
+    $hot = cache('hotVal'.$room_id);
+    $time = todayEndTime()+7200;
+    if ($out_time){
+
+        $arr['hot'] = $num;
+        $arr['expiration_time'] = time()+$out_time;
+        $hot[] = $arr;
+    }else{
+
+        if (!array_key_exists('hot',$hot)){
+            $hot['hot']['hot'] = $num;
+            $hot['hot']['expiration_time'] = time()+$time;
+        }else{
+            $hot['hot']['hot'] = $hot['hot']['hot']+$num;
+        }
+
+    }
+    cache('hotVal'.$room_id,$hot,$time);
+}
+
+/**
+ * Created by xiaosong
+ * E-mail:4155433@gmail.com
+ * @param $room_id
+ * @param int $num
+ * 减少房间热度 只能减少房间人数产生的热度
+ */
+function delHot($room_id,$num = 1){
+    $time = todayEndTime()+7200;
+    $hot = cache('hotVal'.$room_id);
+    $have = $hot['hot']['hot'] - $num;
+    if ($have < 0){
+        $have = 0;
+    }
+    $hot['hot']['hot'] = $have;
+    cache('hotVal'.$room_id,$hot,$time);
+}
 
 
 
@@ -1087,8 +1155,10 @@ function numberDecimal($num,$n = 2){
 }
 
 
+
+
 if (! function_exists('dd')) {
-    function dd(...$args)
+    function dd($args)
     {
         http_response_code(500);
 

@@ -19,7 +19,7 @@ class Room extends Validate
         'cid|直播分类' => 'number',
         'detail|房间详情' => 'max:80',
         'is_close|全员禁言' => 'in:0,1',
-        'brief|房间简介' => 'max:80',
+        'notice|房间简介' => 'max:80',
     ];
 
     protected $scene = [

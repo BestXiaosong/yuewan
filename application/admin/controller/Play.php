@@ -8,22 +8,19 @@
 
 namespace app\admin\controller;
 use app\common\model\RoomCategory;
-use app\common\logic\PlayCategory as cate;
 use app\common\model\Room;
 
 use think\Db;
 class Play extends Base
 {
 
-    protected static $room_type = [
+    public static $room_type = [
 //        1=>电台 2=>娱乐  3=>点单 4=>聊天
         '1' =>['type_name'=>'电台','type'=>'1'],
         '2' =>['type_name'=>'娱乐','type'=>'2'],
         '3' =>['type_name'=>'点单','type'=>'3'],
         '4' =>['type_name'=>'聊天','type'=>'4'],
     ];
-
-
 
 
     /**
@@ -35,7 +32,7 @@ class Play extends Base
         $where = [];
         if (!empty($_GET['room_name'])) $where['room_name'] = ['like','%'.trim(input('get.room_name')).'%'];
         if (!isEmpty($_GET['status'])) $where['status'] = input('get.status');
-        if (!isEmpty($_GET['cid'])) $where['cid'] = input('get.cid');
+        if (!isEmpty($_GET['type'])) $where['type'] = input('get.type');
         $model  = new Room();
         $rows = $model->getList($where);
         $data = Db::name('room_category')->order('create_time DESC')->select();

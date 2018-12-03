@@ -488,10 +488,11 @@ class Base extends Controller
     /**
      * 聊天室禁言名单获取|检查某个用户在当前房间是否被禁言
      */
-    protected function chatbanList($room_id,$role_id = 0)
+    protected function chatbanList($room_id,$user_id = 0)
     {
-        if ($role_id){
-            $cache = cache('chat_'.$room_id.'_'.$role_id);
+        if ($user_id){
+            if (is_numeric($user_id)) $user_id = hashid($user_id);
+            $cache = cache('chat_'.$room_id.'_'.$user_id);
             if ($cache) return $cache;
         }else{
             $cache = cache('banlist_'.$room_id);
@@ -501,11 +502,10 @@ class Base extends Controller
         $result    =  $RongCloud->chatRoom()->ListGagUser($room_id);
         $json = json_decode($result,true);
         if ($json['code'] == 200){
-            if ($role_id){
-                if (is_numeric($role_id)) $role_id = hashid($role_id);
+            if ($user_id){
                 $rows = array_key($json['users'],'userId');
-                $data = isset($rows[$role_id]);
-                cache('chat_'.$room_id.'_'.$role_id,$data,3);
+                $data = isset($rows[$user_id]);
+                cache('chat_'.$room_id.'_'.$user_id,$data,3);
                 return $data;
             }
             cache('banlist_'.$room_id,$json['users'],3);

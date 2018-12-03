@@ -15,9 +15,9 @@
                         <input type="text" name="room_name" value="{$Think.get.room_name}" placeholder="房间名"
                                id="input-order-id" class="form-control">
                     </div>
-                    <label class="control-label" for="input-order-id">房间分类</label>
+                    <label class="control-label" for="input-order-id">房间类型</label>
                     <div class="input-group">
-                        {:arr2select('cid',$cate,'全部',input('get.cid'),'cid','cate_name')}
+                        {:arr2select('type',$type,'全部',input('get.type'),'type','type_name')}
                     </div>
                     <label class="control-label" for="input-order-id">是否推荐</label>
                     <select class="form-control" name="top">
