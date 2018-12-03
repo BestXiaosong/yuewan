@@ -274,7 +274,7 @@ class Base extends  Controller
      * E-mail:306027376@qq.com
      * 更改单字段
      */
-    public function _change($table = null,$field = 'status')
+    public function _change($table = null,$field = 'status',$type = 'type')
     {
         $data = input();
 
@@ -282,7 +282,7 @@ class Base extends  Controller
             $this->error('请先指定数据表');
         }
 
-        $result = Db::name($table)->update([$field=>$data['type'],Db::name($table)->getPk()=>$data['id']]);
+        $result = Db::name($table)->update([$field=>$data[$type],Db::name($table)->getPk()=>$data['id']]);
 
         if($result !== false){
             $this->success('操作成功');

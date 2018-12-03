@@ -11,6 +11,7 @@ namespace app\api\controller;
 
 use app\common\model\ChatUsers;
 use app\common\model\RoomFollow;
+use app\common\model\Users;
 use think\Db;
 use think\Exception;
 
@@ -474,9 +475,13 @@ class Chat extends User
 
         $users = cache('applyGroup'. $group['group_id']);
 
+        $map['a.user_id'] = ['in',$users];
 
-        //TODO  完成家族审核列表
+        $model = new Users();
 
+        $rows = $model->apply($map);
+
+        api_return(1,'获取成功',$rows);
 
     }
 

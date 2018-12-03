@@ -98,9 +98,9 @@
             offText:'否'
         });
         $('.is_top').on('switchChange.bootstrapSwitch', function (event,state){
-            var val = state?1:0;
+            var type = state?1:0;
             var id = $(this).attr('data-id');
-            $.post("{:url('cate_top')}",{id:id,val:val},function (data) {
+            $.post("{:url('cate_top')}",{id:id,type:type},function (data) {
                 if(data.code!=1){layer.msg('改变状态失败', {icon: 5, time: 2000});}
             });
         });

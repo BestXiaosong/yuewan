@@ -14,6 +14,14 @@ use think\Model;
 
 class Room extends Model
 {
+    public function profile()
+    {
+        return $this->hasOne('users', 'user_id', 'user_id')->field('nick_name,header_img');
+    }
+
+
+
+
     public function getRoom($where = [])
     {
         $rows = $this->where($where)->field('img,fans,status,room_id,room_name,fans')->select();
@@ -32,6 +40,7 @@ class Room extends Model
                 $rows[$k]['remark'] = '禁用';
             }
         }
+
         return $rows;
     }
     public function rooms($name)
@@ -84,7 +93,7 @@ class Room extends Model
         return $this
             ->where($where)
             ->order('create_time desc')
-            ->field('room_name,top,cid,room_id,img,status,create_time,update_time')
+            ->field('room_name,top,cid,room_id,img,status,create_time,update_time,type')
             ->paginate(15,false,['query'=>request()->param()]);
     }
 
@@ -134,7 +143,7 @@ class Room extends Model
     public function detail($where = [])
     {
         return $this->alias('a')
-            ->join('play_category b','b.cid = a.cid','LEFT')
+            ->join('room_category b','b.cid = a.cid','LEFT')
             ->where($where)
             ->field('a.*,b.cate_name')->find();
 

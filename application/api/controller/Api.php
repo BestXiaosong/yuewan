@@ -169,9 +169,6 @@ class Api extends User
 
         }
 
-
-//        print_r($rows);exit;
-
         api_return(1,'获取成功',$rows);
 
     }

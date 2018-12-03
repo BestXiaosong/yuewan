@@ -15,7 +15,7 @@
                         <input type="text" name="room_name" value="{$Think.get.room_name}" placeholder="房间名"
                                id="input-order-id" class="form-control">
                     </div>
-                    <label class="control-label" for="input-order-id">直播分类</label>
+                    <label class="control-label" for="input-order-id">房间分类</label>
                     <div class="input-group">
                         {:arr2select('cid',$cate,'全部',input('get.cid'),'cid','cate_name')}
                     </div>
@@ -39,7 +39,7 @@
                     <button type="submit" onclick="javascript:document.getElementById('search-form2').submit();"
                             id="button-filter search-order" class="btn btn-primary"><i class="fa fa-search"></i> 筛选
                     </button>
-                    <!--<a href="{:url('edit')}"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>-->
+                    <a href="{:url('edit')}"  class="btn btn-primary pull-right"><i class="fa fa-plus"></i>添加</a>
                 </form>
             </div>
             <div id="ajax_return">
@@ -51,9 +51,8 @@
                                 <td>id</td>
                                 <td>封面图</td>
                                 <td>房间名</td>
-                                <td>直播分类</td>
+                                <td>房间类型</td>
                                 <td>是否推荐</td>
-
                                 <td>状态</td>
                                 <td>操作</td>
                             </tr>
@@ -65,7 +64,7 @@
                                 <td>{$row.room_id}</td>
                                 <td><img src="{$row.img}" style="max-width: 100px" alt=""></td>
                                 <td>{$row.room_name}</td>
-                                <td>{$cate[$row.cid]['cate_name']}</td>
+                                <td>{$type[$row.type]['type_name']}</td>
                                 <td><input type="checkbox" class="checkbox is_top" {:ischeck($row.top)} data-size="small" data-id="{$row.room_id}"></td>
 
 

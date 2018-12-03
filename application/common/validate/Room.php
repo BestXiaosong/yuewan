@@ -15,7 +15,7 @@ use think\Validate;
 class Room extends Validate
 {
     protected $rule = [
-        'room_name|房间名'  =>  'require|chs|checkName',
+//        'room_name|房间名'  =>  'require|chs|checkName',
         'cid|直播分类' => 'number',
         'detail|房间详情' => 'max:80',
         'is_close|全员禁言' => 'in:0,1',
@@ -23,7 +23,7 @@ class Room extends Validate
     ];
 
     protected $scene = [
-        'add_room'=> ['room_name','cid','detail','is_close','brief'],
+        'add_room'=> ['cid','detail','is_close','brief'],
         'edit'=> ['cid'],
     ];
 
