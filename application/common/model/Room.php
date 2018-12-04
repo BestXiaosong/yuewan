@@ -10,9 +10,11 @@ namespace app\common\model;
 
 
 use app\admin\controller\Play;
+use app\api\controller\User;
 use function Qiniu\waterImg;
 use think\Db;
 use think\Model;
+use wheat\Wheat;
 
 class Room extends Model
 {
@@ -127,6 +129,7 @@ class Room extends Model
             api_return(0,'参数错误');
         }
 
+        $data['self'] = hashid($user_id);
         if ($data['is_lock']){
             if ($data['password'] != $password){
                 api_return(0,'密码错误');
@@ -145,11 +148,8 @@ class Room extends Model
         //查询房间热度
         $data['hot'] = hotValue($data['room_id']);
 
-        //查询是否关注房间
-        $follow['room_id'] = $data['room_id'];
-        $follow['status']  = 1;
-        $follow['user_id'] = $user_id;
-        $data['is_follow'] = Db::name('room_follow')->where($follow)->cache(3)->value('status')??0;
+        //查询是否关注房间 可用于判断权限
+        $data['is_follow'] =  \app\api\controller\Base::roomPower($data['room_id'],$user_id);
 
         //查询用户权限
         if ($data['user_id'] == $user_id){
@@ -162,10 +162,12 @@ class Room extends Model
             $data['power'] = 4;//普通成员
         }
 
+
         //判断房间类型做不同处理
 //        1=>电台 2=>娱乐  3=>点单 4=>聊天
         switch ($data['type']){
             case 1:
+                $num = 5;
 
 
                 break;
@@ -180,9 +182,11 @@ class Room extends Model
                break;
         }
 
+        $wheat = Wheat::wheat($data['room_id'],$num);
 
+        $data['wheat'] = $wheat;
 
-
+        unset($data['user_id']);
 
         return $data;
     }

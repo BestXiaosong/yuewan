@@ -64,6 +64,48 @@ class Base extends Controller
         return $array;
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * @param $room_id
+     * 获取房间信息
+     */
+    public function roomInfo($room_id,$field = '',$cache = 3)
+    {
+        $map['room_id'] = $room_id;
+        $map['status']  = 1;
+
+        $data =  Db::name('room')->where($map)->cache($cache)->find();
+        if (strstr($field,',') || empty($field)){
+            if (!$field){ return $data; }
+            $arr = explode(',',$field);
+            $array = [];
+            foreach ($arr as $v){
+                $array[$v] = $data[$v];
+            }
+            return $array;
+        }else{
+            return $data[$field];
+        }
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 查询是否关注房间 可用于判断权限
+     */
+    public static function roomPower($room_id,$user_id)
+    {
+        $follow['room_id'] = $room_id;
+        $follow['user_id'] = $user_id;
+        return Db::name('room_follow')->where($follow)->cache(1)->value('status')??0;
+    }
+
+
+
+
+
+
 
 
     public function _empty()

@@ -17,6 +17,12 @@ use think\Model;
 class Logic extends Model
 {
 
+
+    public function changeTable($table)
+    {
+        $this->setTable(config('database.prefix').$table);
+    }
+
     public function saveChange($table = null,$data = [],$validate = true)
     {
 
@@ -38,6 +44,9 @@ class Logic extends Model
         }
 
     }
+
+
+
 
 
     public function saveAllChange($table = null,$data = [],$validate = true)

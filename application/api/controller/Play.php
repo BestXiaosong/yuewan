@@ -12,6 +12,7 @@ namespace app\api\controller;
 use app\common\model\Room;
 use app\common\model\RoomFollow;
 use think\Db;
+use wheat\Wheat;
 
 class Play extends User
 {
@@ -59,7 +60,88 @@ class Play extends User
 
 
 
+    /**
+     * 上麦、换麦、抱麦
+     * */
+    public function upWheat(){
+        $post = request()->only(['room_id','wheat_id','type','user_id'],'post');
+        //验证数据
+        $result = $this->validate($post,'Wheat.up');
+        if(true !== $result){
+            api_return(0,$result);
+        }
+        //不传默认登录用户ID
+        if(empty($post['user_id'])){
+            $post['user_id'] = $this->user_id;
+        }else{
+            $post['user_id'] = dehashid($post['user_id']);
+            if (!is_numeric($post['user_id'])) api_return(0,'参数错误');
+        }
 
+        //TODO  不同房间不同处理
+
+        $wheat = new Wheat();
+        if(isset($post['type']) && $post['type']  == 1){
+            //TODO 验证用户是否有抱麦权限
+
+            $ret = $wheat->embrace($post['user_id'],$post['room_id'],$post['wheat_id']);  //抱麦
+        }else{
+            $ret = $wheat->on($post['user_id'],$post['room_id'],$post['wheat_id']);  //上麦
+        }
+        if($ret['code']){
+            api_return(1,$ret['msg'],$ret['data']['wheat']);
+        }else{
+            api_return(0,$ret['msg']);
+        }
+    }
+
+    /**
+     *下麦、提麦
+     * */
+    public function downWheat(){
+        $post = request()->only(['room_id','wheat_id','type'],'post');
+        //验证数据
+        $result = $this->validate($post,'Wheat.down');
+        if(true !== $result){
+            api_return(0,$result);
+        }
+        $wheat = new Wheat();
+        if ($post['type'] == 1){  //下麦
+
+            $wheatInfo = $wheat->getWheatId($post['room_id'],$post['wheat_id']);
+
+            if ($wheatInfo['user_id'] != hashid($this->user_id)){
+                api_return(0,'您不在麦位上,不能下麦');
+            }
+
+
+        }else{ //踢人
+            //TODO 验证是否具有踢人权限
+
+
+        }
+
+        $ret = $wheat->down($post['room_id'],$post['wheat_id']);
+        if($ret['code']){
+            api_return(1,$ret['msg'],$ret['data']);
+        }else{
+            api_return(0,$ret['msg']);
+        }
+    }
+
+    /**
+     *锁麦
+     * */
+    public function lockWheat(){
+        $post =$this->request->post();
+        //验证数据
+        $result = $this->validate($post,'Wheat.down');
+        if(true !== $result){
+            api_return(0,$result);
+        }
+        api_return(1,'操作成功');
+
+    }
 
 
     /**
