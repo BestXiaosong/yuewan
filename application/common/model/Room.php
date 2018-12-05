@@ -137,9 +137,10 @@ class Room extends Model
         }
 
         //查询用户是否被封禁
-        $ban['user_id'] = $user_id;
-        $ban['status']  = 1;
+        $ban['user_id']  = $user_id;
+        $ban['status']   = 1;
         $ban['end_time'] = ['>',time()];
+        $ban['room_id']  = $data['room_id'];
         $black = Db::name('room_blacklist')->where($ban)->cache(3)->value('end_time');
         if ($black){
             api_return(0,'您已被拉入黑名单',$black['end_time']);

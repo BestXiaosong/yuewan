@@ -58,45 +58,27 @@ class Users extends Model
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * 家族申请列表获取用户
+     * 家族申请列表获取用户  房间管理获取用户
      */
-    public function apply($map = [])
+    public function getItems($map = [])
     {
         $join = [
             ['user_extend e','e.user_id = a.user_id','left']
         ];
 
-        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.tag,e.noble_id,e.level';
+        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.tag,e.noble_id,e.noble_time,e.level';
 
-        $rows =  $this->alias('a')->where($map)->join($join)
+        $rows =  $this->alias('a')
+            ->where($map)
+            ->join($join)
             ->field($field)
             ->order('e.online_status desc')
             ->cache(15)
             ->paginate()->each(function ($item){
-
-                if ($item['noble_id']){
-
-                    //有贵族身份 不查询等级颜色
-                    $item['color'] = '';
-                }else{
-
-                    //用户拥有等级  查询等级颜色
-                    if ($item['level'] > 0){
-
-                        $level['level'] = $item['level'];
-
-                        $item['color'] = Db::name('user_level')->where($level)->cache(15)->value('color');
-
-                    }else{
-                        $item['color'] = '';
-                    }
-
-                }
-
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
                 $item['user_id'] = hashid($item['user_id']);
 
             });
-
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
     }
     
@@ -112,7 +94,7 @@ class Users extends Model
             ['user_extend e','e.user_id = a.user_id','left']
         ];
 
-        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level';
+        $field = 'a.user_id,a.header_img,a.sex,a.nick_name,a.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.noble_time,e.level';
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -129,25 +111,7 @@ class Users extends Model
                     $item['status'] = formatTime($item['online_time']);
 
                 }
-
-                if ($item['noble_id']){
-
-                    //有贵族身份 不查询等级颜色
-                    $item['color'] = '';
-                }else{
-
-                    //用户拥有等级  查询等级颜色
-                    if ($item['level'] > 0){
-
-                        $level['level'] = $item['level'];
-
-                        $item['color'] = Db::name('user_level')->where($level)->cache(15)->value('color');
-
-                    }else{
-                        $item['color'] = '';
-                    }
-
-                }
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
 
 
                 if ($item['room_id']){

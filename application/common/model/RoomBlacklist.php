@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2018/7/26
- * Time: 15:46
+ * Created by xiaosong
+ * E-mail:4155433@gmail.com
+ * Date: 2018/12/5
+ * Time: 16:53
  */
 
 namespace app\common\model;
@@ -11,9 +11,8 @@ namespace app\common\model;
 
 use think\Model;
 
-class RoomFollow extends Model
+class RoomBlacklist extends Model
 {
-
     public function getRows($map = [])
     {
         $join = [
@@ -21,7 +20,7 @@ class RoomFollow extends Model
             ['users u','u.user_id = a.user_id','left']
         ];
 
-        $field = 'a.status,u.birthday,u.user_id,u.header_img,u.sex,u.nick_name,u.tag,e.noble_id,e.noble_time,e.level';
+        $field = 'a.update_time,a.minute,u.birthday,u.user_id,u.header_img,u.sex,u.nick_name,u.tag,e.noble_id,e.noble_time,e.level';
 
         $rows =  $this->alias('a')
             ->where($map)
@@ -34,5 +33,7 @@ class RoomFollow extends Model
             });
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
     }
+
+
 
 }

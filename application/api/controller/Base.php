@@ -91,6 +91,37 @@ class Base extends Controller
 
     /**
      * Created by xiaosong
+     * E-mail:306027376@qq.com
+     * 静态获取用户信息
+     */
+    public static function staticInfo($field = '',$user_id = null,$cache = 3){
+
+        if ($user_id){
+
+            $map['user_id'] = $user_id;
+
+        }else{
+            return '';
+        }
+
+        $data =  Db::name('users')->where($map)->cache($cache)->find();
+        if (strstr($field,',') || empty($field)){
+            if (!$field){ return $data; }
+            $arr = explode(',',$field);
+            $array = [];
+            foreach ($arr as $v){
+                $array[$v] = $data[$v];
+            }
+            return $array;
+        }else{
+            return $data[$field];
+        }
+
+    }
+
+
+    /**
+     * Created by xiaosong
      * E-mail:4155433@gmail.com
      * 查询是否关注房间 可用于判断权限
      */
@@ -102,7 +133,25 @@ class Base extends Controller
     }
 
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 检查贵族是否有效  有效返回贵族id  无效返回0
+     *$data => ['user_id','noble_id','noble_time']
+     */
+    public static function checkNoble($data)
+    {
+        if ($data['noble_time'] < time()){
 
+            //如果贵族已过期一个月以上 清除用户贵族id 和贵族过期时间
+            if ($data['noble_time'] < time() + 3600*24*31){
+                Db::name('user_extend')->where('user_id',$data['user_id'])->update(['noble_id'=>0,'noble_time'=>0]);
+            }
+
+            return 0;
+        }
+        return $data['noble_id'];
+    }
 
 
 

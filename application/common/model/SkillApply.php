@@ -191,7 +191,7 @@ class SkillApply extends Model
             ['users u','u.user_id = a.user_id','left']
         ];
 
-        $field = 'e.place,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level';
+        $field = 'e.place,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level,e.noble_time';
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -210,26 +210,8 @@ class SkillApply extends Model
                     $item['status'] = formatTime($item['online_time']);
 
                 }
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
 
-                if ($item['noble_id']){
-
-
-                    //无贵族身份 不查询等级颜色
-                    $item['color'] = '';
-                }else{
-
-                    //用户拥有等级  查询等级颜色
-                    if ($item['level'] > 0){
-
-                        $level['level'] = $item['level'];
-
-                        $item['color'] = Db::name('user_level')->where($level)->cache(15)->value('color');
-
-                    }else{
-                        $item['color'] = '';
-                    }
-
-                }
 
 
                 if ($item['room_id']){
@@ -279,7 +261,7 @@ class SkillApply extends Model
         $log = $userExtra['log'];
         $lat = $userExtra['lat'];
 
-        $field = "e.place,(st_distance (point (e.log,e.lat),point($log,$lat) ) / 0.0111) AS distance,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.level";
+        $field = "e.place,(st_distance (point (e.log,e.lat),point($log,$lat) ) / 0.0111) AS distance,a.skill_id,a.mini_price,a.num,u.user_id,u.header_img,u.sex,u.nick_name,u.sign,e.online_time,e.online_status,e.room_id,e.noble_id,e.noble_time,e.level";
 
         $rows =  $this->alias('a')->where($map)->join($join)
             ->field($field)
@@ -313,25 +295,7 @@ class SkillApply extends Model
                     $rows[$k]['status'] = formatTime($item['online_time']);
 
                 }
-
-                if ($item['noble_id']){
-
-                    //无贵族身份 不查询等级颜色
-                    $rows[$k]['color'] = '';
-                }else{
-
-                    //用户拥有等级  查询等级颜色
-                    if ($item['level'] > 0){
-
-                        $level['level'] = $item['level'];
-
-                        $rows[$k]['color'] = Db::name('user_level')->where($level)->cache(15)->value('color');
-
-                    }else{
-                        $rows[$k]['color'] = '';
-                    }
-
-                }
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
 
                 if ($item['room_id']){
 

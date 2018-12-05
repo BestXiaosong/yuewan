@@ -12,6 +12,7 @@
 namespace wheat;
 
 use app\api\controller\User;
+use function PHPSTORM_META\type;
 use rongyun\api\Chat;
 use think\Cache;
 
@@ -182,7 +183,7 @@ class Wheat
             return $this->error('该麦位已关闭');
         }
 
-        if($arrWheat[$wheat_id_key]['user_id'] == $user_id){
+        if($arrWheat[$wheat_id_key]['user_id'] === $user_id){
             return $this->error('已在该麦位上');
         }
 
@@ -197,7 +198,7 @@ class Wheat
         $oldId = -1;
 
         foreach ($arrWheat as $k=>$v){
-            if($v['user_id'] && $v['user_id'] == $user_id){
+            if($v['user_id'] && $v['user_id'] === $user_id){
                 $oldId = $k;
                 break;
             }

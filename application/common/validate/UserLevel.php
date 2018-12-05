@@ -9,7 +9,6 @@ class UserLevel extends Validate
 
         'level|等级'  =>  'require',
         'experience|所需经验'  =>  'require|number',
-        'color|颜色代码'  =>  'require',
 
     ];
 }

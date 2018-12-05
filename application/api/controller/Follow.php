@@ -8,6 +8,7 @@
 
 namespace app\api\controller;
 
+use app\common\logic\Logic;
 use app\common\logic\UserFollow;
 use \app\common\model\UserFollow as model;
 use think\Db;
@@ -260,6 +261,75 @@ class Follow extends User
         }else{
             api_return(0,'您未拉黑该用户!');
         }
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 关注房间
+     */
+    public function roomFollow()
+    {
+        $id = input('post.id');
+
+        $roomInfo = $this->roomInfo($id);
+
+        if (!$roomInfo) api_return(0,'房间id错误');
+        if ($roomInfo['user_id'] == $this->user_id){
+            api_return(0,'您不能关注自己的房间');
+        }
+
+        $map['room_id'] = $id;
+        $map['user_id'] = $this->user_id;
+
+        $model = new Logic();
+        $model->changeTable('room_follow');
+
+        $data = $model->where($map)->find();
+
+        if ($data && $data['status'] != 0){
+            api_return(0,'您已关注该房间');
+        }
+
+        if ($data){
+
+            $result = $data->save(['status'=>1]);
+
+        }else{
+            $result =$model->save($map);
+        }
+
+        if ($result){
+            api_return(1,'关注成功');
+        }
+
+        api_return(0,$data->getError().$model->getError());
+
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 取消关注
+     */
+    public function roomCancel()
+    {
+        $id = input('post.id');
+        $map['room_id'] = $id;
+        $map['user_id'] = $this->user_id;
+        $model = new Logic();
+        $model->changeTable('room_follow');
+        $data = $model->where($map)->find();
+        if (!$data || $data['status'] == 0){
+            api_return(0,'您未关注该房间');
+        }
+        if ($data['status'] != 1){
+            api_return(0,'管理员不能取消关注');
+        }
+        $result =  $data->save(['status'=>0]);
+
+        if ($result) api_return(1,'取消关注成功');
+        api_return(0,'操作失败');
     }
 
 

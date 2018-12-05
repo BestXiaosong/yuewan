@@ -9,6 +9,7 @@
 namespace app\common\model;
 
 
+use app\api\controller\User;
 use think\Db;
 use think\Model;
 
@@ -34,6 +35,24 @@ class GiftRecord extends Model
             ->order('g.price')
             ->select();
     }
+
+    public function giftList($map = [])
+    {
+        $rows =  $this->alias('a')
+            ->join([
+                ['users u','u.user_id = a.user_id','left']
+            ])
+            ->where($map)
+            ->field('a.total,u.nick_name,a.to_user,a.create_time')
+            ->cache(15)
+            ->order('a.record_id desc')
+            ->paginate()->each(function ($item){
+                $item['to_user'] = \app\api\controller\Base::staticInfo('nick_name',$item['to_user']);
+            });
+        return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
+    }
+
+
 
     //后台获取赠送礼物日志
     public function  recordList($where=[])

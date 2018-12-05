@@ -21,6 +21,7 @@ class Logic extends Model
     public function changeTable($table)
     {
         $this->setTable(config('database.prefix').$table);
+        return $this;
     }
 
     public function saveChange($table = null,$data = [],$validate = true)

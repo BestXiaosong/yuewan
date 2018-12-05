@@ -267,7 +267,7 @@ class Api extends User
     public function noble()
     {
         $data['noble'] = $this->userExtra('noble_id,noble_time');
-
+        //TODO 判断是否需要使用checkNoble方法更新用户的贵族等级
         $data['rows']  = Db::name('noble')->field('create_time,update_time',true)->order('noble_id')->select();
 
         api_return(1,'获取成功',$data);

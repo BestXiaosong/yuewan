@@ -38,9 +38,9 @@ class Chat extends User
             $group_img  = $this->userInfo('header_img');
 
         }else{  //家族群
-            $extra = $this->userExtra('noble_id,noble_time');
+            $noble_id = Base::checkNoble($this->userExtra('noble_id,noble_time,user_id'));
 
-            if (!$extra['noble_id'] || $extra['noble_time'] < time()) api_return(0,'非贵族不能创建家族');
+            if (!$noble_id) api_return(0,'非贵族不能创建家族');
 
             $group_name = $data['group_name'];
             $group_img  = $data['img'];
@@ -415,7 +415,7 @@ class Chat extends User
 
         $master = $this->userInfo('nick_name,header_img,user_id',$group['group_user']);
         $master['user_id'] = hashid($master['user_id']);
-        $master['noble_id'] = $this->userExtra('noble_id',$group['group_user']);
+        $master['noble_id'] = Base::checkNoble($this->userExtra('noble_id,user_id,noble_time',$group['group_user']));
 
         $condition['a.group_id'] =  $group['group_id'];
         $condition['a.status']   = 1;
@@ -479,7 +479,7 @@ class Chat extends User
 
         $model = new Users();
 
-        $rows = $model->apply($map);
+        $rows = $model->getItems($map);
 
         api_return(1,'获取成功',$rows);
 
