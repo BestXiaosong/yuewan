@@ -8,8 +8,6 @@
 
 namespace app\common\model;
 
-
-use app\api\controller\User;
 use think\Db;
 use think\Model;
 
@@ -52,6 +50,61 @@ class GiftRecord extends Model
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
     }
 
+    public function getTrueLove($map = [])
+    {
+
+        $field = 'a.user_id,u.nick_name,u.header_img,e.noble_id,e.level,e.noble_time,a.to_user,g.thumbnail,g.img,a.create_time,r.room_id,r.room_name';
+
+        $rows =  $this->alias('a')
+            ->join([
+                ['users u','u.user_id = a.user_id','left'],
+                ['user_extend e','e.user_id = a.user_id','left'],
+                ['gift g','g.gift_id = a.gift_id','left'],
+                ['room r','r.room_id = a.room_id','left'],
+            ])
+            ->where($map)
+            ->field($field)
+            ->cache(15)
+            ->order('a.record_id desc')
+            ->paginate(3)->each(function ($item){
+                $item['formatTime'] = formatTime($item['create_time']);
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
+                $item['to_nick_name'] = \app\api\controller\Base::staticInfo('nick_name',$item['to_user']);
+                $item['to_header_img'] = \app\api\controller\Base::staticInfo('header_img',$item['to_user']);
+                $item['to_user'] = hashid($item['to_user']);
+                $item['user_id'] = hashid($item['user_id']);
+            });
+        return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
+    }
+
+    public function protect($map = [])
+    {
+
+
+
+        $field = 'sum(total) as total,a.user_id,u.nick_name,u.header_img,e.noble_id,e.level,e.noble_time,a.to_user,a.create_time,r.room_id,r.room_name';
+
+        $rows =  $this->alias('a')
+            ->join([
+                ['users u','u.user_id = a.user_id','left'],
+                ['user_extend e','e.user_id = a.user_id','left'],
+                ['room r','r.room_id = a.room_id','left'],
+            ])
+            ->where($map)
+            ->field($field)
+            ->group('to_user')
+            ->cache(15)
+            ->order('total desc')
+            ->paginate(3)->each(function ($item){
+                $item['formatTime'] = formatTime($item['create_time']);
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
+                $item['to_nick_name'] = \app\api\controller\Base::staticInfo('nick_name',$item['to_user']);
+                $item['to_header_img'] = \app\api\controller\Base::staticInfo('header_img',$item['to_user']);
+                $item['to_user'] = hashid($item['to_user']);
+                $item['user_id'] = hashid($item['user_id']);
+            });
+        return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
+    }
 
 
     //后台获取赠送礼物日志

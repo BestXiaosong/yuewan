@@ -12,11 +12,10 @@ namespace app\api\controller;
 use app\common\model\GiftRecord;
 use app\common\model\Room;
 use app\common\model\RoomBlacklist;
-use app\common\model\RoomFollow;
 use app\common\model\RoomLog;
+use app\common\model\UserGuard;
 use app\common\model\Users;
 use think\Db;
-use wheat\Wheat;
 
 class Play extends User
 {
@@ -143,180 +142,74 @@ class Play extends User
     }
 
 
-
     /**
-     * 获取房主及管理员
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 真爱排行榜
      */
-    public function roomAdmins()
+    public function trueLove()
     {
 
-        $id = dehashid(input('post.id'));
-//        $id = input('post.id');
-        if (!is_numeric($id)) api_return(0,'参数错误');
-        $model = new Room();
-        $where['a.room_id'] = $id;
-        $rows = $model->getAdmins($where);
-        if (!empty($rows)) api_return(1,'获取成功',$rows);
-        api_return(0,'暂无数据');
+        $map['a.status'] = 1;
+        $map['a.room_id'] = ['>',0];
+        $map['g.price'] = ['>',519];
+        $model = new GiftRecord();
+
+        $rows = $model->getTrueLove($map);
+
+        api_return(1,'获取成功',$rows);
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 守护排行榜
+     */
+    public function protect()
+    {
+        $map['a.status'] = 1;
+        $map['a.room_id'] = ['>',0];
+        $model = new GiftRecord();
+        $rows = $model->protect($map);
+        api_return(1,'获取成功',$rows);
+    }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 获取CP排行榜
+     */
+    public function guard()
+    {
+        $time = cache('guardTime');
+        $map = [];
+
+        if (time()+86430 > $time){
+            $time = time() + 86430;
+            cache('guardTime',$time);
+        }
+
+        $map['a.status'] = 1;
+        $map['a.end_time'] = ['>',$time];
+
+        $model = new UserGuard();
+        $rows = $model->getRows($map);
+
+        api_return(1,'获取成功',$rows);
 
     }
 
     /**
      * Created by xiaosong
-     * E-mail:306027376@qq.com
-     * 设置房间管理员
+     * E-mail:4155433@gmail.com
+     * 获取贵族排行榜
      */
-    public function admin()
+    public function noble()
     {
-        $map['role_id'] = dehashid(input('post.role_id'));
-        if (!is_numeric($map['role_id'])) api_return(0,'非法参数');
-        $map['room_id'] = dehashid(input('post.room_id'));
-        if (!is_numeric($map['room_id'])) api_return(0,'房间id错误');
-        $room = Db::name('room')->where('room_id',$map['room_id'])->field('room_id,user_id')->find();
-        if ($room['user_id'] != $this->user_id) api_return(0,'您不是房主,没有权限操作');
-        $type = input('post.type');
-        $follow = Db::name('room_follow')->where($map)->find();
-        if ($type == 1){ //设置管理员
-            if (empty($follow)){
-                $map['status'] = 2;
-                $map['create_time'] = time();
-                $map['update_time'] = time();
-                $result = Db::name('room_follow')->insert($map);
-            }elseif ($follow['status'] == 2){
-                api_return(0,'该用户已经是管理员了');
-            }else{
-                $result = Db::name('room_follow')->where('follow_id',$follow['follow_id'])->update(['status'=>2,'update_time'=>time()]);
-            }
-        }else{ //取消管理员
-            if ($follow['status'] != 2){
-                api_return(0,'该用户不是管理员!');
-            }else{
-                $result = Db::name('room_follow')->where('follow_id',$follow['follow_id'])->update(['status'=>1,'update_time'=>time()]);
-            }
-        }
-        if ($result) api_return(1,'操作成功');
-        api_return(0,'操作失败');
-    }
+        //TODO 获取贵族排行榜
 
 
 
-
-    /**
-     * 获取房间普通成员
-     */
-    public function roomUsers()
-    {
-
-        $id = dehashid(input('post.id'));
-//        $id = input('post.id');
-        if (!is_numeric($id)) api_return(0,'参数错误');
-        $model = new RoomFollow();
-        $where['a.room_id'] = $id;
-        $where['a.status'] = ['between','0,1'];
-        $where['r.status'] = 1;
-        $rows = $model->getUsers($where);
-        if (!empty($rows)) api_return(1,'获取成功',$rows);
-        api_return(0,'暂无数据');
-    }
-
-
-
-
-
-
-    /**
-     * 房间公告修改
-     */
-    public function changeDetail(){
-        $id = $this->role_id;
-        $where = array();
-        $room_id = dehashid($this->request->post('room_id'));
-        if (!is_numeric($room_id)) api_return(0,'参数错误');
-        $notice_id = $this->request->post('notice_id');
-        $content   = $this->request->post('content');
-        $title     = $this->request->post('title');
-        if(!empty($content)){
-            $where['content'] = $content;
-        }
-        if(!empty($title)){
-            $where['title'] = $title;
-        }
-        $model = new \app\common\logic\Room();
-        $data = $model->notice($id,$room_id,$where,$this->user_id,$notice_id);
-        if($data == 1){
-            api_return(1,'操作成功');
-        }elseif($data == 0){
-            api_return(0,'操作失败');
-        }elseif($data == -2){
-            api_return(0,'您并没有修改公告');
-        }else{
-            api_return(0,'您没有修改公告的权限');
-        }
-    }
-
-    /**
-     * 房间公告删除
-     */
-    public function notice_del(){
-        $id = $this->user_id;
-        $room_id = dehashid($this->request->post('room_id'));
-        if (!is_numeric($room_id)) api_return(0,'参数错误');
-        $notice_id = $this->request->post('notice_id');
-        $model = new \app\common\logic\Room();
-        $data = $model->changeStatus($id,$room_id,$notice_id,1,0,$this->user_id);
-        if($data == 1){
-            api_return(1,'操作成功');
-        }elseif($data == 0){
-            api_return(0,'操作失败');
-        }else{
-            api_return(0,'您没有删除公告的权限');
-        }
-    }
-
-    /**
-     * 房间公告置顶
-     */
-    public function up_notice(){
-        $id = $this->user_id;
-        $room_id = dehashid($this->request->post('room_id'));
-        if (!is_numeric($room_id)) api_return(0,'参数错误');
-        $notice_id = $this->request->post('notice_id');
-        $model = new \app\common\logic\Room();
-        $data = $model->changeStatus($id,$room_id,$notice_id,0,1);
-        if($data == 1){
-            api_return(1,'操作成功');
-        }elseif($data == 0){
-            api_return(0,'操作失败');
-        }else{
-            api_return(0,'您没有置顶公告的权限');
-        }
-    }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 播放信息获取
-     */
-    public function PlayInfo()
-    {
-        $id = dehashid(input('post.id'));
-        if (!is_numeric($id)) api_return(0,'参数错误');
-        $data = $this->getPlayInfo($id);
-        api_return(1,'获取成功',$data);
     }
 
 
@@ -326,22 +219,6 @@ class Play extends User
 
 
 
-    /**
-     *  直播间开启与关闭(by yy)
-     */
-    public function ioRoom(){
-        $room_id = dehashid($this->request->post('room_id'));
-        if((!is_numeric($room_id))) api_return(0,'参数错误');
-        $data = Db::name('room')->where(['room_id'=>$room_id])->value('play_status');
-        $status = 0;
-        if($data == 1){
-            $status = 0;
-        }elseif($data == 0){
-            $status = 1;
-        }
-        Db::name('room')->where(['room_id'=>$room_id])->update(['play_status'=>$status]);
-        api_return(1,'修改成功');
-    }
 
 
     /**
@@ -400,31 +277,6 @@ class Play extends User
     }
 
 
-    public function new_activity(){
-        $id = dehashid(input('post.id'));
-        if (!is_numeric($id)) api_return(0,'参数错误');
-        $model = new \app\common\model\RoomActivity();
-        $data = $model->new_activity($id);
-        if($data !=0){
-            api_return(1,'获取成功',$data);
-        }else{
-            api_return(0,'暂无数据');
-        }
-    }
-    public function activity_money(){
-        $id = dehashid(input('post.id'));
-//        $id = 9;
-        if (!is_numeric($id)) api_return(0,'参数错误');
-        $join = [
-           ['cl_room_activity ra','r.room_id = ra.room_id','left']
-        ];
-        $file = 'ra.money,ra.charge';
-        $data = Db::name('room')->alias('r')->field($file)->join($join)->where(['r.room_id'=>$id])->order('ra.start_time desc')->find();
-        if($data['charge'] == 1){
-            $datas = $data['money']??1;
-        }else{
-            $datas = 0;
-        }
-        api_return(1,'获取成功',$datas);
-    }
+
+
 }

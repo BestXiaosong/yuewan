@@ -42,9 +42,11 @@ class Wheat
      *string user_id 用户ID
      *string room_id 房间ID
      *string wheat_id 麦ID
+     * bool|int is_manage 是否为管理员上麦  如果是 判断麦位是否关闭 如果关闭 就打开
      * */
-    public function on($user_id,$room_id,$wheat_id){
-        return $this->up($user_id,$room_id,$wheat_id);
+    public function on($user_id,$room_id,$wheat_id,$is_manage = false){
+
+        return $this->up($user_id,$room_id,$wheat_id,false,$is_manage);
     }
 
     /**
@@ -153,8 +155,10 @@ class Wheat
      *string room_id 房间ID
      *string wheat_id 麦ID
      *string wheat_id 麦ID
+     * bool|int is_manage 是否为管理员上麦  如果是 判断麦位是否关闭 如果关闭 就打开
      * */
-    private function up($user_id,$room_id,$wheat_id,$is_embrace=true){
+    private function up($user_id,$room_id,$wheat_id,$is_embrace=true,$is_manage = false){
+
         //判断房间开启上麦功能
         if(!$this->isOPenWheat($room_id)){
             return $this->error('抢麦还没开始');
@@ -179,8 +183,21 @@ class Wheat
         $arrWheat = $this->getWheat($room_id);
 
         $wheat_id_key = $wheat_id-1;
-        if(!is_array($arrWheat) || !array_key_exists($wheat_id_key,$arrWheat) || !$arrWheat[$wheat_id_key]['st']){
+        if(!is_array($arrWheat) || !array_key_exists($wheat_id_key,$arrWheat)){
+
             return $this->error('该麦位已关闭');
+
+        }
+
+        if (!$arrWheat[$wheat_id_key]['st']){
+
+            if ($is_manage){
+
+                $arrWheat[$wheat_id_key]['st'] = 1;
+
+            }else{
+                return $this->error('该麦位已关闭');
+            }
         }
 
         if($arrWheat[$wheat_id_key]['user_id'] === $user_id){

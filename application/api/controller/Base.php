@@ -257,33 +257,6 @@ class Base extends Controller
     }
 
 
-//    /**
-//     * token对比
-//     * 用于验证是否登陆
-//     */
-//    protected function checkToken(){
-//        if (request()->isPost()){
-//            $token = input('post.token')??request()->header()['token'];
-//            if (empty($token)){
-//                api_return(-1,'登录过期');
-//            }
-//            $data  = Db::name('users')->where('token',$token)->field('user_id,token,token_expire,status')->find();
-//            if ($data['status'] == 1){
-//                if ($token == $data['token']){
-//                    if(time() < $data['token_expire']){
-//                        return $data['user_id'];
-//                    }
-//                }
-//                api_return(-1,'登录过期');
-//            }
-//            api_return(0,'账号不存在或被禁用');
-//        }
-//        api_return(0,'访问错误');
-//    }
-
-
-
-
 
     /**
      * @param int $phone

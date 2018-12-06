@@ -170,9 +170,10 @@ class Room extends Model
             case 1:
                 $num = 5;
 
-
                 break;
             case 2:
+                $num = 9;
+
                 break;
             case 3:
                 break;

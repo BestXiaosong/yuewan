@@ -19,9 +19,13 @@ use wheat\Wheat;
 
 class Radio extends User
 {
-    private static $roomInfo = null;
+    protected static $roomInfo = null;
 
-    private static $room_id = null;
+    protected static $room_id  = null;
+
+    protected static $roomType = 1;
+
+    protected static $generalNotUp = [1];
 
     public function _initialize()
     {
@@ -37,7 +41,8 @@ class Radio extends User
      * 房间类型拦截
      */
     protected function roomType(){
-        if (self::$roomInfo['type'] != 1){
+
+        if (self::$roomInfo['type'] != self::$roomType){
             api_return(0,'房间类型访问错误');
         }
     }
@@ -166,17 +171,28 @@ class Radio extends User
     /**
      * Created by xiaosong
      * E-mail:4155433@gmail.com
-     * 踢下麦
+     * 下麦|踢下麦
      */
     public function downWheat()
     {
-        if (!$this->owner() && !$this->power()){
-            api_return(0,'权限不足,操作');
-        }
 
-        $data = request()->only(['wheat_id'],'post');
+        $data = request()->only(['wheat_id','type'],'post');
 
         $wheat = new Wheat();
+
+        if ($data['type'] == 1){ //踢下麦
+
+            $this->checkPower();
+
+        }else{ //自己下麦
+
+            $info = $wheat->getWheat(self::$room_id)[$data['wheat_id']-1];
+
+            if ($info['user_id'] !== hashid($this->user_id)){
+                api_return(0,'您不在麦位上,不能下麦');
+            }
+
+        }
 
         $ret = $wheat->down(self::$room_id,$data['wheat_id']);
 
@@ -191,6 +207,7 @@ class Radio extends User
      * 上麦、换麦、抱麦
      * */
     public function upWheat(){
+
         $post = request()->only(['wheat_id','type','user_id'],'post');
         //验证数据
         $result = $this->validate($post,'Wheat.up');
@@ -198,9 +215,7 @@ class Radio extends User
             api_return(0,$result);
         }
         //不传默认登录用户ID
-        if(empty($post['user_id'])){
-            $post['user_id'] = $this->user_id;
-        }else{
+        if(!empty($post['user_id'])){
             $post['user_id'] = dehashid($post['user_id']);
             if (!is_numeric($post['user_id'])) api_return(0,'参数错误');
         }
@@ -217,10 +232,18 @@ class Radio extends User
             $ret = $wheat->embrace($post['user_id'],self::$room_id,$post['wheat_id']);
         }else{//上麦
 
+            $powerCode = $this->getPowerCode();
+
+            if (in_array($post['wheat_id'],self::$generalNotUp)){
+                if (!$powerCode){
+                    api_return(0,'非管理员不能上麦');
+                }
+            }
+
             if ($post['wheat_id'] == 1){
                 $this->checkPower($this->user_id,'权限不足,不能上主播位');
             }
-            $ret = $wheat->on($post['user_id'],self::$room_id,$post['wheat_id']);
+            $ret = $wheat->on($this->user_id,self::$room_id,$post['wheat_id'],$powerCode);
         }
         if($ret['code']){
             api_return(1,$ret['msg'],$ret['data']['wheat']);
@@ -381,6 +404,50 @@ class Radio extends User
             api_return(1,'操作成功');
         }
         api_return(0,$data->getError().$model->getError());
+    }
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 取消房间管理
+     */
+    public function cancelManage()
+    {
+        $id     = dehashid(input('post.id'));
+
+        if (!is_numeric($id)){
+            api_return(0,'用户id错误');
+        }
+
+        $this->checkPower();
+
+        $powerCode = $this->getPowerCode($id);
+
+        if (!$powerCode){
+            api_return(0,'该用户不是房间管理,不能操作');
+        }
+
+        $map['room_id'] = self::$room_id;
+        $map['user_id'] = $id;
+
+        $model = new Logic();
+        $model->changeTable('room_follow');
+
+        $data = $model->where($map)->find();
+
+        if ($data){
+           $data->save(['status'=>1]);
+        }else{
+            api_return(0,$data->getError());
+        }
+
+        //写入操作日志
+        $content = '<tag>'.$this->userInfo('nick_name').
+            '</tag> 取消  <tag>'.$this->userInfo('nick_name',$id).
+            '</tag> 的管理权限';
+
+        $this->writeLog($content,self::$room_id);
+        api_return(1,'操作成功');
+
     }
 
     /**

@@ -639,7 +639,14 @@ function array_key($arr, $val)
 //人性化时间
 function formatTime($time)
 {
+
+    if (!is_numeric($time)){
+        $time = strtotime($time);
+    }
+    $time = strtotime($time);
+
     $rtime = date("m-d H:i", $time);
+
     $htime = date("H:i", $time);
     $time = time() - $time;
     if ($time < 60) {
@@ -662,6 +669,19 @@ function formatTime($time)
     }
     return $str;
 }
+
+/**
+ * Created by xiaosong
+ * E-mail:4155433@gmail.com
+ * 秒数转换为天数
+ */
+function secToDay($time){
+
+    $day = bcdiv($time,86400,0);
+    return $day.'天';
+
+}
+
 
 /**
  * Created by xiaosong
