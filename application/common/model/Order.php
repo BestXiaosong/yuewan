@@ -39,10 +39,24 @@ class Order extends Base
                 $item['user_id'] = hashid($item['user_id']);
 
             });
-
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
-
     }
+
+
+    public static function InterestTag($map = [])
+    {
+
+        return self::alias('a')
+            ->where($map)
+            ->join('skill s','s.skill_id = a.skill_id','LEFT')
+            ->distinct(true)
+            ->field('s.skill_name')
+            ->cache(15)
+            ->select();
+    }
+    
+    
+    
 
 
 }

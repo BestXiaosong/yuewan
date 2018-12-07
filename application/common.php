@@ -1187,3 +1187,27 @@ if (! function_exists('dd')) {
         die(1);
     }
 }
+
+function getAge($birthday){
+
+    if (!is_numeric($birthday)){
+        $birthday = strtotime($birthday);
+    }
+
+    //格式化出生时间年月日
+    $byear=date('Y',$birthday);
+    $bmonth=date('m',$birthday);
+    $bday=date('d',$birthday);
+
+    //格式化当前时间年月日
+    $tyear=date('Y');
+    $tmonth=date('m');
+    $tday=date('d');
+
+    //开始计算年龄
+    $age=$tyear-$byear;
+    if($bmonth>$tmonth || $bmonth==$tmonth && $bday>$tday){
+        $age--;
+    }
+    return $age;
+}

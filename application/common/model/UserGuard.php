@@ -31,7 +31,19 @@ class UserGuard extends Model
             });
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
     }
-    
+
+    public static function Best($map = []){
+        return self::alias('a')
+            ->join([
+                ['users u','u.user_id = a.user_id','left'],
+            ])
+            ->where($map)
+            ->field('u.header_img,a.type')
+            ->order(['type'=>'desc','end_time'=>'desc'])
+            ->find();
+    }
+
+
 
 
 }

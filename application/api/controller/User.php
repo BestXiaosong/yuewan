@@ -1,10 +1,14 @@
 <?php
 namespace app\api\controller;
 use app\common\logic\UserAccount;
+use app\common\model\ChatUsers;
 use app\common\model\GiftRecord;
 use app\common\model\Job;
+use app\common\model\Order;
 use app\common\model\RechargeConfig;
+use app\common\model\Room;
 use app\common\model\SkillApply;
+use app\common\model\UserGuard;
 use think\Db;
 use app\common\model\Users;
 use think\helper\Time;
@@ -237,6 +241,7 @@ class User extends Base
         $model = new Users();
         $userInfo = $model->getInfo($user_id);
         $userInfo['constellation'] = get_constellation($userInfo['birthday']);
+        $userInfo['age'] = getAge($userInfo['birthday']);
 
         $extra = $this->userExtra('place,online_status,online_time');
 
@@ -249,19 +254,29 @@ class User extends Base
        }
 
         $map['status']  = 1;
-        $map['user_id'] = $this->user_id;
+        $map['user_id'] = $user_id;
 
         $data['vod']     = Db::name('vod')->where($map)->field('pid,play_url,play_num')->select();
 
         $data['vod_max'] = $this->extend('vod_max');
 
         $gift['a.status']  = 1;
-        $gift['a.user_id'] = $this->user_id;
+        $gift['a.user_id'] = $user_id;
         $data['gift_count'] = Db::name('gift_record')->alias('a')->where($gift)->sum('a.num');
 
         $data['gift_list']  = (new GiftRecord())->giftCount($gift);
 
-        //TODO 所在圈子  房间 家族 待处理
+        $group['c.type']    = 2;
+        $group['c.status']  = 1;
+        $group['a.user_id'] = $user_id;
+        $group['a.status']  = 1;
+        $data['group_list'] = (new ChatUsers())->items($group);
+
+        $room['a.status'] = 1;
+        $room['a.user_id'] = $user_id;
+
+        //TODO 为房间管理员的房间未加入
+        $data['room_list'] = (new Room())->room($room);
 
         $skill['a.user_id'] = $this->user_id;
         $data['skill_list'] = (new SkillApply())->getMy();
@@ -284,14 +299,34 @@ class User extends Base
 
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.comZ
+     * 其它用户详情
+     */
     public function otherInfo()
     {
 
         $user_id = dehashid(input('post.id'));
 
-        if (!is_numeric($user_id)) api_return(0,'参数错误');
+        if (!is_numeric($user_id)){
+            api_return(0,'参数错误');
+        }elseif ($user_id == $this->user_id){
+            api_return(0,'应查询个人详情');
+        }
 
         $data = $this->userDetail($user_id);
+
+        $guard['a.guard_user'] = $user_id;
+        $guard['a.status']     = 1;
+        $guard['a.end_time']   = ['>',time()];
+
+        $data['guard'] = UserGuard::Best($guard);
+
+        $tag['a.user_id'] = $user_id;
+        $tag['a.status']  = ['between','4,5'];
+
+        $data['InterestTag'] = Order::InterestTag($tag);
 
         $map['user_id']     = $this->user_id;
         $map['follow_user'] = $user_id;
@@ -302,8 +337,6 @@ class User extends Base
 
         api_return(1,'获取成功',$data);
     }
-
-
 
     /**
      * Created by xiaosong

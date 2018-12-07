@@ -81,7 +81,36 @@ class Users extends Model
             });
         return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
     }
-    
+
+    public function getNoble($map = [])
+    {
+        $join = [
+            ['user_extend e','e.user_id = a.user_id','left']
+        ];
+
+        $field = 'a.user_id,a.header_img,a.nick_name,a.sign,e.noble_id,e.noble_time,e.online_time,e.online_status';
+
+        $rows =  $this->alias('a')
+            ->where($map)
+            ->join($join)
+            ->field($field)
+            ->order(['e.noble_id'=>'desc','noble_time'=>'desc'])
+            ->cache(15)
+            ->paginate()->each(function ($item){
+                $item['noble_id'] = \app\api\controller\Base::checkNoble($item);
+
+                if ($item['online_status']){
+                    $item['status'] = '当前在线';
+                }else{
+                    $item['status'] = formatTime($item['online_time']);
+                }
+
+                $item['user_id'] = hashid($item['user_id']);
+            });
+        return ['thisPage'=>$rows->currentPage(),'hasNext'=>$rows->hasMore(),'data'=>$rows->items()];
+    }
+
+
 
     /**
      * Created by xiaosong

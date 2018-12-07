@@ -11,8 +11,8 @@
  * */
 namespace wheat;
 
+use app\api\controller\Base;
 use app\api\controller\User;
-use function PHPSTORM_META\type;
 use rongyun\api\Chat;
 use think\Cache;
 
@@ -282,10 +282,10 @@ class Wheat
      * @return array|mixed
      * 获取或设置房间当前麦位
      */
-    public static function wheat($room_id,$wheat = 5){
+    public static function wheat($room_id,$type = 1){
         $data = Cache::store('redis')->get('wheat_bit_'.$room_id);
         if (!is_array($data)){
-            $data = self::wheatInit($room_id,$wheat);
+            $data = self::wheatInit($room_id,$type);
         }
         $is_open = Cache::store('redis')->get('wheat_is_open_'.$room_id);
 
@@ -300,16 +300,51 @@ class Wheat
      * E-mail:4155433@gmail.com
      * 麦位初始化
      */
-    public static function wheatInit($room_id,$wheat){
+    public static function wheatInit($room_id,$type = 1){
         $data = [];
-        for ($i = 1;$i <= $wheat;$i++){
-            $arr['wheat_id'] = $i;
-            $arr['user_id'] = 0;
-            $arr['st'] = 1;
-            $arr['header_img'] = '';
-            $arr['nick_name']  = '';
-            $data[] = $arr;
+
+        //判断房间类型做不同处理
+//        1=>电台 2=>娱乐  3=>点单 4=>聊天
+        switch ($type){
+            case 1:
+                for ($i = 1;$i <= 5;$i++){
+                    $arr['wheat_id'] = $i;
+                    $arr['user_id'] = 0;
+                    $arr['st'] = 1;
+                    $arr['header_img'] = '';
+                    $arr['nick_name']  = '';
+                    $data[] = $arr;
+                }
+
+                break;
+            case 2:
+                for ($i = 1;$i <= 9;$i++){
+                    $arr['wheat_id'] = $i;
+                    $arr['st'] = 1;
+                    $arr['is_show'] = 1;
+                    if ($i == 1){
+                        $user_id = Base::StaticRoomInfo($room_id,'user_id');
+                        $arr['user_id'] = hashid($user_id);
+                        $arr['header_img'] = Base::staticInfo('header_img',$user_id);
+                        $arr['nick_name']  = Base::staticInfo('nick_name',$user_id);
+                    }else{
+                        $arr['user_id'] = 0;
+                        $arr['header_img'] = '';
+                        $arr['nick_name']  = '';
+                    }
+                    $data[] = $arr;
+                }
+
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                api_return(0,'房间类型错误');
+                break;
         }
+
         Cache::store('redis')->set('wheat_bit_'.$room_id,$data);
         return $data;
     }
@@ -321,7 +356,7 @@ class Wheat
      * int  room_id 房间ID
      * array  data 麦位集合
      * */
-    private function setWheat($room_id,$data){
+    public function setWheat($room_id,$data){
         return Cache::store('redis')->set('wheat_bit_'.$room_id,$data);
     }
 

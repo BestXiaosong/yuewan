@@ -89,6 +89,26 @@ class Base extends Controller
         }
     }
 
+    public static function StaticRoomInfo($room_id,$field = '',$cache = 3)
+    {
+        $map['room_id'] = $room_id;
+        $map['status']  = 1;
+
+        $data =  Db::name('room')->where($map)->cache($cache)->find();
+        if (strstr($field,',') || empty($field)){
+            if (!$field){ return $data; }
+            $arr = explode(',',$field);
+            $array = [];
+            foreach ($arr as $v){
+                $array[$v] = $data[$v];
+            }
+            return $array;
+        }else{
+            return $data[$field];
+        }
+    }
+
+
     /**
      * Created by xiaosong
      * E-mail:306027376@qq.com

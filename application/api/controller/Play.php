@@ -206,9 +206,23 @@ class Play extends User
      */
     public function noble()
     {
-        //TODO 获取贵族排行榜
 
+        $time = cache('nobleTime');
+        $map = [];
 
+        if (time()+30 > $time){
+            $time = time() + 30;
+            cache('nobleTime',$time);
+        }
+
+        $map['e.noble_id']   = ['>',0];
+        $map['e.noble_time'] = ['>',$time];
+
+        $model = new Users();
+
+        $rows = $model->getNoble($map);
+
+        api_return(1,'获取成功',$rows);
 
     }
 

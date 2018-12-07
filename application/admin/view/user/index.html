@@ -31,8 +31,9 @@
                                 <td>用户id</td>
                                 <td>昵称</td>
                                 <td>头像</td>
-                                <td>手机号码</td>
-                                <td>积分余额</td>
+                                <td>可消费余额</td>
+                                <td>可提现余额</td>
+                                <td>总余额</td>
                                 <td>注册日期</td>
                                 <td>状态</td>
                                 <td>操作</td>
@@ -45,8 +46,9 @@
                                 <td>{$row.user_id}</td>
                                 <td>{$row.nick_name}</td>
                                 <td><img src="{$row.header_img}" style="max-width: 100px" alt=""></td>
-                                <td>{$row.phone}</td>
                                 <td>{$row.money}</td>
+                                <td>{$row.cash}</td>
+                                <td>{$row.cash + $row.money}</td>
                                 <td>{$row.create_time}</td>
                                 <td>{if condition="$row.status == 1"} 启用 {else /} 禁用 {/if}</td>
                                 <td>

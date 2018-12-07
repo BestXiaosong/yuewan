@@ -27,6 +27,21 @@ class ChatUsers extends Base
 
     }
 
+    public function items($map = [])
+    {
+
+        return $this->alias('a')
+            ->join('chat_group c','c.group_id = a.group_id','LEFT')
+            ->where($map)
+            ->field("a.group_id,c.group_name,c.img,a.chat_id,c.num")
+            //可根据group筛选唯一值
+//            ->group('a.group_id')
+            ->cache(5)
+            ->select();
+    }
+
+
+
     //前端群管理页面获取群成员
     public function getList($map = [],$user_id = 0)
     {
