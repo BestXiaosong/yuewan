@@ -82,12 +82,14 @@ class Pays extends User
                 //获取要赠送的人数
                 $people = count(explode(',',$data['to_user']));
 
+                if ($people <= 0) api_return(0,'请选择要赠送的的人');
+
                 //根据人数及每人赠送数量判断赠送总数
-                $num = $data['num'] * $people;
+                $total = bcmul($gift['price'],$data['num'],2);
 
-                if ($num <= 0) api_return(0,'请选择要赠送的的人');
+                if ($total <= 0)
 
-                $price = bcmul($gift['price'],$num,2);
+                $price = bcmul($total,$people,2);
 
                 $subject = '萌趴礼物('.$gift['gift_name'].')赠送';
 
@@ -96,7 +98,10 @@ class Pays extends User
                     'user_id' => hashid($this->user_id),
                     'id' => $data['id'],
                     'type' => $data['type'],
-                    'to_user' => $data['to_user']
+                    'to_user' => $data['to_user'],
+                    'room_id' => $data['room_id']??0,
+                    'total'=> $total,
+                    'num' => $data['num'],
                 ]);
 
                 break;
@@ -193,7 +198,6 @@ class Pays extends User
 //            cache('aliTest',$data);
             $data = cache('aliTest');
 
-            var_dump($data);exit;
 
             // 请自行对 trade_status 进行判断及其它逻辑进行判断，在支付宝的业务通知中，只有交易通知状态为 TRADE_SUCCESS 或 TRADE_FINISHED 时，支付宝才会认定为买家付款成功。
             // 1、商户需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号；
@@ -270,32 +274,59 @@ class Pays extends User
      * 礼物赠送回调成功处理
      */
     protected function gift($data){
-
+        
         $userIds = explode(',',$data['to_user']);
 
         $item['room_id'] = $data['room_id']??0;
         $item['gift_id'] = $data['id'];
-        $item['num']     = $data['num'];
+        $item['num']     = $data['num']??1;
         $item['user_id'] = dehashid($data['user_id']);
-        $item['total']   = $data['total'];
+        $item['total']   = $data['total']??1;
+        $item['create_time'] = time();
+        $item['update_time'] = time();
 
+        $gift = Db::name('gift')->where('gift_id',$data['id'])->cache(3)->find();
 
+        $detail['type'] = 1;
+        $detail['title'] = '来自'.$this->userInfo('nick_name',$item['user_id']).'的'.$gift['gift_name'].'x'.$item['num'];
+        $detail['remark'] = '收入';
+        $detail['create_time'] = time();
+        $detail['update_time'] = time();
+        $ratio = $this->extend('gift_ratio') / 100;
+        $detail['money'] = bcmul($item['total'],$ratio,2);
+
+        $detail2['type']   = 2;
+        $detail2['remark']  = '消费';
+        $detail2['money']   = $item['total'];
+        $detail2['user_id'] = $item['user_id'];
+        $detail2['create_time'] = time();
+        $detail2['update_time'] = time();
 
         $model = new Logic();
         $model->changeTable('gift_record');
 
-        $array = [];
-
+        $array    = [];
+        $details  = [];
+        $details2 = [];
         foreach ($userIds as $k => $v){
 
-            $item['to_user'] = $v;
-            $array[] = $item;
-            //TODO 发送融云消息
+            $item['to_user'] = dehashid($v);
+            if (is_numeric($item['to_user'])){
+                $array[] = $item;
 
+                $detail['user_id'] = $item['to_user'];
+                $detail2['title']  = '打赏'.$this->userInfo('nick_name',$item['to_user']).$gift['gift_name'].'x'.$item['num'];
+                $details[] = $detail;
+                $details2[] = $detail2;
+                Db::name('users')->where('user_id',$item['to_user'])->setInc('money',$detail['money']);
+
+                //TODO 发送融云消息
+            }
         }
 
         $result = $model->insertAll($array);
-
+        Db::name('money_detail')->insertAll($details);
+        Db::name('money_detail')->insertAll($details2);
 
         print_r($result);exit;
 
