@@ -241,7 +241,7 @@ class Pays extends User
 //             cache('message',$e->getMessage());
 //        }
 
-        return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
+//        return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
     }
 
     public function test()
