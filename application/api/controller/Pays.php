@@ -323,9 +323,9 @@ class Pays extends User
                 //TODO 发送融云消息
             }
         }
-        var_dump($array);
-        var_dump($details);
-        var_dump($details2);exit;
+//        var_dump($array);
+//        var_dump($details);
+//        var_dump($details2);exit;
         $result = $model->insertAll($array);
         Db::name('money_detail')->insertAll($details);
         Db::name('money_detail')->insertAll($details2);
