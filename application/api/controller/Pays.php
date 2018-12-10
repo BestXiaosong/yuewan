@@ -79,10 +79,11 @@ class Pays extends User
 
                 if (!isInt($data['num'])) api_return(0,'赠送数量错误');
 
+                if (empty($data['to_user'])) api_return(0,'请选择要赠送的的人');
+
                 //获取要赠送的人数
                 $people = count(explode(',',$data['to_user']));
 
-                if ($people <= 0) api_return(0,'请选择要赠送的的人');
 
                 //根据人数及每人赠送数量判断赠送总数
                 $total = bcmul($gift['price'],$data['num'],2);
