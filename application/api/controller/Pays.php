@@ -233,7 +233,7 @@ class Pays extends User
              cache('message',$e->getMessage());
         }
 
-        return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
+//        return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
     }
 
     public function test()
@@ -270,7 +270,7 @@ class Pays extends User
 
         $userIds = explode(',',$data['to_user']);
 
-        $item['room_id'] = $data['room_id'];
+        $item['room_id'] = $data['room_id']??0;
         $item['gift_id'] = $data['id'];
         $item['num']     = $data['num'];
         $item['user_id'] = dehashid($data['user_id']);
@@ -294,7 +294,7 @@ class Pays extends User
         $result = $model->insertAll($array);
 
 
-        dd($result);
+        print_r($result);exit;
 
 
 
