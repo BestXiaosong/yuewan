@@ -192,7 +192,7 @@ class Pays extends User
      */
     public function notify()
     {
-        $alipay = Pay::alipay($this->alipay);
+//        $alipay = Pay::alipay($this->alipay);
 //        try{
 //            $data = $alipay->verify(); // 是，验签就这么简单！
 //            cache('aliTest',$data);
