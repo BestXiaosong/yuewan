@@ -201,7 +201,8 @@ class Pays extends User
 
 //            Log::debug('Alipay notify', $data->all());
         } catch (Exception $e) {
-            // $e->getMessage();
+
+             cache('message',$e->getMessage());
         }
 
         return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
