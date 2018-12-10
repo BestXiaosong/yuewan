@@ -185,7 +185,7 @@ class Pays extends User
      */
     public function notify()
     {
-//        $alipay = Pay::alipay($this->alipay);
+        $alipay = Pay::alipay($this->alipay);
         try{
             $data = cache('aliTest');
 //            $data = $alipay->verify(); // 是，验签就这么简单！
@@ -194,7 +194,14 @@ class Pays extends User
 
                 $body = json_decode($data['body'],true);
 
-                dd($body);
+                switch ($body['type']){
+                    case 'recharge'://充值
+                        $this->recharge($body);
+                        break;
+                    default:
+                        api_return(0,'类型错误');
+                        break;
+                }
 
 
             }
@@ -225,6 +232,25 @@ class Pays extends User
 
        dd($data);
     }
+
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 充值回调成功处理
+     */
+    protected function recharge($data)
+    {
+        $user_id = dehashid($data['user_id']);
+
+        if (!is_numeric($user_id))  return false;
+
+        $map['r_id']   = $data['id'];
+        $map['status'] = 1;
+        $config = Db::name('recharge_config')->where($map)->cache(3)->find();
+
+        return Db::name('users')->where('user_id',$user_id)->setInc('money',$config['money']);
+    }
+
 
 
 }
