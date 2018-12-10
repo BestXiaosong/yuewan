@@ -193,7 +193,7 @@ class Pays extends User
 //            cache('aliTest',$data);
             $data = cache('aliTest');
 
-//            dd($data);
+            dd($data);
 
             // 请自行对 trade_status 进行判断及其它逻辑进行判断，在支付宝的业务通知中，只有交易通知状态为 TRADE_SUCCESS 或 TRADE_FINISHED 时，支付宝才会认定为买家付款成功。
             // 1、商户需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号；
@@ -206,6 +206,9 @@ class Pays extends User
             if ($data['trade_status'] == 'TRADE_SUCCESS' || $data['trade_status'] == 'TRADE_FINISHED'){
 
                 $body = json_decode($data['body'],true);
+
+
+
 
                 switch ($body['type']){
                     case 'recharge'://充值
