@@ -8,7 +8,7 @@ RewriteRule ^(.*)$ index.php [L,E=PATH_INFO:$1]
 </IfModule>
 
 
-#apace省略index.php
+##apace省略index.php
 #<IfModule mod_rewrite.c>
 #Options +FollowSymlinks -Multiviews
 #RewriteEngine on
