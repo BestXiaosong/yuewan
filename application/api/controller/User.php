@@ -23,7 +23,16 @@ class User extends Base
     public function _initialize()
     {
         parent::_initialize();
-        $this->user_id = $this->checkToken();
+        $url = request()->controller();
+        $url .= '/'.request()->action();
+
+        $notIntercept = ['Pays/notify'];
+
+        if (!in_array($url,$notIntercept)){
+            //支付回调不进行拦截
+            $this->user_id = $this->checkToken();
+        }
+
     }
 
 
