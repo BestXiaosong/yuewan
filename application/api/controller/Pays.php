@@ -103,7 +103,7 @@ class Pays extends User
                     'total'=> $total,
                     'num' => $data['num'],
                 ]);
-
+                dd($body);
                 break;
             case 'invite': //邀约订单付款
 
