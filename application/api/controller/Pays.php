@@ -173,7 +173,7 @@ class Pays extends User
 
         }
 
-//        $signature = 'sha1=b37abb5f89ae3e4c301f3360440c8beceeb5ea4c';
+        $signature = 'sha1=b37abb5f89ae3e4c301f3360440c8beceeb5ea4c';
 //        $hash =
 //        sha1=b37abb5f89ae3e4c301f3360440c8beceeb5ea4c+++++++sha1=b37abb5f89ae3e4c301f3360440c8beceeb5ea4c
         var_dump(strcmp('sha1=b37abb5f89ae3e4c301f3360440c8beceeb5ea4c', 'sha1=b37abb5f89ae3e4c301f3360440c8beceeb5ea4c'));exit;
