@@ -185,9 +185,20 @@ class Pays extends User
      */
     public function notify()
     {
-        $alipay = Pay::alipay($this->alipay);
+//        $alipay = Pay::alipay($this->alipay);
         try{
-            $data = $alipay->verify(); // 是的，验签就这么简单！
+            $data = cache('aliTest');
+//            $data = $alipay->verify(); // 是，验签就这么简单！
+
+            if ($data['trade_status'] == 'TRADE_SUCCESS' || $data['trade_status'] == 'TRADE_FINISHED'){
+
+                $body = json_decode($data['body'],true);
+
+                dd($body);
+
+
+            }
+
 
 
             cache('aliTest',$data);
