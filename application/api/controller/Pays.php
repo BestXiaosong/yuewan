@@ -9,6 +9,7 @@
 namespace app\api\controller;
 
 
+use app\common\logic\Logic;
 use think\Db;
 use think\Exception;
 use Yansongda\Pay\Pay;
@@ -90,6 +91,7 @@ class Pays extends User
 
                 $subject = '萌趴礼物('.$gift['gift_name'].')赠送';
 
+                //TODO 传入房间id
                 $body = json_encode([
                     'user_id' => hashid($this->user_id),
                     'id' => $data['id'],
@@ -209,6 +211,10 @@ class Pays extends User
                     case 'recharge'://充值
                         $this->recharge($body);
                         break;
+                    case 'gift': //礼物赠送
+                        $this->gift($body);
+
+                        break;
                     default:
                         api_return(0,'类型错误');
                         break;
@@ -255,6 +261,48 @@ class Pays extends User
         return Db::name('users')->where('user_id',$user_id)->setInc('money',$config['money']);
     }
 
+    /**
+     * Created by xiaosong
+     * E-mail:4155433@gmail.com
+     * 礼物赠送回调成功处理
+     */
+    protected function gift($data){
+
+        $userIds = explode(',',$data['to_user']);
+
+        $item['room_id'] = $data['room_id'];
+        $item['gift_id'] = $data['id'];
+        $item['num']     = $data['num'];
+        $item['user_id'] = dehashid($data['user_id']);
+        $item['total']   = $data['total'];
+
+
+
+        $model = new Logic();
+        $model->changeTable('gift_record');
+
+        $array = [];
+
+        foreach ($userIds as $k => $v){
+
+            $item['to_user'] = $v;
+            $array[] = $item;
+            //TODO 发送融云消息
+
+        }
+
+        $result = $model->insertAll($array);
+
+
+        dd($result);
+
+
+
+
+
+
+
+    }
 
 
 }
