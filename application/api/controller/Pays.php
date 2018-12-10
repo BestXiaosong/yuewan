@@ -172,8 +172,7 @@ class Pays extends User
                 break;
 
         }
-
-echo 'xxxx';
+    echo 'zxczxc';
         print_r($sign);exit;
         api_return(1,'获取成功',$sign);
 
