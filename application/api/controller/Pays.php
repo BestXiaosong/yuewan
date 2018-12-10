@@ -193,7 +193,7 @@ class Pays extends User
     public function notify()
     {
         $alipay = Pay::alipay($this->alipay);
-        try{
+//        try{
 //            $data = $alipay->verify(); // 是，验签就这么简单！
 //            cache('aliTest',$data);
             $data = cache('aliTest');
@@ -235,10 +235,10 @@ class Pays extends User
 
 
 //            Log::debug('Alipay notify', $data->all());
-        } catch (Exception $e) {
-
-             cache('message',$e->getMessage());
-        }
+//        } catch (Exception $e) {
+//
+//             cache('message',$e->getMessage());
+//        }
 
         return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
     }
