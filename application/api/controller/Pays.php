@@ -328,7 +328,7 @@ class Pays extends User
         Db::name('money_detail')->insertAll($details);
         Db::name('money_detail')->insertAll($details2);
 
-        print_r($result);exit;
+       cache('msg','success');
 
 
 
