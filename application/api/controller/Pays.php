@@ -220,7 +220,6 @@ class Pays extends User
                         $this->recharge($body);
                         break;
                     case 'gift': //礼物赠送
-                        dd($body);
                         $this->gift($body);
 
                         break;
@@ -276,7 +275,6 @@ class Pays extends User
      * 礼物赠送回调成功处理
      */
     protected function gift($data){
-        print_r($data);exit;
         $userIds = explode(',',$data['to_user']);
 
         $item['room_id'] = $data['room_id']??0;
@@ -325,7 +323,9 @@ class Pays extends User
                 //TODO 发送融云消息
             }
         }
-
+        var_dump($array);
+        var_dump($details);
+        var_dump($details2);exit;
         $result = $model->insertAll($array);
         Db::name('money_detail')->insertAll($details);
         Db::name('money_detail')->insertAll($details2);
