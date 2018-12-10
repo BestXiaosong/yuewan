@@ -13,6 +13,8 @@ use think\Route;
 
 Route::domain('*','api');
 Route::domain('admin','admin');
+Route::domain('mp','admin');
+Route::domain('amp','api');
 Route::domain('api','api');
 Route::domain('soho','admin');
 Route::domain('wap','index');
