@@ -192,11 +192,11 @@ class Pays extends User
      */
     public function notify()
     {
-//        $alipay = Pay::alipay($this->alipay);
-//        try{
-//            $data = $alipay->verify(); // 是，验签就这么简单！
-//            cache('aliTest',$data);
-            $data = cache('aliTest');
+        $alipay = Pay::alipay($this->alipay);
+        try{
+            $data = $alipay->verify(); // 是，验签就这么简单！
+            cache('aliTest',$data);
+//            $data = cache('aliTest');
 
 
             // 请自行对 trade_status 进行判断及其它逻辑进行判断，在支付宝的业务通知中，只有交易通知状态为 TRADE_SUCCESS 或 TRADE_FINISHED 时，支付宝才会认定为买家付款成功。
@@ -235,12 +235,12 @@ class Pays extends User
 
 
 //            Log::debug('Alipay notify', $data->all());
-//        } catch (Exception $e) {
-//
-//             cache('message',$e->getMessage());
-//        }
+        } catch (Exception $e) {
 
-//        return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
+             cache('message',$e->getMessage());
+        }
+
+        return $alipay->success()->send();// laravel 框架中请直接 `return $alipay->success()`
     }
 
     public function test()
@@ -274,7 +274,7 @@ class Pays extends User
      * 礼物赠送回调成功处理
      */
     protected function gift($data){
-        
+
         $userIds = explode(',',$data['to_user']);
 
         $item['room_id'] = $data['room_id']??0;
