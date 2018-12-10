@@ -17,6 +17,7 @@ class Pays extends User
 
     protected $alipay = [
         'app_id' => '2018052160244001',
+        
         'notify_url' => 'http://api.tikuzhuanjia.com/pays/alipay',
         'ali_public_key'   => 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiF4Y1bF3uVl6+xdUE+HqeG6HkiRsmnvnszkqv4v9iHrQJHpp7r9GXd1QO51MKjvU3OBOI6I/RLxADtaL8RmQ4AIHYdye5GreITFivbXIMtTprG0AF8gCw8tjWTD+iwuYgbXDh+OniKR3Dks2IEDiwOHilnNGCbib0CIwXDodPxq/avOMMguVxHfsVVIVvzxmaFKun9h8IVC4JGuXaLgV0AHrmqgk7zsTdMQ1pn9AGAh/tW4MC+wb4VPSuDCexU+GSktZZEQU5DBk/mTR+9VuLWDLyEU34sspvlb3TnmDMvPsnA+WxSXSGQeyyk+T2u1tz5/YLTnJ4KzusKwUz+MPSQIDAQAB',
         'return_url' => 'http://api.tikuzhuanjia.com/pays/alipay1',
