@@ -219,6 +219,7 @@ class Pays extends User
                         $this->recharge($body);
                         break;
                     case 'gift': //礼物赠送
+
                         $this->gift($body);
 
                         break;
@@ -274,7 +275,7 @@ class Pays extends User
      * 礼物赠送回调成功处理
      */
     protected function gift($data){
-        dd($data);
+        print_r($data);exit;
         $userIds = explode(',',$data['to_user']);
 
         $item['room_id'] = $data['room_id']??0;
