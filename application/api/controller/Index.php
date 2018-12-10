@@ -20,7 +20,7 @@ class Index extends Base
     {
         $ip = request()->ip();
         echo 'api:';
-        echo  $ip;exit('end');
+        echo  $ip;exit('endTest');
     }
 
 
