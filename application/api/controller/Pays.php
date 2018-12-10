@@ -173,6 +173,7 @@ class Pays extends User
 
         }
 
+echo 'xxxx';
         print_r($sign);exit;
         api_return(1,'获取成功',$sign);
 
