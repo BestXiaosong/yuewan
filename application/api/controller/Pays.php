@@ -320,6 +320,7 @@ class Pays extends User
                 $details2[] = $detail2;
                 Db::name('users')->where('user_id',$item['to_user'])->setInc('money',$detail['money']);
 
+                //trest
                 //TODO 发送融云消息
             }
         }
